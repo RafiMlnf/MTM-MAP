@@ -1,0 +1,137 @@
+'use client';
+
+import React from 'react';
+
+interface SettingsSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  blueprintOpacity: number;
+  onBlueprintOpacityChange: (val: number) => void;
+  satelliteOpacity: number;
+  onSatelliteOpacityChange: (val: number) => void;
+  showGrid: boolean;
+  onShowGridChange: (val: boolean) => void;
+  showRoads: boolean;
+  onShowRoadsChange: (val: boolean) => void;
+}
+
+export default function SettingsSidebar({
+  isOpen,
+  onClose,
+  blueprintOpacity,
+  onBlueprintOpacityChange,
+  satelliteOpacity,
+  onSatelliteOpacityChange,
+  showGrid,
+  onShowGridChange,
+  showRoads,
+  onShowRoadsChange,
+}: SettingsSidebarProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="settings-sidebar-overlay" onClick={onClose}>
+      <div className="settings-sidebar-panel" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="settings-header">
+          <div className="settings-title-row">
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
+            </svg>
+            <h2>Pengaturan Peta</h2>
+          </div>
+          <button className="settings-close-btn" onClick={onClose} title="Tutup">
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="settings-content">
+          {/* Section 1: Opasitas Peta */}
+          <div className="settings-section">
+            <h3>Opasitas Peta Latar</h3>
+            
+            {/* L1 Satelit Opacity */}
+            <div className="setting-control-group">
+              <div className="setting-label-row">
+                <span>Citra Satelit L1:</span>
+                <span className="setting-val">{Math.round(satelliteOpacity * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="1.0"
+                step="0.05"
+                value={satelliteOpacity}
+                onChange={(e) => onSatelliteOpacityChange(parseFloat(e.target.value))}
+                className="global-opacity-slider"
+              />
+            </div>
+
+            {/* L2 Blueprint Opacity */}
+            <div className="setting-control-group">
+              <div className="setting-label-row">
+                <span>Denah Blueprint L2:</span>
+                <span className="setting-val">{Math.round(blueprintOpacity * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0.0"
+                max="0.8"
+                step="0.05"
+                value={blueprintOpacity}
+                onChange={(e) => onBlueprintOpacityChange(parseFloat(e.target.value))}
+                className="global-opacity-slider"
+              />
+            </div>
+          </div>
+
+          {/* Section 2: Visibilitas Elemen */}
+          <div className="settings-section">
+            <h3>Visibilitas Elemen</h3>
+
+            {/* L1 Roads Switch */}
+            <div className="setting-switch-row">
+              <div className="setting-switch-info">
+                <span className="switch-title">Jalan & Marka (L1)</span>
+                <span className="switch-desc">Tampilkan overlay jalan aspal di Citra Satelit</span>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={showRoads}
+                  onChange={(e) => onShowRoadsChange(e.target.checked)}
+                />
+                <span className="switch-slider"></span>
+              </label>
+            </div>
+
+            {/* L2 Grid Switch */}
+            <div className="setting-switch-row">
+              <div className="setting-switch-info">
+                <span className="switch-title">Garis Grid (L2)</span>
+                <span className="switch-desc">Tampilkan garis-garis grid panduan denah</span>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={showGrid}
+                  onChange={(e) => onShowGridChange(e.target.checked)}
+                />
+                <span className="switch-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer info */}
+        <div className="settings-footer">
+          <span>PT Menara Terus Makmur &copy; 2026</span>
+        </div>
+      </div>
+    </div>
+  );
+}

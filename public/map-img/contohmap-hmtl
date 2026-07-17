@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Layout Pabrik - Digital Floor Plan</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; background:#f4f4f0; margin:0; padding:30px; display:flex; justify-content:center; }
+  .sheet { background:#fff; border:3px solid #1a1a1a; width:1400px; }
+  .title-bar { border-bottom:2px solid #1a1a1a; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; font-size:13px; color:#333; }
+  .title-bar h1 { font-size:18px; margin:0; color:#111; }
+  .canvas { position:relative; width:1400px; height:1000px;
+    background-image:linear-gradient(#e6e6e0 1px,transparent 1px),linear-gradient(90deg,#e6e6e0 1px,transparent 1px);
+    background-size:25px 25px; }
+  .outer-wall { position:absolute; left:40px; top:20px; right:40px; bottom:20px; border:3px solid #111; }
+  .zone { position:absolute; border:2px dashed #8a5a2b; background:#d3ead9; }
+  .zone-label { position:absolute; top:-13px; left:10px; background:#fff; border:1px solid #333; font-size:11px; font-weight:bold; padding:1px 6px; color:#222; }
+  .cell { position:absolute; border:1px solid #6b4a2a; background:#fff8ec; border-radius:3px;
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; color:#222; text-align:center; padding:2px; }
+  .bar { position:absolute; border:1px solid #6b4a2a; background:#fff8ec; border-radius:3px;
+    writing-mode:vertical-rl; text-orientation:mixed; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; color:#222; }
+  .circle { position:absolute; width:30px; height:30px; border-radius:50%; border:1.3px solid #333; background:#fff; }
+  .circle.pink { background:conic-gradient(#f2a8c2 0deg 90deg, #fff 90deg 360deg); }
+  .dot { position:absolute; width:9px; height:9px; border-radius:50%; background:#e0729a; top:3px; right:3px; }
+  .plain-room { position:absolute; border:1px solid #999; background:repeating-linear-gradient(45deg,#f2f2ee,#f2f2ee 6px,#e9e9e3 6px,#e9e9e3 7px); }
+  .label-txt { position:absolute; font-size:11px; color:#555; }
+  .out-label { position:absolute; font-size:13px; font-weight:bold; color:#b3401f; }
+  .legend { position:absolute; right:55px; bottom:25px; background:#fff; border:1px solid #333; padding:8px 12px; font-size:11px; display:flex; flex-direction:column; gap:6px; }
+  .legend-row { display:flex; align-items:center; gap:8px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="title-bar">
+    <h1>Layout Pabrik &mdash; Digitized Floor Plan</h1>
+    <span>Direkonstruksi dari sketsa asli</span>
+  </div>
+  <div class="canvas">
+    <div class="outer-wall"></div>
+
+    <div class="plain-room" style="left:65px; top:45px; width:110px; height:910px;"></div>
+    <div class="label-txt" style="left:75px; top:490px; writing-mode:vertical-rl;">GUDANG / KORIDOR</div>
+
+    <div class="zone" style="left:230px; top:130px; width:295px; height:250px;">
+      <div class="zone-label">F-LINE</div>
+      <div class="circle" style="left:15px; top:15px;">F-9</div>
+      <div class="bar" style="left:110px; top:15px; width:55px; height:110px;">F-8</div>
+      <div class="bar" style="left:200px; top:15px; width:55px; height:110px;">F-10</div>
+      <div class="circle" style="left:15px; top:75px;">F-5</div>
+      <div class="circle" style="left:15px; top:135px;">F-1</div>
+      <div class="circle pink" style="left:15px; top:195px;">F-4</div>
+      <div class="bar" style="left:110px; top:135px; width:55px; height:90px;">F-6</div>
+      <div class="bar" style="left:200px; top:135px; width:55px; height:90px;">F-7</div>
+    </div>
+
+    <div class="zone" style="left:555px; top:135px; width:150px; height:180px; background:#cfe4e0;">
+      <div class="zone-label">TW</div>
+      <div class="label-txt" style="left:15px; top:15px;">Peralatan</div>
+      <div class="circle" style="left:100px; top:60px;">TW</div>
+    </div>
+
+    <div class="zone" style="left:940px; top:175px; width:170px; height:105px;">
+      <div class="cell" style="left:10px; top:35px; width:70px; height:36px;">F-11</div>
+    </div>
+
+    <div class="zone" style="left:230px; top:420px; width:295px; height:260px;">
+      <div class="zone-label">PJ / ASSY LINE</div>
+      <div class="cell" style="left:10px; top:10px; width:110px; height:130px;">Peralatan Kerja</div>
+      <div class="cell" style="left:140px; top:10px; width:90px; height:38px;">PJ SFG</div>
+      <div class="circle pink" style="left:240px; top:8px;"></div>
+      <div class="cell" style="left:140px; top:58px; width:90px; height:38px;">PJ FG1</div>
+      <div class="circle" style="left:240px; top:56px;"></div>
+      <div class="cell" style="left:140px; top:106px; width:90px; height:38px;">PJ FG2</div>
+      <div class="circle" style="left:240px; top:104px;"></div>
+      <div class="cell" style="left:10px; top:154px; width:70px; height:38px;">SJ</div>
+      <div class="circle pink" style="left:88px; top:152px;"></div>
+      <div class="cell" style="left:140px; top:154px; width:90px; height:38px;">Assy AC</div>
+    </div>
+
+    <div class="zone" style="left:940px; top:305px; width:380px; height:290px;">
+      <div class="zone-label">MACHINE SHOP</div>
+      <div class="out-label" style="left:-48px; top:135px;">&#8592; OUT</div>
+
+      <div class="cell" style="left:10px; top:15px; width:55px; height:36px;">LBJ</div>
+      <div class="cell" style="left:73px; top:15px; width:55px; height:36px;">Ball</div>
+      <div class="cell" style="left:136px; top:15px; width:55px; height:36px;">Cone<div class="dot"></div></div>
+      <div class="cell" style="left:199px; top:15px; width:55px; height:36px;">HCA</div>
+      <div class="cell" style="left:262px; top:15px; width:55px; height:36px;">HCB</div>
+      <div class="cell" style="left:325px; top:15px; width:55px; height:36px;">BRC</div>
+
+      <div class="cell" style="left:73px; top:70px; width:55px; height:36px;">Shaft</div>
+      <div class="cell" style="left:199px; top:70px; width:55px; height:36px;">R1<div class="dot"></div></div>
+      <div class="cell" style="left:262px; top:70px; width:55px; height:36px;">R2</div>
+
+      <div class="cell" style="left:10px; top:125px; width:55px; height:36px;">UB-67<div class="dot"></div></div>
+      <div class="cell" style="left:73px; top:125px; width:55px; height:36px;">UB-5</div>
+      <div class="cell" style="left:199px; top:125px; width:55px; height:36px;">D14<div class="dot"></div></div>
+      <div class="cell" style="left:262px; top:125px; width:55px; height:36px;">HPM</div>
+
+      <div class="cell" style="left:10px; top:180px; width:55px; height:36px;">Assy A<div class="dot"></div></div>
+      <div class="cell" style="left:73px; top:180px; width:55px; height:36px;">Assy B</div>
+      <div class="cell" style="left:199px; top:180px; width:55px; height:36px;">Spdl</div>
+      <div class="cell" style="left:262px; top:180px; width:55px; height:36px;">D80<div class="dot"></div></div>
+      <div class="cell" style="left:325px; top:180px; width:55px; height:36px;">D34</div>
+
+      <div class="cell" style="left:10px; top:235px; width:55px; height:36px;">UB-23<div class="dot"></div></div>
+      <div class="cell" style="left:73px; top:235px; width:55px; height:36px;">UB-14</div>
+    </div>
+
+    <div class="legend">
+      <div style="font-weight:bold;">Keterangan</div>
+      <div class="legend-row"><div style="width:16px;height:16px;border:1.3px solid #333;background:#fff8ec;"></div> Stasiun / mesin</div>
+      <div class="legend-row"><div class="dot" style="position:static;"></div> Indikator status mesin</div>
+      <div class="legend-row"><div style="width:16px;height:16px;background:#d3ead9;border:1px dashed #8a5a2b;"></div> Area produksi</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
