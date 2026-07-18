@@ -37,6 +37,7 @@ export interface BuildingData {
   details: string;
   zones: string[];
   operationalStatus: string;
+  icon?: string;
 }
 
 export const buildings: BuildingData[] = [

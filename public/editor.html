@@ -184,9 +184,113 @@
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--panel2);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+      opacity: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .opacity-slider {
+      width: 100%;
+      cursor: pointer;
+      accent-color: var(--accent);
+      height: 5px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      margin: 6px 0;
+    }
+
+    /* ── LAYERS PANEL ── */
+    .layer-group-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      background: var(--panel2);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+    .layer-group-header:hover {
+      background: rgba(255,255,255,0.06);
+    }
+    .layer-group-header.active {
+      border-left: 3px solid var(--accent);
+      background: rgba(59,130,246,0.05);
+    }
+    .layer-visibility-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .layer-visibility-btn.visible {
+      color: var(--accent2);
+    }
+    .layer-visibility-btn:hover {
+      color: var(--text);
+    }
+    .layer-title-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .layer-active-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: transparent;
+    }
+    .layer-group-header.active .layer-active-dot {
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+    }
+    .layer-shapes-list {
+      padding-left: 10px;
+      background: rgba(0,0,0,0.12);
+      border-bottom: 1px solid var(--border);
+    }
+    .layer-shapes-list.collapsed {
+      display: none;
+    }
   </style>
 </head>
 <body>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="toast"></div>
 
 <!-- HEADER -->
 <header>
@@ -245,9 +349,19 @@
 
   <div class="header-sep"></div>
 
-  <button class="tool-btn success" onclick="showExport()" title="Export ke mapData.ts">
+  <button class="tool-btn success" onclick="saveToBrowserManual()" title="Simpan ke Browser [Ctrl+S]" style="background: rgba(16,185,129,0.15); color: var(--accent2); border-color: rgba(16,185,129,0.4);">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Simpan <span class="kbd">Ctrl+S</span>
+  </button>
+
+  <button class="tool-btn" onclick="showExport()" title="Export ke mapData.ts">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     Export TS
+  </button>
+
+  <button class="tool-btn" onclick="importJSON()" title="Buka file TS/JS/JSON">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+    Buka File
   </button>
 </header>
 
@@ -256,7 +370,10 @@
 
   <!-- LEFT: shape list -->
   <div class="left-panel">
-    <div class="panel-title">Shapes (<span id="shape-count">0</span>)</div>
+    <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+      <span>Shapes (<span id="shape-count">0</span>)</span>
+      <button onclick="addLayer()" class="btn-ghost" style="padding: 2px 8px; font-size: 10px; margin: 0; background: rgba(59,130,246,0.12); color: var(--accent); border: 1px solid rgba(59,130,246,0.3);">➕ Layer</button>
+    </div>
     <div class="shape-list" id="shape-list">
       <div class="empty-state">Belum ada shape.<br>Gunakan tool di atas untuk menggambar area.</div>
     </div>
@@ -294,7 +411,14 @@
         <strong>Scroll</strong> – Zoom
       </div>
       <div class="sep"></div>
-      <button class="btn-export" onclick="showExport()">⬇ Export ke mapData.ts</button>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label class="field-label">Opasitas Background (<span id="bg-opacity-val">100</span>%)</label>
+        <input type="range" class="opacity-slider" min="0.1" max="1.0" step="0.05" value="1.0" id="bg-opacity-slider" oninput="changeBgOpacity(this.value)">
+      </div>
+      <div class="sep"></div>
+      <button class="btn-export" style="background: rgba(59,130,246,0.12); color: var(--accent); border: 1px solid rgba(59,130,246,0.35);" onclick="saveToBrowserManual()">💾 Simpan di Browser</button>
+      <button class="btn-export" style="margin-top:4px;" onclick="showExport()">⬇ Export ke mapData.ts</button>
+      <button class="btn-ghost" style="margin-top:4px;" onclick="loadServerJSON()">🌐 Load map.json (Server)</button>
       <button class="btn-ghost" style="margin-top:4px;" onclick="exportJSON()">📋 Simpan JSON</button>
       <button class="btn-ghost" style="margin-top:4px;" onclick="importJSON()">📂 Buka JSON</button>
     </div>
@@ -332,6 +456,14 @@
 // ══════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════
+const SVG_ICONS = {
+  mesin: `<path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L1.97 8.24a.5.5 0 0 0 .12.64l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.12.22.37.29.6.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.42.5.42h3.84c.24 0 .44-.17.49-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/>`,
+  listrik: `<path d="M11.5 2L3 13h7v9l8.5-11h-7z" fill="currentColor"/>`,
+  taman: `<path d="M12 2C7.58 2 4 5.58 4 10c0 2.9 1.54 5.43 3.86 6.86l-.86 3.14h10l-.86-3.14C18.46 15.43 20 12.9 20 10c0-4.42-3.58-8-8-8zm1 14h-2v3h2v-3z" fill="currentColor"/>`,
+  masjid: `<path d="M12 2c.4 0 .7.3.7.7v1.1c2 .2 3.8 1.3 4.8 3.1.2-.1.4-.2.6-.2 1 0 1.9.9 1.9 1.9 0 .4-.1.8-.4 1.1l-1.3 5.4c.5.3.7.8.7 1.4v2.5c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-2.5c0-.6.3-1.1.7-1.4l-1.3-5.4C4.1 9.9 4 9.5 4 9.1c0-1 .9-1.9 1.9-1.9.2 0 .4.1.6.2C7.5 5.6 9.3 4.5 11.3 4.3V2.7c0-.4.3-.7.7-.7zm0 3.3c-3.1 0-5.7 2.3-6.1 5.3h12.2C17.7 7.6 15.1 5.3 12 5.3zM7 16.5v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z" fill="currentColor"/>`,
+  parkir: `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 11h-3v3H8V8h5c1.66 0 3 1.34 3 3s-1.34 3-3 3zm0-4h-3v2h3c.55 0 1-.45 1-1s-.45-1-1-1z" fill="currentColor"/>`
+};
+
 let shapes = [];
 let selectedId = null;
 let currentTool = 'select';
@@ -356,6 +488,178 @@ let dragStartMouse = {x: 0, y: 0};
 let mapW = 0, mapH = 0;
 let idCounter = 1;
 
+let bgOpacity = 1.0;
+try {
+  const savedOpacity = localStorage.getItem('mtm_map_bg_opacity');
+  if (savedOpacity) {
+    bgOpacity = parseFloat(savedOpacity);
+  }
+} catch (e) {}
+
+function changeBgOpacity(val) {
+  bgOpacity = parseFloat(val);
+  const mapImgEl = document.getElementById('map-img');
+  if (mapImgEl) {
+    mapImgEl.style.opacity = bgOpacity;
+  }
+  const displayVal = document.getElementById('bg-opacity-val');
+  if (displayVal) {
+    displayVal.textContent = Math.round(bgOpacity * 100);
+  }
+  const sliderEl = document.getElementById('bg-opacity-slider');
+  if (sliderEl) {
+    sliderEl.value = bgOpacity;
+  }
+  try {
+    localStorage.setItem('mtm_map_bg_opacity', bgOpacity);
+  } catch (e) {}
+}
+
+let activeLayer = 1;
+let layers = [
+  { id: 1, name: 'Layer 1: Main Building', visible: true, expanded: true },
+  { id: 2, name: 'Layer 2: Ruangan Gedung', visible: true, expanded: true },
+  { id: 3, name: 'Layer 3: Pilihan Lantai', visible: true, expanded: true }
+];
+
+try {
+  const savedLayers = localStorage.getItem('mtm_map_layers');
+  if (savedLayers) {
+    layers = JSON.parse(savedLayers);
+    if (layers.length > 0) {
+      activeLayer = layers[0].id;
+    }
+  }
+} catch (e) {
+  console.error('Gagal memuat sesi layers dari localStorage', e);
+}
+
+function saveLayers() {
+  try {
+    localStorage.setItem('mtm_map_layers', JSON.stringify(layers));
+  } catch (e) {
+    console.error('Gagal menyimpan sesi layers ke localStorage', e);
+  }
+}
+
+function toggleLayerVisibility(layerId) {
+  const l = layers.find(layer => layer.id === layerId);
+  if (!l) return;
+  l.visible = !l.visible;
+  if (!l.visible && selectedId) {
+    const s = shapes.find(sh => sh.id === selectedId);
+    if (s && (s.layer || 1) === layerId) {
+      selectShape(null);
+    }
+  }
+  saveLayers();
+  renderAll();
+}
+
+function addLayer() {
+  const name = prompt('Nama Layer Baru:', 'Layer Baru');
+  if (!name || !name.trim()) return;
+  const newL = {
+    id: Date.now(),
+    name: name.trim(),
+    visible: true,
+    expanded: true
+  };
+  layers.unshift(newL);
+  activeLayer = newL.id;
+  saveLayers();
+  renderAll();
+}
+
+function renameLayer(layerId) {
+  const l = layers.find(layer => layer.id === layerId);
+  if (!l) return;
+  const newName = prompt('Ubah Nama Layer:', l.name);
+  if (newName && newName.trim()) {
+    l.name = newName.trim();
+    saveLayers();
+    renderAll();
+  }
+}
+
+function deleteLayer(layerId) {
+  const l = layers.find(layer => layer.id === layerId);
+  if (!l) return;
+  const count = shapes.filter(s => (s.layer || 1) === layerId).length;
+  if (count > 0) {
+    if (!confirm(`Layer "${l.name}" berisi ${count} shape. Hapus layer beserta seluruh shapenya?`)) {
+      return;
+    }
+    shapes = shapes.filter(s => (s.layer || 1) !== layerId);
+    if (selectedId) {
+      const s = shapes.find(sh => sh.id === selectedId);
+      if (!s) selectShape(null);
+    }
+  }
+  layers = layers.filter(layer => layer.id !== layerId);
+  if (activeLayer === layerId && layers.length > 0) {
+    activeLayer = layers[0].id;
+  }
+  saveLayers();
+  saveSession();
+  renderAll();
+}
+
+function moveLayer(index, direction) {
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= layers.length) return;
+  const temp = layers[index];
+  layers[index] = layers[newIndex];
+  layers[newIndex] = temp;
+  saveLayers();
+  renderAll();
+}
+
+// Drag & Drop
+function dragShape(ev, shapeId) {
+  ev.dataTransfer.setData("shapeId", shapeId);
+}
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+function dropShape(ev, targetLayerId) {
+  ev.preventDefault();
+  const shapeId = ev.dataTransfer.getData("shapeId");
+  if (!shapeId) return;
+  const sh = shapes.find(s => s.id === shapeId);
+  if (sh) {
+    sh.layer = targetLayerId;
+    saveSession();
+    renderAll();
+  }
+}
+
+// Load shapes from localStorage on initialization
+try {
+  const savedShapes = localStorage.getItem('mtm_map_shapes');
+  if (savedShapes) {
+    shapes = JSON.parse(savedShapes);
+    shapes.forEach(s => {
+      if (s.id && s.id.startsWith('bld-new-')) {
+        const num = parseInt(s.id.replace('bld-new-', ''), 10);
+        if (!isNaN(num) && num >= idCounter) {
+          idCounter = num + 1;
+        }
+      }
+    });
+  }
+} catch (e) {
+  console.error('Gagal memuat sesi shapes dari localStorage', e);
+}
+
+function saveSession() {
+  try {
+    localStorage.setItem('mtm_map_shapes', JSON.stringify(shapes));
+  } catch (e) {
+    console.error('Gagal menyimpan sesi shapes ke localStorage', e);
+  }
+}
+
 const viewport = document.getElementById('canvas-viewport');
 const canvasTransform = document.getElementById('canvas-transform');
 const mapImg = document.getElementById('map-img');
@@ -375,6 +679,8 @@ mapImg.onload = () => {
   svgOverlay.setAttribute('viewBox', `0 0 ${mapW} ${mapH}`);
   svgOverlay.style.width = mapW + 'px';
   svgOverlay.style.height = mapH + 'px';
+  mapImg.style.opacity = bgOpacity;
+  changeBgOpacity(bgOpacity);
   resetView();
 };
 if (mapImg.complete && mapImg.naturalWidth > 0) mapImg.onload();
@@ -439,10 +745,15 @@ function setTool(tool) {
 // ══════════════════════════════════════════════════════════
 viewport.addEventListener('mousedown', onMouseDown);
 viewport.addEventListener('mousemove', onMouseMove);
-viewport.addEventListener('mouseup', onMouseUp);
+window.addEventListener('mouseup', onMouseUp);
 viewport.addEventListener('wheel', onWheel, {passive: false});
 viewport.addEventListener('dblclick', onDblClick);
 viewport.addEventListener('contextmenu', e => { e.preventDefault(); cancelDrawing(); });
+window.addEventListener('blur', () => {
+  isPanning = false;
+  isDragging = false;
+  spacePanning = false;
+});
 
 function onMouseDown(e) {
   if (e.button === 1 || spacePanning) {
@@ -466,6 +777,9 @@ function onMouseDown(e) {
       dragStartPts = shapes.find(s => s.id === hit.id).points.map(p => ({...p}));
     } else {
       selectShape(null);
+      isPanning = true;
+      panStart = {x: e.clientX - panX, y: e.clientY - panY};
+      viewport.style.cursor = 'grabbing';
     }
     return;
   }
@@ -497,10 +811,12 @@ function onMouseDown(e) {
     saveUndo();
     const s = { id: newId(), type: 'label', points: [{x: pct.x, y: pct.y}],
       color: document.getElementById('tool-color').value,
-      name: text, code: text, details: '', operationalStatus: 'Aktif', fontSize: 14 };
+      name: text, code: text, details: '', operationalStatus: 'Aktif', fontSize: 14,
+      layer: activeLayer };
     shapes.push(s);
     selectShape(s.id);
     renderAll();
+    saveSession();
   }
 }
 
@@ -540,6 +856,7 @@ function onMouseUp(e) {
     saveUndo();
     isDragging = false;
     dragStartPts = [];
+    saveSession();
     return;
   }
 
@@ -554,10 +871,11 @@ function onMouseUp(e) {
       const s = { id: newId(), type: 'rect',
         points: [{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}],
         color: document.getElementById('tool-color').value,
-        name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif' };
+        name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif',
+        layer: activeLayer };
       shapes.push(s);
       isDrawing = false; rectStart = null; gPreview.innerHTML = '';
-      selectShape(s.id); renderAll();
+      selectShape(s.id); renderAll(); saveSession();
     } else {
       isDrawing = false; rectStart = null; gPreview.innerHTML = '';
     }
@@ -570,20 +888,36 @@ function onDblClick(e) {
 
 function onWheel(e) {
   e.preventDefault();
-  const factor = e.deltaY < 0 ? 1.12 : 0.88;
-  const vp = viewport.getBoundingClientRect();
-  const mx = e.clientX - vp.left, my = e.clientY - vp.top;
-  const newZoom = Math.max(0.05, Math.min(10, zoom * factor));
-  panX = mx - (mx - panX) * (newZoom / zoom);
-  panY = my - (my - panY) * (newZoom / zoom);
-  zoom = newZoom;
-  applyTransform();
+  
+  if (e.ctrlKey) {
+    // Zoom menggunakan pinch-to-zoom (2 jari mencubit) atau Ctrl + Scroll Mouse
+    const zoomIntensity = 0.0015;
+    const factor = Math.exp(-e.deltaY * zoomIntensity);
+    
+    const vp = viewport.getBoundingClientRect();
+    const mx = e.clientX - vp.left, my = e.clientY - vp.top;
+    const newZoom = Math.max(0.05, Math.min(10, zoom * factor));
+    panX = mx - (mx - panX) * (newZoom / zoom);
+    panY = my - (my - panY) * (newZoom / zoom);
+    zoom = newZoom;
+    applyTransform();
+  } else {
+    // Geser peta menggunakan 2 jari (touchpad scroll)
+    panX -= e.deltaX;
+    panY -= e.deltaY;
+    applyTransform();
+  }
 }
 
 // ══════════════════════════════════════════════════════════
 // KEYBOARD
 // ══════════════════════════════════════════════════════════
 window.addEventListener('keydown', e => {
+  if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    saveToBrowserManual();
+    return;
+  }
   const tag = document.activeElement.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
   if (e.code === 'Space') { spacePanning = true; viewport.style.cursor = 'grab'; e.preventDefault(); }
@@ -620,10 +954,11 @@ function finishPolygon() {
   saveUndo();
   const s = { id: newId(), type: 'poly', points: [...drawPoints],
     color: document.getElementById('tool-color').value,
-    name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif' };
+    name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif',
+    layer: activeLayer };
   shapes.push(s);
   drawPoints = []; isDrawing = false; gPreview.innerHTML = '';
-  selectShape(s.id); renderAll();
+  selectShape(s.id); renderAll(); saveSession();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -638,69 +973,100 @@ function renderAll() {
   gHandles.innerHTML = '';
   document.getElementById('shape-count').textContent = shapes.length;
 
-  shapes.forEach(shape => {
-    const isSelected = shape.id === selectedId;
-    const color = shape.color || '#ef4444';
+  for (let i = layers.length - 1; i >= 0; i--) {
+    const layer = layers[i];
+    if (!layer.visible) continue;
 
-    if (shape.type === 'label') {
-      const pt = pctToPx(shape.points[0].x, shape.points[0].y);
-      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      g.setAttribute('data-id', shape.id);
+    const layerShapes = shapes.filter(s => (s.layer || 1) === layer.id);
+    layerShapes.forEach(shape => {
+      const isSelected = shape.id === selectedId;
+      const color = shape.color || '#ef4444';
 
-      const fs = (shape.fontSize || 14);
-      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('x', pt.x); text.setAttribute('y', pt.y);
-      text.setAttribute('font-size', fs); text.setAttribute('font-weight', 'bold');
-      text.setAttribute('fill', color);
-      text.setAttribute('stroke', 'rgba(0,0,0,0.8)'); text.setAttribute('stroke-width', fs * 0.2);
-      text.setAttribute('paint-order', 'stroke'); text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('dominant-baseline', 'middle'); text.setAttribute('class', 'shape-label-text');
-      text.setAttribute('font-family', 'Segoe UI, system-ui, sans-serif');
-      text.textContent = shape.name;
+      if (shape.type === 'label') {
+        const pt = pctToPx(shape.points[0].x, shape.points[0].y);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('data-id', shape.id);
 
-      const hitRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      hitRect.setAttribute('x', pt.x - 100); hitRect.setAttribute('y', pt.y - fs);
-      hitRect.setAttribute('width', 200); hitRect.setAttribute('height', fs * 2.2);
-      hitRect.setAttribute('fill', 'transparent'); hitRect.style.cursor = 'pointer';
+        const hasIcon = shape.icon && SVG_ICONS[shape.icon];
+        const textY = hasIcon ? pt.y + 14 : pt.y;
 
-      g.appendChild(hitRect); g.appendChild(text);
-      g.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
-      gShapes.appendChild(g);
+        if (hasIcon) {
+          const iconG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          iconG.setAttribute('transform', `translate(${pt.x - 12}, ${pt.y - 16})`);
+          iconG.setAttribute('fill', color);
+          iconG.style.pointerEvents = 'none';
+          iconG.innerHTML = SVG_ICONS[shape.icon];
+          g.appendChild(iconG);
+        }
+
+        const fs = (shape.fontSize || 14);
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', pt.x); text.setAttribute('y', textY);
+        text.setAttribute('font-size', fs); text.setAttribute('font-weight', 'bold');
+        text.setAttribute('fill', color);
+        text.setAttribute('stroke', 'rgba(0,0,0,0.8)'); text.setAttribute('stroke-width', fs * 0.2);
+        text.setAttribute('paint-order', 'stroke'); text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'middle'); text.setAttribute('class', 'shape-label-text');
+        text.setAttribute('font-family', 'Segoe UI, system-ui, sans-serif');
+        text.textContent = shape.name;
+
+        const hitRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        hitRect.setAttribute('x', pt.x - 100); hitRect.setAttribute('y', pt.y - fs - (hasIcon ? 14 : 0));
+        hitRect.setAttribute('width', 200); hitRect.setAttribute('height', fs * 2.2 + (hasIcon ? 28 : 0));
+        hitRect.setAttribute('fill', 'transparent'); hitRect.style.cursor = 'pointer';
+
+        g.appendChild(hitRect); g.appendChild(text);
+        g.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
+        gShapes.appendChild(g);
+
+        if (isSelected) {
+          const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          c.setAttribute('cx', pt.x); c.setAttribute('cy', pt.y);
+          c.setAttribute('r', 5); c.setAttribute('fill', 'white');
+          c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
+          gHandles.appendChild(c);
+        }
+        return;
+      }
+
+      const ptsStr = ptsToSvg(shape.points);
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      poly.setAttribute('points', ptsStr);
+      poly.setAttribute('fill', color);
+      poly.setAttribute('stroke', color);
+      poly.setAttribute('stroke-width', isSelected ? 3 : 2);
+      poly.setAttribute('fill-opacity', isSelected ? 0.3 : 0.15);
+      poly.setAttribute('stroke-opacity', isSelected ? 1 : 0.8);
+      poly.setAttribute('class', 'shape-poly' + (isSelected ? ' selected' : ''));
+      poly.style.cursor = 'pointer';
+      poly.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
+      gShapes.appendChild(poly);
+
+      if (shape.icon && SVG_ICONS[shape.icon]) {
+        const xs = shape.points.map(p => p.x), ys = shape.points.map(p => p.y);
+        const cx = (Math.max(...xs) + Math.min(...xs)) / 2;
+        const cy = (Math.max(...ys) + Math.min(...ys)) / 2;
+        const centerPt = pctToPx(cx, cy);
+        const iconG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        iconG.setAttribute('transform', `translate(${centerPt.x - 12}, ${centerPt.y - 12})`);
+        iconG.setAttribute('fill', color);
+        iconG.style.pointerEvents = 'none';
+        iconG.innerHTML = SVG_ICONS[shape.icon];
+        gShapes.appendChild(iconG);
+      }
 
       if (isSelected) {
-        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        c.setAttribute('cx', pt.x); c.setAttribute('cy', pt.y);
-        c.setAttribute('r', 5); c.setAttribute('fill', 'white');
-        c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
-        gHandles.appendChild(c);
+        shape.points.forEach(p => {
+          const px = pctToPx(p.x, p.y);
+          const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
+          c.setAttribute('r', 5); c.setAttribute('fill', 'white');
+          c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
+          gHandles.appendChild(c);
+        });
       }
-      return;
-    }
-
-    const ptsStr = ptsToSvg(shape.points);
-    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-    poly.setAttribute('points', ptsStr);
-    poly.setAttribute('fill', color);
-    poly.setAttribute('stroke', color);
-    poly.setAttribute('stroke-width', isSelected ? 3 : 2);
-    poly.setAttribute('fill-opacity', isSelected ? 0.3 : 0.15);
-    poly.setAttribute('stroke-opacity', isSelected ? 1 : 0.8);
-    poly.setAttribute('class', 'shape-poly' + (isSelected ? ' selected' : ''));
-    poly.style.cursor = 'pointer';
-    poly.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
-    gShapes.appendChild(poly);
-
-    if (isSelected) {
-      shape.points.forEach(p => {
-        const px = pctToPx(p.x, p.y);
-        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
-        c.setAttribute('r', 5); c.setAttribute('fill', 'white');
-        c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
-        gHandles.appendChild(c);
-      });
-    }
-  });
+    });
+  }
 
   renderShapeList();
 }
@@ -760,7 +1126,14 @@ function showDefaultProps() {
       <strong>Space+Drag</strong> – Pan<br><strong>Scroll</strong> – Zoom
     </div>
     <div class="sep"></div>
-    <button class="btn-export" onclick="showExport()">⬇ Export ke mapData.ts</button>
+    <div class="field-group" style="margin-bottom:10px;">
+      <label class="field-label">Opasitas Background (<span id="bg-opacity-val">${Math.round(bgOpacity * 100)}</span>%)</label>
+      <input type="range" class="opacity-slider" min="0.1" max="1.0" step="0.05" value="${bgOpacity}" oninput="changeBgOpacity(this.value)">
+    </div>
+    <div class="sep"></div>
+    <button class="btn-export" style="background: rgba(59,130,246,0.12); color: var(--accent); border: 1px solid rgba(59,130,246,0.35);" onclick="saveToBrowserManual()">💾 Simpan di Browser</button>
+    <button class="btn-export" style="margin-top:5px;" onclick="showExport()">⬇ Export ke mapData.ts</button>
+    <button class="btn-ghost" style="margin-top:5px;" onclick="loadServerJSON()">🌐 Load map.json (Server)</button>
     <button class="btn-ghost" style="margin-top:5px;" onclick="exportJSON()">📋 Simpan JSON</button>
     <button class="btn-ghost" style="margin-top:5px;" onclick="importJSON()">📂 Buka JSON</button>
   `;
@@ -785,6 +1158,23 @@ function showShapeProps(shape) {
     <div class="field-group">
       <label class="field-label">Warna</label>
       <input type="color" class="field-input" style="height:34px;padding:2px;" value="${shape.color || '#ef4444'}" oninput="updatePropAndRender(this.value, 'color')">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Simbol Ikon</label>
+      <select class="field-input" onchange="updatePropAndRender(this.value, 'icon')">
+        <option value="" ${!shape.icon ? 'selected' : ''}>Tidak ada (None)</option>
+        <option value="mesin" ${shape.icon === 'mesin' ? 'selected' : ''}>Mesin (Gear)</option>
+        <option value="listrik" ${shape.icon === 'listrik' ? 'selected' : ''}>Listrik (Power)</option>
+        <option value="taman" ${shape.icon === 'taman' ? 'selected' : ''}>Taman (Tree)</option>
+        <option value="masjid" ${shape.icon === 'masjid' ? 'selected' : ''}>Masjid (Dome)</option>
+        <option value="parkir" ${shape.icon === 'parkir' ? 'selected' : ''}>Parkir (Parking P)</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Layer</label>
+      <select class="field-input" onchange="updatePropAndRender(+this.value, 'layer')">
+        ${layers.map(l => `<option value="${l.id}" ${(shape.layer || 1) === l.id ? 'selected' : ''}>${escHtml(l.name)}</option>`).join('')}
+      </select>
     </div>
     ${isLabel ? `<div class="field-group">
       <label class="field-label">Ukuran Font</label>
@@ -814,9 +1204,10 @@ function updateProp(value, key) {
   const sh = shapes.find(s => s.id === selectedId);
   if (!sh) return;
   if (key === 'id') {
-    sh.id = value; selectedId = value; renderShapeList(); return;
+    sh.id = value; selectedId = value; renderShapeList(); saveSession(); return;
   }
   sh[key] = value;
+  saveSession();
 }
 function updatePropAndRender(value, key) {
   updateProp(value, key);
@@ -832,18 +1223,155 @@ function updatePropsCoords(shape) {
 // ══════════════════════════════════════════════════════════
 function renderShapeList() {
   const list = document.getElementById('shape-list');
-  if (shapes.length === 0) {
-    list.innerHTML = '<div class="empty-state">Belum ada shape.<br>Gunakan tool di atas untuk menggambar.</div>';
-    return;
-  }
+  list.innerHTML = '';
+
   const icons = {label:'🏷', rect:'▭', poly:'⬡'};
-  list.innerHTML = shapes.map(s => `
-    <div class="shape-item ${s.id === selectedId ? 'selected' : ''}" onclick="selectShape('${s.id}')">
-      <div class="shape-icon" style="background:${s.color}22;border:1.5px solid ${s.color};">${icons[s.type]||'◈'}</div>
-      <span class="shape-name">${escHtml(s.code || s.name)}</span>
-      <button class="shape-del" onclick="event.stopPropagation();deleteShape('${s.id}')">×</button>
-    </div>
-  `).join('');
+
+  layers.forEach((layer, index) => {
+    const layerShapes = shapes.filter(s => (s.layer || 1) === layer.id);
+    
+    const header = document.createElement('div');
+    header.className = `layer-group-header ${activeLayer === layer.id ? 'active' : ''}`;
+    header.setAttribute('ondragover', 'allowDrop(event)');
+    header.setAttribute('ondrop', `dropShape(event, ${layer.id})`);
+
+    header.onclick = (e) => {
+      if (e.target.closest('.layer-action-btn') || e.target.closest('.layer-visibility-btn')) return;
+      activeLayer = layer.id;
+      renderShapeList();
+    };
+
+    const arrow = document.createElement('span');
+    arrow.style.fontSize = '8px';
+    arrow.style.marginRight = '4px';
+    arrow.textContent = layer.expanded ? '▼' : '▶';
+    arrow.onclick = (e) => {
+      e.stopPropagation();
+      layer.expanded = !layer.expanded;
+      saveLayers();
+      renderShapeList();
+    };
+
+    const visBtn = document.createElement('button');
+    visBtn.className = `layer-visibility-btn ${layer.visible ? 'visible' : ''}`;
+    visBtn.innerHTML = layer.visible ? '👁' : '👁‍🗨';
+    visBtn.title = layer.visible ? 'Sembunyikan Layer' : 'Tampilkan Layer';
+    visBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleLayerVisibility(layer.id);
+    };
+
+    const title = document.createElement('span');
+    title.className = 'layer-title-text';
+    title.textContent = `${layer.name} (${layerShapes.length})`;
+    title.ondblclick = (e) => {
+      e.stopPropagation();
+      renameLayer(layer.id);
+    };
+
+    const actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.gap = '2px';
+    actions.style.marginLeft = '4px';
+
+    if (index > 0) {
+      const upBtn = document.createElement('button');
+      upBtn.className = 'layer-action-btn';
+      upBtn.style.cssText = 'background:none; border:none; color:var(--muted); cursor:pointer; font-size:9px; padding:0 2px;';
+      upBtn.innerHTML = '▲';
+      upBtn.title = 'Naikkan Layer';
+      upBtn.onclick = (e) => { e.stopPropagation(); moveLayer(index, -1); };
+      actions.appendChild(upBtn);
+    }
+
+    if (index < layers.length - 1) {
+      const downBtn = document.createElement('button');
+      downBtn.className = 'layer-action-btn';
+      downBtn.style.cssText = 'background:none; border:none; color:var(--muted); cursor:pointer; font-size:9px; padding:0 2px;';
+      downBtn.innerHTML = '▼';
+      downBtn.title = 'Turunkan Layer';
+      downBtn.onclick = (e) => { e.stopPropagation(); moveLayer(index, 1); };
+      actions.appendChild(downBtn);
+    }
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'layer-action-btn';
+    editBtn.style.cssText = 'background:none; border:none; color:var(--muted); cursor:pointer; font-size:10px; padding:0 2px;';
+    editBtn.innerHTML = '✏️';
+    editBtn.title = 'Ubah Nama';
+    editBtn.onclick = (e) => { e.stopPropagation(); renameLayer(layer.id); };
+    actions.appendChild(editBtn);
+
+    if (layers.length > 1) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'layer-action-btn';
+      delBtn.style.cssText = 'background:none; border:none; color:var(--red); cursor:pointer; font-size:10px; padding:0 2px;';
+      delBtn.innerHTML = '🗑';
+      delBtn.title = 'Hapus Layer';
+      delBtn.onclick = (e) => { e.stopPropagation(); deleteLayer(layer.id); };
+      actions.appendChild(delBtn);
+    }
+
+    const dot = document.createElement('div');
+    dot.className = 'layer-active-dot';
+
+    header.appendChild(arrow);
+    header.appendChild(visBtn);
+    header.appendChild(title);
+    header.appendChild(actions);
+    header.appendChild(dot);
+    list.appendChild(header);
+
+    const container = document.createElement('div');
+    container.className = `layer-shapes-list ${layer.expanded ? '' : 'collapsed'}`;
+    container.setAttribute('ondragover', 'allowDrop(event)');
+    container.setAttribute('ondrop', `dropShape(event, ${layer.id})`);
+
+    if (layerShapes.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.style.padding = '8px';
+      empty.textContent = 'Kosong';
+      container.appendChild(empty);
+    } else {
+      layerShapes.forEach(s => {
+        const item = document.createElement('div');
+        item.className = `shape-item ${s.id === selectedId ? 'selected' : ''}`;
+        item.setAttribute('draggable', 'true');
+        item.setAttribute('ondragstart', `dragShape(event, '${s.id}')`);
+
+        item.onclick = (e) => {
+          e.stopPropagation();
+          selectShape(s.id);
+        };
+
+        const icon = document.createElement('div');
+        icon.className = 'shape-icon';
+        icon.style.backgroundColor = `${s.color || '#ef4444'}22`;
+        icon.style.border = `1.5px solid ${s.color || '#ef4444'}`;
+        icon.textContent = icons[s.type] || '◈';
+
+        const name = document.createElement('span');
+        name.className = 'shape-name';
+        name.textContent = s.code || s.name;
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'shape-del';
+        delBtn.textContent = '×';
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteShape(s.id);
+        };
+
+        item.appendChild(icon);
+        item.appendChild(name);
+        item.appendChild(delBtn);
+        container.appendChild(item);
+      });
+    }
+
+    list.appendChild(container);
+  });
 }
 
 // ══════════════════════════════════════════════════════════
@@ -852,6 +1380,8 @@ function renderShapeList() {
 function hitTest(px, py) {
   for (let i = shapes.length - 1; i >= 0; i--) {
     const s = shapes[i];
+    const layer = s.layer || 1;
+    if (!layerVisibility[layer]) continue;
     if (s.type === 'label') {
       const dx = Math.abs(px - s.points[0].x);
       const dy = Math.abs(py - s.points[0].y);
@@ -877,7 +1407,7 @@ function deleteShape(id) {
   saveUndo();
   shapes = shapes.filter(s => s.id !== id);
   if (selectedId === id) selectedId = null;
-  renderAll(); showDefaultProps();
+  renderAll(); showDefaultProps(); saveSession();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -905,13 +1435,13 @@ function undo() {
   if (!undoStack.length) return;
   redoStack.push(JSON.stringify(shapes));
   shapes = JSON.parse(undoStack.pop());
-  selectedId = null; renderAll(); showDefaultProps();
+  selectedId = null; renderAll(); showDefaultProps(); saveSession();
 }
 function redo() {
   if (!redoStack.length) return;
   undoStack.push(JSON.stringify(shapes));
   shapes = JSON.parse(redoStack.pop());
-  renderAll(); showDefaultProps();
+  renderAll(); showDefaultProps(); saveSession();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -942,7 +1472,7 @@ function showExport() {
     area: ${wM * hM},
     details: "${(s.details||'').replace(/"/g,'\\"')}",
     zones: [],
-    operationalStatus: "${s.operationalStatus || 'Aktif'}"
+    operationalStatus: "${s.operationalStatus || 'Aktif'}"${s.icon ? `,\n    icon: "${s.icon}"` : ''}${s.layer ? `,\n    layer: ${s.layer}` : ''}
   }`;
     }).join(',\n');
 
@@ -964,6 +1494,11 @@ function showExport() {
 
   if (!out) {
     out = '// Belum ada shape.\n// Gunakan tool Rect, Poly, atau Label untuk menggambar area.';
+  } else {
+    out += `\n\n// ════════════════════════════════════════════════════\n`;
+    out += `// LAYERS CONFIG — copy & paste ke array layers jika diperlukan\n`;
+    out += `// ════════════════════════════════════════════════════\n\n`;
+    out += `// export const layers = ` + JSON.stringify(layers, null, 2) + `;\n`;
   }
 
   document.getElementById('export-code').textContent = out;
@@ -991,24 +1526,171 @@ function exportJSON() {
   a.click(); URL.revokeObjectURL(a.href);
 }
 
+function loadShapesData(rawText) {
+  let content = rawText.trim();
+  // Extract layers if present in the raw text
+  if (rawText.includes('layers')) {
+    const startIdx = rawText.indexOf('[', rawText.indexOf('layers'));
+    if (startIdx !== -1) {
+      let depth = 1;
+      let i = startIdx + 1;
+      while (i < rawText.length && depth > 0) {
+        if (rawText[i] === '[') depth++;
+        else if (rawText[i] === ']') depth--;
+        i++;
+      }
+      if (depth === 0) {
+        try {
+          const layersStr = rawText.slice(startIdx, i);
+          const parsedLayers = new Function('return ' + layersStr)();
+          if (Array.isArray(parsedLayers) && parsedLayers.length > 0) {
+            layers = parsedLayers;
+            saveLayers();
+          }
+        } catch (e) {
+          console.error('Gagal memuat config layers dari file TS/JS', e);
+        }
+      }
+    }
+  }
+
+  // Extract buildings if present (which is the case for mapData.ts)
+  if (content.includes('buildings')) {
+    const startIdx = content.indexOf('[', content.indexOf('buildings'));
+    if (startIdx !== -1) {
+      let depth = 1;
+      let i = startIdx + 1;
+      while (i < content.length && depth > 0) {
+        if (content[i] === '[') depth++;
+        else if (content[i] === ']') depth--;
+        i++;
+      }
+      if (depth === 0) {
+        content = content.slice(startIdx, i);
+      }
+    }
+  }
+
+  // Strip single-line comments
+  content = content.replace(/\/\/.*/g, '');
+  
+  // If it's a list of objects but not wrapped in [ ], wrap it
+  if (!content.startsWith('[')) {
+    if (content.endsWith(',')) {
+      content = content.slice(0, -1);
+    }
+    content = '[' + content + ']';
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch (e) {
+    try {
+      parsed = new Function('return ' + content)();
+    } catch (err) {
+      throw new Error('Format JSON atau JS Object tidak valid!');
+    }
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Data harus berupa array!');
+  }
+
+  // Parse points to editor format if they are in production string format
+  const converted = parsed.map(item => {
+    if (Array.isArray(item.points)) {
+      return item;
+    }
+    if (typeof item.points === 'string') {
+      const pts = item.points.split(' ').map(p => {
+        const [x, y] = p.split(',').map(Number);
+        return { x, y };
+      });
+      return {
+        id: item.id || ('bld-new-' + (idCounter++)),
+        type: item.type || 'poly',
+        points: pts,
+        color: item.color || '#3b82f6',
+        name: item.name || 'Area Baru',
+        code: item.code || 'New Area',
+        details: item.details || '',
+        operationalStatus: item.operationalStatus || 'Aktif',
+        fontSize: item.fontSize || 14,
+        icon: item.icon || '',
+        layer: item.layer || 1
+      };
+    }
+    return item;
+  });
+
+  saveUndo();
+  shapes = converted;
+  
+  // Update idCounter to avoid duplicate IDs
+  converted.forEach(s => {
+    if (s.id && typeof s.id === 'string') {
+      const num = parseInt(s.id.replace(/\D/g, ''), 10);
+      if (!isNaN(num) && num >= idCounter) {
+        idCounter = num + 1;
+      }
+    }
+  });
+
+  selectedId = null;
+  renderAll();
+  showDefaultProps();
+  saveSession();
+  showToast('✅ Data berhasil dimuat!');
+}
+
+function loadServerJSON() {
+  fetch('/map.json')
+    .then(res => {
+      if (!res.ok) throw new Error('Gagal mengambil file map.json dari server');
+      return res.text();
+    })
+    .then(text => {
+      loadShapesData(text);
+    })
+    .catch(err => {
+      alert('Error: ' + err.message);
+    });
+}
+
 function importJSON() {
-  const input = Object.assign(document.createElement('input'), {type: 'file', accept: '.json'});
+  const input = Object.assign(document.createElement('input'), {type: 'file', accept: '.json,.ts,.js,.txt'});
   input.onchange = e => {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = ev => {
       try {
-        const data = JSON.parse(ev.target.result);
-        if (!Array.isArray(data)) throw new Error();
-        saveUndo();
-        shapes = data;
-        data.forEach(s => { const n = parseInt(s.id?.replace(/\D/g,'')); if (n >= idCounter) idCounter = n+1; });
-        selectedId = null; renderAll(); showDefaultProps();
-      } catch { alert('File JSON tidak valid!'); }
+        loadShapesData(ev.target.result);
+      } catch (err) {
+        alert(err.message || 'File tidak valid!');
+      }
     };
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ══════════════════════════════════════════════════════════
+// BROWSER SAVE & TOAST
+// ══════════════════════════════════════════════════════════
+function saveToBrowserManual() {
+  saveSession();
+  showToast('💾 Sesi berhasil disimpan ke browser!');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
 }
 
 // ══════════════════════════════════════════════════════════
