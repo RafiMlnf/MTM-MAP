@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PT MTM Map - Polygon Coordinates Mapper</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      background: #1e1e2e;
+      color: #cdd6f4;
+    }
+    #sidebar {
+      width: 380px;
+      background: #181825;
+      border-right: 1px solid #313244;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    #workspace {
+      flex: 1;
+      position: relative;
+      overflow: auto;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    #map-container {
+      position: relative;
+      display: inline-block;
+    }
+    #map-image {
+      max-width: 1200px;
+      height: auto;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    #svg-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .building-item {
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #313244;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .building-item.active {
+      border-color: #f5c2e7;
+      background: #45475a;
+    }
+    .building-item.mapped {
+      background: #2e3c30;
+      border-left: 5px solid #a6e3a1;
+    }
+    .btn {
+      background: #89b4fa;
+      color: #11111b;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .btn.reset {
+      background: #f38ba8;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: #11111b;
+      color: #a6e3a1;
+      border: 1px solid #313244;
+      border-radius: 6px;
+      font-family: monospace;
+      padding: 8px;
+      margin-top: 10px;
+    }
+    h2, h3 {
+      margin-top: 0;
+    }
+    .temp-dot {
+      fill: #f5e0dc;
+      stroke: #11111b;
+      stroke-width: 2px;
+    }
+    .poly-preview {
+      fill: rgba(137, 180, 250, 0.3);
+      stroke: #89b4fa;
+      stroke-width: 2px;
+    }
+    .poly-mapped {
+      fill: rgba(166, 227, 161, 0.25);
+      stroke: #a6e3a1;
+      stroke-width: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="sidebar">
+    <h2>PT MTM Mapper</h2>
+    <p style="font-size: 12px; color: #a6adc8;">
+      Select a building from the list below, then click on the map to define its 4 corners. 
+      Click "Generate Output" to copy the new TypeScript code.
+    </p>
+    
+    <div id="buildings-list"></div>
+    
+    <button id="btn-export" class="btn">Generate Output</button>
+    <button id="btn-clear" class="btn reset">Clear Selected Points</button>
+    
+    <h3>Generated mapData.ts</h3>
+    <textarea id="output" readonly placeholder="Click Generate Output..."></textarea>
+  </div>
+
+  <div id="workspace">
+    <div id="map-container">
+      <img id="map-image" src="/map-img/mtmmap.jpg" alt="PT MTM Map">
+      <svg id="svg-overlay" xmlns="http://www.w3.org/2000/svg">
+        <!-- Render polygons here -->
+        <g id="g-polygons"></g>
+        <!-- Render current temp line and points -->
+        <g id="g-temp"></g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    // Original buildings data to start with
+    const buildings = [
+      { id: "bld-office", name: "OFFICE (Gedung Kantor Utama)", code: "Gedung Kantor", points: "12,76 34,76 34,85 12,85", width: 25, length: 15, area: 375, details: "Pusat administrasi, manajemen, divisi HRD, keuangan, dan ruang pertemuan utama PT Menara Terus Makmur.", zones: [], operationalStatus: "Aktif (Jam Kantor)" },
+      { id: "bld-dies", name: "PRODUCTION 1 (Gedung Produksi 1)", code: "Production 1", points: "12,45 34,45 34,76 12,76", width: 25, length: 60, area: 1500, details: "Gedung khusus fabrikasi, penyimpanan, dan perawatan cetakan presisi tinggi (dies) untuk forging dan stamping.", zones: ["PJ"], operationalStatus: "Normal Operasional" },
+      { id: "bld-forging", name: "FORGING (Gedung Penempaan)", code: "Area Forging", points: "12,24 34,24 34,43 12,43", width: 25, length: 30, area: 750, details: "Area utama proses hot and cold forging untuk pembentukan dasar material logam suku cadang otomotif.", zones: ["F-LINE"], operationalStatus: "Normal Operasional" },
+      { id: "bld-cutting", name: "CUTTING (Gedung Pemotongan Bahan)", code: "Area Cutting", points: "13,15 48,15 48,23 13,23", width: 10, length: 35, area: 350, details: "Fasilitas pemotongan awal raw material (kawat baja/rod) sesuai ukuran standar produksi.", zones: ["GUDANG-KORIDOR"], operationalStatus: "Normal Operasional" },
+      { id: "bld-shotblasting", name: "SHOTBLASTING (Gedung Pembersihan Logam)", code: "Area Blasting", points: "40,24 50,24 50,39 40,39", width: 10, length: 20, area: 200, details: "Area pembersihan kerak hasil penempaan menggunakan tembakan partikel baja (steel shot) untuk finishing permukaan.", zones: ["TW"], operationalStatus: "Normal Operasional" },
+      { id: "bld-admin-delivery", name: "admin delivery (Gedung Logistik & Pengiriman)", code: "Admin Delivery", points: "49,37 69,37 69,57 49,57", width: 20, length: 30, area: 600, details: "Kantor admin logistik, perencanaan pengiriman barang jadi, dan koordinasi armada truk ekspedisi.", zones: [], operationalStatus: "Sibuk (Bongkar Muat)" },
+      { id: "bld-packaging", name: "PACKAGING (Gedung Pengemasan)", code: "Area Packing", points: "42,60 63,60 63,77 42,77", width: 25, length: 30, area: 750, details: "Stasiun akhir perakitan kecil, inspeksi visual kualitas akhir (QC), pengemasan boks, pelabelan, dan palletizing ekspor.", zones: [], operationalStatus: "Normal Operasional" },
+      { id: "bld-pos-satpam", name: "POS SATPAM", code: "Pos Satpam", points: "37,80 43,80 43,84 37,84", width: 6, length: 6, area: 36, details: "Pos penjagaan utama pintu gerbang pabrik untuk kontrol masuk/keluar karyawan, tamu, dan truk logistik.", zones: [], operationalStatus: "Siaga 24 Jam" },
+      { id: "bld-masjid", name: "MASJID", code: "Fasilitas Masjid", points: "57,79 65,79 67,84 61,88 55,84", width: 12, length: 15, area: 180, details: "Masjid utama kompleks pabrik PT MTM untuk sarana ibadah karyawan dan kegiatan keagamaan.", zones: [], operationalStatus: "Buka" },
+      { id: "bld-tps", name: "TPS (Tempat Penampungan Sementara)", code: "Area TPS", points: "57,14 70,14 70,18 57,18", width: 5, length: 15, area: 75, details: "Area penampungan sampah umum dan pemilahan limbah produksi sebelum diangkut dinas kebersihan luar.", zones: [], operationalStatus: "Aktif" },
+      { id: "bld-kebun", name: "KEBUN (Ruang Terbuka Hijau)", code: "Taman Hijau", points: "58,20 70,20 70,36 58,36", width: 15, length: 25, area: 375, details: "Area penghijauan, taman santai karyawan saat jam istirahat, dan resapan air pabrik.", zones: [], operationalStatus: "Buka" },
+      { id: "bld-b3", name: "B3 (Gudang Bahan Berbahaya & Beracun)", code: "Gudang Limbah B3", points: "74,13 97,13 97,16 74,16", width: 4, length: 25, area: 100, details: "Gudang penyimpanan khusus bahan kimia dan limbah beracun B3 industri dengan standar keselamatan tinggi.", zones: [], operationalStatus: "Normal Terkontrol" },
+      { id: "bld-gardu-listrik", name: "GARDU LISTRIK (Substasiun Listrik Pabrik)", code: "Gardu Listrik", points: "40,42 48,42 48,50 40,50", width: 10, length: 10, area: 100, details: "Pusat pembagi daya listrik tegangan tinggi PLN untuk menyuplai seluruh kebutuhan mesin penempa dan kantor.", zones: [], operationalStatus: "Normal Terkontrol" },
+      { id: "bld-production-2", name: "PRODUCTION 2 (Gedung Produksi 2)", code: "Gedung Produksi 2", points: "73,25 99,25 99,43 73,43", width: 20, length: 35, area: 700, details: "Lini pemesinan tahap akhir, penguliran sekunder, pengeboran, dan pengujian kekuatan.", zones: ["F-11"], operationalStatus: "Normal Operasional" },
+      { id: "bld-production-1", name: "PRODUCTION 3 (Gedung Produksi 3)", code: "Production 3", points: "73,46 99,46 99,66 73,66", width: 25, length: 35, area: 875, details: "Pusat perbautan otomotif, mesin CNC Machine Shop, dan penempatan lini mesin pemesinan utama (UB-67, LBJ, dll).", zones: ["MACHINE SHOP"], operationalStatus: "Normal Operasional" },
+      { id: "bld-dojo", name: "DOJO (Pusat Pelatihan Karyawan)", code: "Gedung Dojo", points: "79,66 90,66 90,83 79,83", width: 12, length: 20, area: 240, details: "Tempat training keselamatan kerja (safety training), pelatihan teknik dasar karyawan baru, dan sertifikasi keahlian.", zones: [], operationalStatus: "Aktif (Sesi Pelatihan)" },
+      { id: "bld-parkir-mobil", name: "PARKIR MOBIL (Fasilitas Parkir Staf/Tamu)", code: "Parkir Mobil", points: "73,69 79,69 79,83 73,83", width: 6, length: 20, area: 120, details: "Area parkir kendaraan roda empat untuk staf manajemen, direksi, tamu perusahaan, dan operasional.", zones: [], operationalStatus: "Normal" },
+      { id: "bld-parkir-motor", name: "PARKIR MOTOR (Fasilitas Parkir Karyawan)", code: "Parkir Motor", points: "73,84 93,84 93,89 73,89", width: 6, length: 25, area: 150, details: "Fasilitas parkir beratap luas khusus untuk sepeda motor seluruh operator dan staf pabrik PT MTM.", zones: [], operationalStatus: "Normal" },
+      { id: "bld-trafo", name: "TRAFO (Transformator Listrik Pabrik)", code: "Gedung Trafo", points: "74,17 81,17 81,23 74,23", width: 8, length: 8, area: 64, details: "Transformator daya listrik pembagi tegangan utama pabrik.", zones: [], operationalStatus: "Normal Terkontrol" },
+      { id: "bld-kompresor", name: "KOMPRESOR (Stasiun Udara Bertekanan)", code: "Stasiun Kompresor", points: "82,17 89,17 89,23 82,23", width: 8, length: 8, area: 64, details: "Stasiun kompresor udara bertekanan tinggi untuk mensuplai sistem pneumatik mesin produksi.", zones: [], operationalStatus: "Normal Operasional" },
+      { id: "bld-docking", name: "DOCKING AREA (Area Bongkar Muat)", code: "Area Docking", points: "40,51 48,51 48,57 40,57", width: 10, length: 15, area: 150, details: "Area parkir truk dan kontainer untuk kegiatan bongkar muat raw material dan barang jadi.", zones: [], operationalStatus: "Aktif (Bongkar Muat)" }
+    ];
+
+    let selectedBuildingId = null;
+    let tempPoints = [];
+    const pointsMap = {}; // buildingId -> string
+
+    const listEl = document.getElementById("buildings-list");
+    const mapImage = document.getElementById("map-image");
+    const svgOverlay = document.getElementById("svg-overlay");
+    const gTemp = document.getElementById("g-temp");
+    const gPolygons = document.getElementById("g-polygons");
+    const outputEl = document.getElementById("output");
+
+    // Initialize list
+    buildings.forEach(b => {
+      const item = document.createElement("div");
+      item.className = "building-item";
+      item.id = "item-" + b.id;
+      item.innerHTML = `<strong>${b.code}</strong><br><span style="font-size: 11px; color:#bac2de;">${b.name}</span>`;
+      item.onclick = () => selectBuilding(b.id);
+      listEl.appendChild(item);
+    });
+
+    function selectBuilding(id) {
+      if (selectedBuildingId) {
+        document.getElementById("item-" + selectedBuildingId).classList.remove("active");
+      }
+      selectedBuildingId = id;
+      document.getElementById("item-" + id).classList.add("active");
+      tempPoints = [];
+      redrawTemp();
+    }
+
+    svgOverlay.onclick = (e) => {
+      if (!selectedBuildingId) {
+        alert("Please select a building from the sidebar first!");
+        return;
+      }
+      
+      const rect = mapImage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const pctX = (x / rect.width) * 100;
+      const pctY = (y / rect.height) * 100;
+      
+      tempPoints.push({ x: pctX, y: pctY });
+      redrawTemp();
+      
+      if (tempPoints.length === 4) {
+        // We have 4 points, save it!
+        const ptsStr = tempPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+        pointsMap[selectedBuildingId] = ptsStr;
+        
+        document.getElementById("item-" + selectedBuildingId).classList.add("mapped");
+        tempPoints = [];
+        redrawTemp();
+        redrawPolygons();
+      }
+    };
+
+    function redrawTemp() {
+      gTemp.innerHTML = "";
+      if (tempPoints.length === 0) return;
+      
+      // Draw points
+      tempPoints.forEach(p => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", p.x + "%");
+        circle.setAttribute("cy", p.y + "%");
+        circle.setAttribute("r", "5");
+        circle.setAttribute("class", "temp-dot");
+        gTemp.appendChild(circle);
+      });
+      
+      // Draw poly line
+      if (tempPoints.length > 1) {
+        const pointsAttr = tempPoints.map(p => `${p.x}%,${p.y}%`).join(" ");
+        const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        poly.setAttribute("points", pointsAttr);
+        poly.setAttribute("class", "poly-preview");
+        gTemp.appendChild(poly);
+      }
+    }
+
+    function redrawPolygons() {
+      gPolygons.innerHTML = "";
+      Object.keys(pointsMap).forEach(id => {
+        const ptsStr = pointsMap[id];
+        // convert e.g., "12,76 34,76" to percentage string
+        const ptsAttr = ptsStr.split(" ").map(p => {
+          const [x, y] = p.split(",");
+          return `${x}%,${y}%`;
+        }).join(" ");
+        
+        const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        poly.setAttribute("points", ptsAttr);
+        poly.setAttribute("class", "poly-mapped");
+        
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = buildings.find(b => b.id === id).name;
+        poly.appendChild(title);
+        
+        gPolygons.appendChild(poly);
+      });
+    }
+
+    document.getElementById("btn-clear").onclick = () => {
+      tempPoints = [];
+      redrawTemp();
+    };
+
+    document.getElementById("btn-export").onclick = () => {
+      const outputBuildings = buildings.map(b => {
+        return {
+          ...b,
+          points: pointsMap[b.id] || b.points
+        };
+      });
+      
+      const tsCode = `export const buildings: BuildingData[] = ${JSON.stringify(outputBuildings, null, 2)};`;
+      outputEl.value = tsCode;
+    };
+  </script>
+</body>
+</html>

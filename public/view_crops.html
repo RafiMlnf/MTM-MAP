@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Label Crops</title>
+  <style>
+    body { font-family: sans-serif; background: #222; color: #fff; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    .card { background: #333; border: 1px solid #444; border-radius: 8px; padding: 10px; text-align: center; }
+    .card img { max-width: 100%; height: auto; border-radius: 4px; background: white; padding: 5px; }
+    .label { margin-top: 10px; font-weight: bold; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>Label Crops from mtmmap.jpg</h1>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const compIds = [
+      "Comp_2", "Comp_3", "Comp_4", "Comp_6", "Comp_7", "Comp_8", "Comp_10",
+      "Comp_11", "Comp_12", "Comp_13", "Comp_14", "Comp_15", "Comp_16", "Comp_17",
+      "Comp_18", "Comp_19", "Comp_21", "Comp_22", "Comp_23", "Comp_24"
+    ];
+    
+    const grid = document.getElementById('grid');
+    compIds.forEach(id => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      
+      const img = document.createElement('img');
+      img.src = `/map-img/label_crops/${id}.jpg`;
+      img.alt = id;
+      
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.innerText = id;
+      
+      card.appendChild(img);
+      card.appendChild(label);
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

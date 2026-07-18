@@ -10,6 +10,7 @@ interface MapSatelliteProps {
   hoveredId: string | null;
   setHoveredId: (id: string | null) => void;
   bgOpacity: number;
+  shapeOpacity: number;
   showRoads: boolean;
 }
 
@@ -20,6 +21,7 @@ export default function MapSatellite({
   hoveredId,
   setHoveredId,
   bgOpacity,
+  shapeOpacity,
   showRoads,
 }: MapSatelliteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -201,7 +203,7 @@ export default function MapSatellite({
       >
         {/* Base Satellite Image */}
         <img
-          src="/map-img/L1.png"
+          src="/map-img/mtmmap.jpg"
           alt="Citra Satelit PT Menara Terus Makmur"
           className="blueprint-underlay"
           style={{ opacity: bgOpacity }}
@@ -234,45 +236,7 @@ export default function MapSatellite({
           {/* Render roads under the buildings with rounded turns */}
           {showRoads && (
             <g>
-              {/* 2. West Access Lane (Connected to Bottom, Ends at Cutting Area) */}
-              <path
-                d="M 36,23 L 36,86.1"
-                className="road-polygon"
-                style={{ strokeWidth: 3.0, strokeLinecap: 'round' }}
-              />
-              <path
-                d="M 36,23 L 36,86.1"
-                className="road-marking"
-                style={{ strokeWidth: 0.12 }}
-              />
-
-              {/* 3. Combined East Access Lane & South Lane (with rounded turn in front of Masjid) */}
-              <path
-                d="M 2,86.1 L 69.1,86.1 Q 71.1,86.1 71.1,84.1 L 71.1,12"
-                className="road-polygon"
-                style={{ strokeWidth: 2.2, strokeLinecap: 'round', strokeLinejoin: 'round' }}
-                fill="none"
-              />
-              <path
-                d="M 2,86.1 L 69.1,86.1 Q 71.1,86.1 71.1,84.1 L 71.1,12"
-                className="road-marking"
-                style={{ strokeWidth: 0.12, strokeLinecap: 'round', strokeLinejoin: 'round' }}
-                fill="none"
-              />
-
-              {/* 4. Docking Area Connector Road (Runs horizontally to East Lane near Prod 3) */}
-              <path
-                d="M 36,57 L 71.1,57"
-                className="road-polygon"
-                style={{ strokeWidth: 2.2, strokeLinecap: 'round' }}
-                fill="none"
-              />
-              <path
-                d="M 36,57 L 71.1,57"
-                className="road-marking"
-                style={{ strokeWidth: 0.12 }}
-                fill="none"
-              />
+              {/* No custom roads needed on the new mtmmap background */}
             </g>
           )}
 
@@ -288,6 +252,18 @@ export default function MapSatellite({
                 className={`building-polygon ${isSelected ? 'selected' : ''} ${
                   isHovered ? 'hovered' : ''
                 }`}
+                style={{
+                  fill: isSelected 
+                    ? `rgba(4, 120, 87, ${shapeOpacity * 0.24})` 
+                    : isHovered 
+                      ? `rgba(29, 78, 216, ${shapeOpacity * 0.36})` 
+                      : `rgba(29, 78, 216, ${shapeOpacity * 0.1})`,
+                  stroke: isSelected 
+                    ? `rgba(16, 185, 129, ${shapeOpacity})` 
+                    : isHovered 
+                      ? `rgba(29, 78, 216, ${shapeOpacity})` 
+                      : `rgba(29, 78, 216, ${shapeOpacity * 0.8})`
+                }}
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelectBuilding(bld.id);
@@ -337,6 +313,8 @@ export default function MapSatellite({
           const centerX = (Math.max(...xs) + Math.min(...xs)) / 2;
           const centerY = (Math.max(...ys) + Math.min(...ys)) / 2;
 
+          const isTopRow = centerY < 4;
+
           return (
             <div
               key={`label-${bld.id}`}
@@ -345,8 +323,8 @@ export default function MapSatellite({
               } ${hoveredId === bld.id ? 'hovered' : ''}`}
               style={{
                 left: `${centerX}%`,
-                top: `${centerY}%`,
-                transform: 'translate(-50%, -50%)',
+                top: isTopRow ? `${Math.min(...ys)}%` : `${centerY}%`,
+                transform: isTopRow ? 'translate(-50%, -125%)' : 'translate(-50%, -50%)',
                 position: 'absolute',
                 zIndex: 10,
               }}

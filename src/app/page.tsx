@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { buildings, zones } from '../data/mapData';
 import Sidebar from '../components/Sidebar';
 import MapSatellite from '../components/MapSatellite';
-import MapLayout from '../components/MapLayout';
 import SettingsSidebar from '../components/SettingsSidebar';
 
 export default function Home() {
@@ -29,6 +28,7 @@ export default function Home() {
   const [showSettingsSidebar, setShowSettingsSidebar] = useState(false);
   const [blueprintOpacity, setBlueprintOpacity] = useState(0.25);
   const [satelliteOpacity, setSatelliteOpacity] = useState(0.8);
+  const [shapeOpacity, setShapeOpacity] = useState(0.5);
   const [showGridL2, setShowGridL2] = useState(true);
   const [showRoadsL1, setShowRoadsL1] = useState(true);
 
@@ -90,30 +90,16 @@ export default function Home() {
         </button>
 
         {/* Dynamic Map Layers */}
-        {activeView === 'satellite' ? (
-          <MapSatellite
-            buildings={buildings}
-            selectedBuildingId={selectedBuildingId}
-            onSelectBuilding={handleSelectBuilding}
-            hoveredId={hoveredBuildingId}
-            setHoveredId={setHoveredBuildingId}
-            bgOpacity={satelliteOpacity}
-            showRoads={showRoadsL1}
-          />
-        ) : (
-          <MapLayout
-            zones={zones}
-            selectedZoneId={selectedZoneId}
-            selectedMachineId={selectedMachineId}
-            onSelectZone={handleSelectZone}
-            onSelectMachine={handleSelectMachine}
-            searchTarget={searchTarget}
-            clearSearchTarget={handleClearSearchTarget}
-            bgOpacity={blueprintOpacity}
-            onBgOpacityChange={setBlueprintOpacity}
-            showGrid={showGridL2}
-          />
-        )}
+        <MapSatellite
+          buildings={buildings}
+          selectedBuildingId={selectedBuildingId}
+          onSelectBuilding={handleSelectBuilding}
+          hoveredId={hoveredBuildingId}
+          setHoveredId={setHoveredBuildingId}
+          bgOpacity={satelliteOpacity}
+          shapeOpacity={shapeOpacity}
+          showRoads={showRoadsL1}
+        />
       </main>
 
       {/* Floating Right Settings Drawer */}
@@ -124,6 +110,8 @@ export default function Home() {
         onBlueprintOpacityChange={setBlueprintOpacity}
         satelliteOpacity={satelliteOpacity}
         onSatelliteOpacityChange={setSatelliteOpacity}
+        shapeOpacity={shapeOpacity}
+        onShapeOpacityChange={setShapeOpacity}
         showGrid={showGridL2}
         onShowGridChange={setShowGridL2}
         showRoads={showRoadsL1}

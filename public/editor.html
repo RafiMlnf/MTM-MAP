@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>PT MTM - Visual Map Editor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117;
+      --panel: #161b27;
+      --panel2: #1e2535;
+      --border: #2a3347;
+      --accent: #3b82f6;
+      --accent2: #10b981;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --purple: #8b5cf6;
+      --text: #e2e8f0;
+      --muted: #64748b;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 14px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 100;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+    .header-logo { font-size: 14px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+    .header-sep { width: 1px; height: 22px; background: var(--border); margin: 0 2px; flex-shrink: 0; }
+
+    /* ── TOOLBAR ── */
+    .tool-btn {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 4px 9px; gap: 2px;
+      background: transparent; border: 1px solid transparent;
+      border-radius: 6px; cursor: pointer; color: var(--muted);
+      font-size: 10px; transition: all .15s; white-space: nowrap;
+      min-width: 46px; flex-shrink: 0;
+    }
+    .tool-btn svg { width: 15px; height: 15px; }
+    .tool-btn:hover { background: var(--panel2); color: var(--text); border-color: var(--border); }
+    .tool-btn.active { background: rgba(59,130,246,0.15); color: var(--accent); border-color: var(--accent); }
+    .tool-btn.danger { color: var(--red); }
+    .tool-btn.danger:hover { background: rgba(239,68,68,0.15); border-color: var(--red); }
+    .tool-btn.success { color: var(--accent2); }
+    .tool-btn.success:hover { background: rgba(16,185,129,0.15); border-color: var(--accent2); }
+    .kbd { display: inline-block; padding: 0 3px; background: var(--bg); border: 1px solid var(--border); border-radius: 3px; font-size: 9px; color: var(--muted); }
+    .color-row { display: flex; align-items: center; gap: 5px; }
+    .color-row label { font-size: 10px; color: var(--muted); }
+    #tool-color { width: 26px; height: 26px; border: 2px solid var(--border); border-radius: 4px; cursor: pointer; padding: 1px; background: transparent; }
+    .zoom-display { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; padding: 0 6px; white-space: nowrap; }
+    .ml-auto { margin-left: auto; }
+
+    /* ── MAIN ── */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      width: 210px;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .panel-title {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      color: var(--muted); padding: 8px 12px 6px;
+      border-bottom: 1px solid var(--border); text-transform: uppercase;
+    }
+    .shape-list { overflow-y: auto; flex: 1; }
+    .shape-item {
+      display: flex; align-items: center; gap: 7px;
+      padding: 6px 9px; cursor: pointer;
+      border-bottom: 1px solid rgba(42,51,71,0.4);
+      transition: background .12s; font-size: 11px;
+    }
+    .shape-item:hover { background: var(--panel2); }
+    .shape-item.selected { background: rgba(59,130,246,0.12); border-left: 3px solid var(--accent); }
+    .shape-icon { width: 18px; height: 18px; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+    .shape-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .shape-del { opacity: 0; transition: opacity .12s; background: none; border: none; color: var(--red); cursor: pointer; font-size: 14px; padding: 0 2px; }
+    .shape-item:hover .shape-del { opacity: 1; }
+
+    /* ── CANVAS ── */
+    .canvas-area { flex: 1; overflow: hidden; position: relative; background: #070b14; }
+    .canvas-viewport { position: absolute; inset: 0; overflow: hidden; }
+    .canvas-transform { position: absolute; top: 0; left: 0; transform-origin: 0 0; user-select: none; }
+    #map-img { display: block; }
+    #svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; }
+    .in-progress-poly { fill: rgba(59,130,246,0.1); stroke: #3b82f6; stroke-width: 1.5px; stroke-dasharray: 6 3; }
+    .in-progress-rect { fill: rgba(59,130,246,0.08); stroke: #3b82f6; stroke-width: 1.5px; stroke-dasharray: 5 3; }
+    .shape-poly { fill-opacity: 0.15; stroke-width: 2px; cursor: pointer; transition: fill-opacity .15s; }
+    .shape-poly:hover { fill-opacity: 0.28; }
+    .shape-poly.selected { fill-opacity: 0.32; }
+    .shape-label-text { paint-order: stroke; stroke-linejoin: round; cursor: pointer; user-select: none; }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      width: 250px;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .props-body { padding: 10px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 9px; }
+    .field-group { display: flex; flex-direction: column; gap: 3px; }
+    .field-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+    .field-input {
+      background: var(--panel2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 5px; padding: 5px 7px;
+      font-size: 11px; font-family: inherit; width: 100%;
+      transition: border-color .15s; resize: vertical;
+    }
+    .field-input:focus { outline: none; border-color: var(--accent); }
+    textarea.field-input { min-height: 55px; }
+    .btn-danger {
+      background: rgba(239,68,68,0.12); color: var(--red);
+      border: 1px solid rgba(239,68,68,0.3); border-radius: 5px;
+      padding: 6px 12px; font-size: 11px; cursor: pointer;
+      font-weight: 600; width: 100%; transition: all .15s;
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.22); }
+    .btn-export {
+      background: rgba(16,185,129,0.12); color: var(--accent2);
+      border: 1px solid rgba(16,185,129,0.35); border-radius: 5px;
+      padding: 7px 12px; font-size: 11px; cursor: pointer;
+      font-weight: 600; width: 100%; transition: all .15s;
+    }
+    .btn-export:hover { background: rgba(16,185,129,0.22); }
+    .btn-ghost {
+      background: var(--panel2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 5px;
+      padding: 6px 12px; font-size: 11px; cursor: pointer;
+      font-weight: 600; width: 100%; transition: all .15s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .sep { height: 1px; background: var(--border); }
+    .hint { font-size: 10px; color: var(--muted); line-height: 1.7; }
+    .hint strong { color: var(--text); }
+    .coords-display {
+      font-family: monospace; font-size: 9.5px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: 5px 7px;
+      color: var(--accent2); word-break: break-all; line-height: 1.6;
+    }
+
+    /* ── MODAL ── */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; width: 720px; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--border); }
+    .modal-header h2 { font-size: 13px; font-weight: 700; }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; }
+    .modal-body { padding: 14px; overflow-y: auto; flex: 1; }
+    .code-block { background: #070b14; border: 1px solid var(--border); border-radius: 6px; padding: 13px; font-family: 'Consolas', monospace; font-size: 11px; color: #a6e3a1; white-space: pre; overflow: auto; max-height: 48vh; }
+    .modal-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+    .modal-footer button { flex: 1; padding: 8px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-copy { background: var(--accent2); color: #fff; }
+    .btn-close-modal { background: var(--panel2); color: var(--text); border: 1px solid var(--border) !important; }
+
+    /* ── STATUS BAR ── */
+    .statusbar { display: flex; align-items: center; gap: 14px; padding: 3px 12px; background: var(--panel); border-top: 1px solid var(--border); font-size: 10px; color: var(--muted); flex-shrink: 0; }
+    .status-coords { font-family: monospace; color: var(--accent); }
+    .status-tool { color: var(--accent2); font-weight: 600; }
+
+    .empty-state { padding: 20px 10px; text-align: center; color: var(--muted); font-size: 10px; line-height: 1.8; }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-logo">🗺 PT MTM Map Editor</div>
+  <div class="header-sep"></div>
+
+  <!-- Tools -->
+  <button class="tool-btn active" id="tool-select" title="Select/Move [V]" onclick="setTool('select')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l7 18 3-7 7-3z"/></svg>
+    Select <span class="kbd">V</span>
+  </button>
+  <button class="tool-btn" id="tool-rect" title="Rectangle [R]" onclick="setTool('rect')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="1"/></svg>
+    Rect <span class="kbd">R</span>
+  </button>
+  <button class="tool-btn" id="tool-poly" title="Polygon [P]" onclick="setTool('poly')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,3 20,9 17,19 7,19 4,9"/></svg>
+    Poly <span class="kbd">P</span>
+  </button>
+  <button class="tool-btn" id="tool-label" title="Label [T]" onclick="setTool('label')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h10M4 17h6"/></svg>
+    Label <span class="kbd">T</span>
+  </button>
+
+  <div class="header-sep"></div>
+  <div class="color-row">
+    <label>Warna</label>
+    <input type="color" id="tool-color" value="#ef4444" title="Warna Shape">
+  </div>
+  <div class="header-sep"></div>
+
+  <button class="tool-btn" onclick="undo()" title="Undo Ctrl+Z">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h11a6 6 0 010 12H7"/><path d="M3 10l4-4-4-4"/></svg>
+    Undo
+  </button>
+  <button class="tool-btn danger" onclick="deleteSelected()" title="Hapus [Del]">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+    Hapus
+  </button>
+
+  <div class="header-sep ml-auto"></div>
+
+  <button class="tool-btn" onclick="changeZoom(0.25)" title="Zoom In">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>
+    Zoom+
+  </button>
+  <span class="zoom-display" id="zoom-label">100%</span>
+  <button class="tool-btn" onclick="changeZoom(-0.25)" title="Zoom Out">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M8 11h6"/></svg>
+    Zoom-
+  </button>
+  <button class="tool-btn" onclick="resetView()" title="Reset [0]">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0"/><path d="M12 8v4l3 3"/></svg>
+    Reset
+  </button>
+
+  <div class="header-sep"></div>
+
+  <button class="tool-btn success" onclick="showExport()" title="Export ke mapData.ts">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Export TS
+  </button>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: shape list -->
+  <div class="left-panel">
+    <div class="panel-title">Shapes (<span id="shape-count">0</span>)</div>
+    <div class="shape-list" id="shape-list">
+      <div class="empty-state">Belum ada shape.<br>Gunakan tool di atas untuk menggambar area.</div>
+    </div>
+  </div>
+
+  <!-- CENTER: canvas -->
+  <div class="canvas-area" id="canvas-area">
+    <div class="canvas-viewport" id="canvas-viewport">
+      <div class="canvas-transform" id="canvas-transform">
+        <img id="map-img" src="/map-img/mtmmap.jpg" alt="PT MTM Map" draggable="false">
+        <svg id="svg-overlay" xmlns="http://www.w3.org/2000/svg">
+          <g id="g-shapes"></g>
+          <g id="g-preview"></g>
+          <g id="g-handles"></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: properties -->
+  <div class="right-panel">
+    <div class="panel-title">Properti</div>
+    <div class="props-body" id="props-body">
+      <div class="hint">
+        Pilih atau gambar shape untuk edit propertinya.<br><br>
+        <strong>V</strong> – Select/Move<br>
+        <strong>R</strong> – Persegi panjang<br>
+        <strong>P</strong> – Polygon bebas<br>
+        <strong>T</strong> – Label teks<br>
+        <strong>Enter/Dbl-click</strong> – Tutup polygon<br>
+        <strong>Esc / Klik kanan</strong> – Batal<br>
+        <strong>Del</strong> – Hapus terpilih<br>
+        <strong>Ctrl+Z/Y</strong> – Undo/Redo<br>
+        <strong>Space+Drag</strong> – Pan<br>
+        <strong>Scroll</strong> – Zoom
+      </div>
+      <div class="sep"></div>
+      <button class="btn-export" onclick="showExport()">⬇ Export ke mapData.ts</button>
+      <button class="btn-ghost" style="margin-top:4px;" onclick="exportJSON()">📋 Simpan JSON</button>
+      <button class="btn-ghost" style="margin-top:4px;" onclick="importJSON()">📂 Buka JSON</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <span>Tool: <span class="status-tool" id="status-tool">select</span></span>
+  <span>Posisi: <span class="status-coords" id="status-coords">x:0 y:0</span></span>
+  <span id="status-hint">Pilih tool dan klik di peta</span>
+</div>
+
+<!-- MODAL EXPORT -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📄 Export → mapData.ts</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:11px; color:#64748b; margin-bottom:10px;">
+        Copy kode berikut dan tempel ke dalam array <code style="color:#a6e3a1;">buildings</code> di <code style="color:#a6e3a1;">src/data/mapData.ts</code>
+      </p>
+      <pre class="code-block" id="export-code"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-copy" onclick="copyCode()">📋 Copy Semua</button>
+      <button class="btn-close-modal" onclick="closeModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let shapes = [];
+let selectedId = null;
+let currentTool = 'select';
+let undoStack = [];
+let redoStack = [];
+
+let isDrawing = false;
+let drawPoints = [];
+let rectStart = null;
+let mousePos = {x: 0, y: 0};
+
+let zoom = 1;
+let panX = 0, panY = 0;
+let isPanning = false;
+let panStart = {x: 0, y: 0};
+let spacePanning = false;
+
+let isDragging = false;
+let dragStartPts = [];
+let dragStartMouse = {x: 0, y: 0};
+
+let mapW = 0, mapH = 0;
+let idCounter = 1;
+
+const viewport = document.getElementById('canvas-viewport');
+const canvasTransform = document.getElementById('canvas-transform');
+const mapImg = document.getElementById('map-img');
+const gShapes = document.getElementById('g-shapes');
+const gPreview = document.getElementById('g-preview');
+const gHandles = document.getElementById('g-handles');
+const svgOverlay = document.getElementById('svg-overlay');
+
+function newId() { return 'bld-new-' + (idCounter++); }
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+mapImg.onload = () => {
+  mapW = mapImg.naturalWidth;
+  mapH = mapImg.naturalHeight;
+  svgOverlay.setAttribute('viewBox', `0 0 ${mapW} ${mapH}`);
+  svgOverlay.style.width = mapW + 'px';
+  svgOverlay.style.height = mapH + 'px';
+  resetView();
+};
+if (mapImg.complete && mapImg.naturalWidth > 0) mapImg.onload();
+
+function resetView() {
+  const area = document.getElementById('canvas-area');
+  const aW = area.clientWidth;
+  const aH = area.clientHeight;
+  if (!mapW || !mapH) return;
+  const s = Math.min((aW - 40) / mapW, (aH - 40) / mapH);
+  zoom = s;
+  panX = (aW - mapW * zoom) / 2;
+  panY = (aH - mapH * zoom) / 2;
+  applyTransform();
+}
+
+function applyTransform() {
+  canvasTransform.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+  document.getElementById('zoom-label').textContent = Math.round(zoom * 100) + '%';
+}
+
+// ══════════════════════════════════════════════════════════
+// COORDS
+// ══════════════════════════════════════════════════════════
+function clientToMapPx(cx, cy) {
+  const vp = viewport.getBoundingClientRect();
+  return {
+    x: (cx - vp.left - panX) / zoom,
+    y: (cy - vp.top - panY) / zoom
+  };
+}
+function pxToPct(px, py) {
+  return { x: (px / mapW) * 100, y: (py / mapH) * 100 };
+}
+function pctToPx(px, py) {
+  return { x: (px / 100) * mapW, y: (py / 100) * mapH };
+}
+function fmt(n) { return parseFloat(n.toFixed(2)); }
+
+// ══════════════════════════════════════════════════════════
+// TOOLS
+// ══════════════════════════════════════════════════════════
+function setTool(tool) {
+  finishDrawing();
+  currentTool = tool;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('tool-' + tool);
+  if (btn) btn.classList.add('active');
+  document.getElementById('status-tool').textContent = tool;
+  const hints = {
+    select: 'Klik shape untuk memilih, drag untuk pindahkan',
+    rect: 'Klik+drag untuk menggambar persegi panjang',
+    poly: 'Klik untuk titik polygon. Enter/dbl-click/klik titik pertama untuk tutup',
+    label: 'Klik di peta untuk taruh label teks'
+  };
+  document.getElementById('status-hint').textContent = hints[tool] || '';
+  viewport.style.cursor = tool === 'select' ? 'default' : 'crosshair';
+}
+
+// ══════════════════════════════════════════════════════════
+// MOUSE
+// ══════════════════════════════════════════════════════════
+viewport.addEventListener('mousedown', onMouseDown);
+viewport.addEventListener('mousemove', onMouseMove);
+viewport.addEventListener('mouseup', onMouseUp);
+viewport.addEventListener('wheel', onWheel, {passive: false});
+viewport.addEventListener('dblclick', onDblClick);
+viewport.addEventListener('contextmenu', e => { e.preventDefault(); cancelDrawing(); });
+
+function onMouseDown(e) {
+  if (e.button === 1 || spacePanning) {
+    isPanning = true;
+    panStart = {x: e.clientX - panX, y: e.clientY - panY};
+    viewport.style.cursor = 'grabbing';
+    e.preventDefault();
+    return;
+  }
+  if (e.button !== 0) return;
+
+  const mp = clientToMapPx(e.clientX, e.clientY);
+  const pct = pxToPct(mp.x, mp.y);
+
+  if (currentTool === 'select') {
+    const hit = hitTest(pct.x, pct.y);
+    if (hit) {
+      selectShape(hit.id);
+      isDragging = true;
+      dragStartMouse = {x: pct.x, y: pct.y};
+      dragStartPts = shapes.find(s => s.id === hit.id).points.map(p => ({...p}));
+    } else {
+      selectShape(null);
+    }
+    return;
+  }
+
+  if (currentTool === 'rect') {
+    isDrawing = true;
+    rectStart = {x: pct.x, y: pct.y};
+    return;
+  }
+
+  if (currentTool === 'poly') {
+    isDrawing = true;
+    // Check close to first point
+    if (drawPoints.length >= 3) {
+      const first = drawPoints[0];
+      const fpx = pctToPx(first.x, first.y);
+      const cpx = pctToPx(pct.x, pct.y);
+      const dist = Math.hypot((fpx.x - cpx.x) * zoom, (fpx.y - cpx.y) * zoom);
+      if (dist < 14) { finishPolygon(); return; }
+    }
+    drawPoints.push({x: pct.x, y: pct.y});
+    renderPreview();
+    return;
+  }
+
+  if (currentTool === 'label') {
+    const text = prompt('Teks label:', 'Nama Area');
+    if (!text) return;
+    saveUndo();
+    const s = { id: newId(), type: 'label', points: [{x: pct.x, y: pct.y}],
+      color: document.getElementById('tool-color').value,
+      name: text, code: text, details: '', operationalStatus: 'Aktif', fontSize: 14 };
+    shapes.push(s);
+    selectShape(s.id);
+    renderAll();
+  }
+}
+
+function onMouseMove(e) {
+  if (isPanning) {
+    panX = e.clientX - panStart.x;
+    panY = e.clientY - panStart.y;
+    applyTransform();
+    return;
+  }
+  const mp = clientToMapPx(e.clientX, e.clientY);
+  const pct = pxToPct(mp.x, mp.y);
+  mousePos = pct;
+  document.getElementById('status-coords').textContent = `x:${fmt(pct.x)} y:${fmt(pct.y)}`;
+
+  if (isDragging && selectedId && currentTool === 'select') {
+    const dx = pct.x - dragStartMouse.x;
+    const dy = pct.y - dragStartMouse.y;
+    const sh = shapes.find(s => s.id === selectedId);
+    if (sh) {
+      sh.points = dragStartPts.map(p => ({x: p.x + dx, y: p.y + dy}));
+      renderAll();
+      updatePropsCoords(sh);
+    }
+    return;
+  }
+  if (isDrawing) renderPreview();
+}
+
+function onMouseUp(e) {
+  if (isPanning) {
+    isPanning = false;
+    viewport.style.cursor = spacePanning ? 'grab' : (currentTool === 'select' ? 'default' : 'crosshair');
+    return;
+  }
+  if (isDragging && selectedId) {
+    saveUndo();
+    isDragging = false;
+    dragStartPts = [];
+    return;
+  }
+
+  const mp = clientToMapPx(e.clientX, e.clientY);
+  const pct = pxToPct(mp.x, mp.y);
+
+  if (currentTool === 'rect' && isDrawing && rectStart) {
+    const x1 = Math.min(rectStart.x, pct.x), y1 = Math.min(rectStart.y, pct.y);
+    const x2 = Math.max(rectStart.x, pct.x), y2 = Math.max(rectStart.y, pct.y);
+    if (Math.abs(x2-x1) > 0.3 && Math.abs(y2-y1) > 0.3) {
+      saveUndo();
+      const s = { id: newId(), type: 'rect',
+        points: [{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}],
+        color: document.getElementById('tool-color').value,
+        name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif' };
+      shapes.push(s);
+      isDrawing = false; rectStart = null; gPreview.innerHTML = '';
+      selectShape(s.id); renderAll();
+    } else {
+      isDrawing = false; rectStart = null; gPreview.innerHTML = '';
+    }
+  }
+}
+
+function onDblClick(e) {
+  if (currentTool === 'poly' && drawPoints.length >= 3) finishPolygon();
+}
+
+function onWheel(e) {
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.12 : 0.88;
+  const vp = viewport.getBoundingClientRect();
+  const mx = e.clientX - vp.left, my = e.clientY - vp.top;
+  const newZoom = Math.max(0.05, Math.min(10, zoom * factor));
+  panX = mx - (mx - panX) * (newZoom / zoom);
+  panY = my - (my - panY) * (newZoom / zoom);
+  zoom = newZoom;
+  applyTransform();
+}
+
+// ══════════════════════════════════════════════════════════
+// KEYBOARD
+// ══════════════════════════════════════════════════════════
+window.addEventListener('keydown', e => {
+  const tag = document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (e.code === 'Space') { spacePanning = true; viewport.style.cursor = 'grab'; e.preventDefault(); }
+  if (e.key === 'v' || e.key === 'V') setTool('select');
+  if (e.key === 'r' || e.key === 'R') setTool('rect');
+  if (e.key === 'p' || e.key === 'P') setTool('poly');
+  if (e.key === 't' || e.key === 'T') setTool('label');
+  if (e.key === 'Escape') cancelDrawing();
+  if (e.key === 'Enter' && currentTool === 'poly' && drawPoints.length >= 3) finishPolygon();
+  if ((e.key === 'Delete' || e.key === 'Backspace') && !isDragging) deleteSelected();
+  if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+  if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
+  if (e.key === '0') resetView();
+  if (e.key === '+' || e.key === '=') changeZoom(0.25);
+  if (e.key === '-') changeZoom(-0.25);
+});
+window.addEventListener('keyup', e => {
+  if (e.code === 'Space') {
+    spacePanning = false;
+    viewport.style.cursor = currentTool === 'select' ? 'default' : 'crosshair';
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+// DRAWING
+// ══════════════════════════════════════════════════════════
+function cancelDrawing() {
+  drawPoints = []; isDrawing = false; rectStart = null; gPreview.innerHTML = '';
+}
+function finishDrawing() { cancelDrawing(); }
+
+function finishPolygon() {
+  if (drawPoints.length < 3) return;
+  saveUndo();
+  const s = { id: newId(), type: 'poly', points: [...drawPoints],
+    color: document.getElementById('tool-color').value,
+    name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif' };
+  shapes.push(s);
+  drawPoints = []; isDrawing = false; gPreview.innerHTML = '';
+  selectShape(s.id); renderAll();
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════
+function ptsToSvg(points) {
+  return points.map(p => { const px = pctToPx(p.x, p.y); return `${px.x},${px.y}`; }).join(' ');
+}
+
+function renderAll() {
+  gShapes.innerHTML = '';
+  gHandles.innerHTML = '';
+  document.getElementById('shape-count').textContent = shapes.length;
+
+  shapes.forEach(shape => {
+    const isSelected = shape.id === selectedId;
+    const color = shape.color || '#ef4444';
+
+    if (shape.type === 'label') {
+      const pt = pctToPx(shape.points[0].x, shape.points[0].y);
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('data-id', shape.id);
+
+      const fs = (shape.fontSize || 14);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', pt.x); text.setAttribute('y', pt.y);
+      text.setAttribute('font-size', fs); text.setAttribute('font-weight', 'bold');
+      text.setAttribute('fill', color);
+      text.setAttribute('stroke', 'rgba(0,0,0,0.8)'); text.setAttribute('stroke-width', fs * 0.2);
+      text.setAttribute('paint-order', 'stroke'); text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('dominant-baseline', 'middle'); text.setAttribute('class', 'shape-label-text');
+      text.setAttribute('font-family', 'Segoe UI, system-ui, sans-serif');
+      text.textContent = shape.name;
+
+      const hitRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      hitRect.setAttribute('x', pt.x - 100); hitRect.setAttribute('y', pt.y - fs);
+      hitRect.setAttribute('width', 200); hitRect.setAttribute('height', fs * 2.2);
+      hitRect.setAttribute('fill', 'transparent'); hitRect.style.cursor = 'pointer';
+
+      g.appendChild(hitRect); g.appendChild(text);
+      g.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
+      gShapes.appendChild(g);
+
+      if (isSelected) {
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', pt.x); c.setAttribute('cy', pt.y);
+        c.setAttribute('r', 5); c.setAttribute('fill', 'white');
+        c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
+        gHandles.appendChild(c);
+      }
+      return;
+    }
+
+    const ptsStr = ptsToSvg(shape.points);
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', ptsStr);
+    poly.setAttribute('fill', color);
+    poly.setAttribute('stroke', color);
+    poly.setAttribute('stroke-width', isSelected ? 3 : 2);
+    poly.setAttribute('fill-opacity', isSelected ? 0.3 : 0.15);
+    poly.setAttribute('stroke-opacity', isSelected ? 1 : 0.8);
+    poly.setAttribute('class', 'shape-poly' + (isSelected ? ' selected' : ''));
+    poly.style.cursor = 'pointer';
+    poly.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
+    gShapes.appendChild(poly);
+
+    if (isSelected) {
+      shape.points.forEach(p => {
+        const px = pctToPx(p.x, p.y);
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
+        c.setAttribute('r', 5); c.setAttribute('fill', 'white');
+        c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
+        gHandles.appendChild(c);
+      });
+    }
+  });
+
+  renderShapeList();
+}
+
+function renderPreview() {
+  gPreview.innerHTML = '';
+
+  if (currentTool === 'poly' && drawPoints.length > 0) {
+    const allPts = [...drawPoints, mousePos];
+    const ptsStr = allPts.map(p => { const px = pctToPx(p.x, p.y); return `${px.x},${px.y}`; }).join(' ');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', ptsStr); poly.setAttribute('class', 'in-progress-poly');
+    gPreview.appendChild(poly);
+
+    drawPoints.forEach((p, i) => {
+      const px = pctToPx(p.x, p.y);
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
+      c.setAttribute('r', (i === 0 && drawPoints.length >= 3) ? 8 : 4);
+      c.setAttribute('fill', (i === 0 && drawPoints.length >= 3) ? '#10b981' : 'white');
+      c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 1.5);
+      gPreview.appendChild(c);
+    });
+  }
+
+  if (currentTool === 'rect' && isDrawing && rectStart) {
+    const x1 = Math.min(rectStart.x, mousePos.x), y1 = Math.min(rectStart.y, mousePos.y);
+    const x2 = Math.max(rectStart.x, mousePos.x), y2 = Math.max(rectStart.y, mousePos.y);
+    const pts = [{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}];
+    const ptsStr = pts.map(p => { const px = pctToPx(p.x, p.y); return `${px.x},${px.y}`; }).join(' ');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', ptsStr); poly.setAttribute('class', 'in-progress-rect');
+    gPreview.appendChild(poly);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// SELECTION & PROPERTIES
+// ══════════════════════════════════════════════════════════
+function selectShape(id) {
+  selectedId = id;
+  renderAll();
+  if (!id) { showDefaultProps(); return; }
+  const shape = shapes.find(s => s.id === id);
+  if (shape) showShapeProps(shape);
+}
+
+function showDefaultProps() {
+  document.getElementById('props-body').innerHTML = `
+    <div class="hint">
+      Pilih atau gambar shape untuk edit propertinya.<br><br>
+      <strong>V</strong> – Select/Move<br><strong>R</strong> – Rect<br>
+      <strong>P</strong> – Polygon<br><strong>T</strong> – Label<br>
+      <strong>Enter/Dbl-click</strong> – Tutup polygon<br>
+      <strong>Esc</strong> – Batal<br><strong>Del</strong> – Hapus<br>
+      <strong>Ctrl+Z/Y</strong> – Undo/Redo<br>
+      <strong>Space+Drag</strong> – Pan<br><strong>Scroll</strong> – Zoom
+    </div>
+    <div class="sep"></div>
+    <button class="btn-export" onclick="showExport()">⬇ Export ke mapData.ts</button>
+    <button class="btn-ghost" style="margin-top:5px;" onclick="exportJSON()">📋 Simpan JSON</button>
+    <button class="btn-ghost" style="margin-top:5px;" onclick="importJSON()">📂 Buka JSON</button>
+  `;
+}
+
+function showShapeProps(shape) {
+  const ptsStr = shape.points.map(p => `${fmt(p.x)},${fmt(p.y)}`).join(' ');
+  const isLabel = shape.type === 'label';
+  document.getElementById('props-body').innerHTML = `
+    <div class="field-group">
+      <label class="field-label">ID (untuk mapData)</label>
+      <input class="field-input" value="${shape.id}" oninput="updateProp(this.value, 'id')">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Nama Lengkap</label>
+      <input class="field-input" value="${escHtml(shape.name)}" oninput="updatePropAndRender(this.value, 'name')">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Kode / Label Singkat</label>
+      <input class="field-input" value="${escHtml(shape.code)}" oninput="updatePropAndRender(this.value, 'code')">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Warna</label>
+      <input type="color" class="field-input" style="height:34px;padding:2px;" value="${shape.color || '#ef4444'}" oninput="updatePropAndRender(this.value, 'color')">
+    </div>
+    ${isLabel ? `<div class="field-group">
+      <label class="field-label">Ukuran Font</label>
+      <input type="number" class="field-input" value="${shape.fontSize || 14}" min="4" max="80" oninput="updatePropAndRender(+this.value, 'fontSize')">
+    </div>` : ''}
+    <div class="field-group">
+      <label class="field-label">Status Operasional</label>
+      <input class="field-input" value="${escHtml(shape.operationalStatus)}" oninput="updateProp(this.value, 'operationalStatus')">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Deskripsi</label>
+      <textarea class="field-input" oninput="updateProp(this.value, 'details')">${escHtml(shape.details)}</textarea>
+    </div>
+    <div class="sep"></div>
+    <div class="field-group">
+      <label class="field-label">Koordinat (%) — ${shape.points.length} titik</label>
+      <div class="coords-display" id="prop-coords">${ptsStr}</div>
+    </div>
+    <div class="sep"></div>
+    <button class="btn-danger" onclick="deleteSelected()">🗑 Hapus Shape Ini</button>
+  `;
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function updateProp(value, key) {
+  const sh = shapes.find(s => s.id === selectedId);
+  if (!sh) return;
+  if (key === 'id') {
+    sh.id = value; selectedId = value; renderShapeList(); return;
+  }
+  sh[key] = value;
+}
+function updatePropAndRender(value, key) {
+  updateProp(value, key);
+  renderAll();
+}
+function updatePropsCoords(shape) {
+  const el = document.getElementById('prop-coords');
+  if (el) el.textContent = shape.points.map(p => `${fmt(p.x)},${fmt(p.y)}`).join(' ');
+}
+
+// ══════════════════════════════════════════════════════════
+// SHAPE LIST
+// ══════════════════════════════════════════════════════════
+function renderShapeList() {
+  const list = document.getElementById('shape-list');
+  if (shapes.length === 0) {
+    list.innerHTML = '<div class="empty-state">Belum ada shape.<br>Gunakan tool di atas untuk menggambar.</div>';
+    return;
+  }
+  const icons = {label:'🏷', rect:'▭', poly:'⬡'};
+  list.innerHTML = shapes.map(s => `
+    <div class="shape-item ${s.id === selectedId ? 'selected' : ''}" onclick="selectShape('${s.id}')">
+      <div class="shape-icon" style="background:${s.color}22;border:1.5px solid ${s.color};">${icons[s.type]||'◈'}</div>
+      <span class="shape-name">${escHtml(s.code || s.name)}</span>
+      <button class="shape-del" onclick="event.stopPropagation();deleteShape('${s.id}')">×</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// HIT TEST
+// ══════════════════════════════════════════════════════════
+function hitTest(px, py) {
+  for (let i = shapes.length - 1; i >= 0; i--) {
+    const s = shapes[i];
+    if (s.type === 'label') {
+      const dx = Math.abs(px - s.points[0].x);
+      const dy = Math.abs(py - s.points[0].y);
+      if (dx < 5 && dy < 2) return s;
+    } else if (pointInPolygon(px, py, s.points)) return s;
+  }
+  return null;
+}
+function pointInPolygon(px, py, pts) {
+  let inside = false;
+  for (let i=0, j=pts.length-1; i<pts.length; j=i++) {
+    const xi=pts[i].x, yi=pts[i].y, xj=pts[j].x, yj=pts[j].y;
+    if (((yi>py)!==(yj>py)) && px<((xj-xi)*(py-yi)/(yj-yi)+xi)) inside=!inside;
+  }
+  return inside;
+}
+
+// ══════════════════════════════════════════════════════════
+// DELETE
+// ══════════════════════════════════════════════════════════
+function deleteSelected() { if (selectedId) deleteShape(selectedId); }
+function deleteShape(id) {
+  saveUndo();
+  shapes = shapes.filter(s => s.id !== id);
+  if (selectedId === id) selectedId = null;
+  renderAll(); showDefaultProps();
+}
+
+// ══════════════════════════════════════════════════════════
+// ZOOM
+// ══════════════════════════════════════════════════════════
+function changeZoom(delta) {
+  const area = document.getElementById('canvas-area');
+  const cx = area.clientWidth/2, cy = area.clientHeight/2;
+  const newZoom = Math.max(0.05, Math.min(10, zoom + delta * zoom));
+  panX = cx - (cx - panX) * (newZoom/zoom);
+  panY = cy - (cy - panY) * (newZoom/zoom);
+  zoom = newZoom;
+  applyTransform();
+}
+
+// ══════════════════════════════════════════════════════════
+// UNDO / REDO
+// ══════════════════════════════════════════════════════════
+function saveUndo() {
+  undoStack.push(JSON.stringify(shapes));
+  if (undoStack.length > 60) undoStack.shift();
+  redoStack = [];
+}
+function undo() {
+  if (!undoStack.length) return;
+  redoStack.push(JSON.stringify(shapes));
+  shapes = JSON.parse(undoStack.pop());
+  selectedId = null; renderAll(); showDefaultProps();
+}
+function redo() {
+  if (!redoStack.length) return;
+  undoStack.push(JSON.stringify(shapes));
+  shapes = JSON.parse(redoStack.pop());
+  renderAll(); showDefaultProps();
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════════════
+function showExport() {
+  const blds = shapes.filter(s => s.type !== 'label');
+  const labels = shapes.filter(s => s.type === 'label');
+
+  let out = '';
+
+  if (blds.length > 0) {
+    const entries = blds.map(s => {
+      const ptsStr = s.points.map(p => `${fmt(p.x)},${fmt(p.y)}`).join(' ');
+      const xs = s.points.map(p => p.x), ys = s.points.map(p => p.y);
+      const wPct = Math.max(...xs) - Math.min(...xs);
+      const hPct = Math.max(...ys) - Math.min(...ys);
+      // Rough meter estimate (map ~200m wide based on image)
+      const wM = Math.round(wPct * 200 / 100) || 10;
+      const hM = Math.round(hPct * 130 / 100) || 10;
+      return `  {
+    id: "${s.id}",
+    name: "${s.name}",
+    code: "${s.code}",
+    points: "${ptsStr}",
+    width: ${wM},
+    length: ${hM},
+    area: ${wM * hM},
+    details: "${(s.details||'').replace(/"/g,'\\"')}",
+    zones: [],
+    operationalStatus: "${s.operationalStatus || 'Aktif'}"
+  }`;
+    }).join(',\n');
+
+    out += `// ════════════════════════════════════════════════════\n`;
+    out += `// SHAPES BARU — copy & paste ke array buildings[]\n`;
+    out += `// di file: src/data/mapData.ts\n`;
+    out += `// ════════════════════════════════════════════════════\n\n`;
+    out += entries + ',';
+  }
+
+  if (labels.length > 0) {
+    out += `\n\n// ════════════════════════════════════════════════════\n`;
+    out += `// REFERENSI POSISI LABEL (hanya untuk referensi koordinat)\n`;
+    out += `// ════════════════════════════════════════════════════\n`;
+    labels.forEach(s => {
+      out += `// "${s.name}" → x:${fmt(s.points[0].x)}% y:${fmt(s.points[0].y)}%\n`;
+    });
+  }
+
+  if (!out) {
+    out = '// Belum ada shape.\n// Gunakan tool Rect, Poly, atau Label untuk menggambar area.';
+  }
+
+  document.getElementById('export-code').textContent = out;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function copyCode() {
+  const code = document.getElementById('export-code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Tersalin!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// JSON BACKUP
+// ══════════════════════════════════════════════════════════
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(shapes, null, 2)], {type: 'application/json'});
+  const a = Object.assign(document.createElement('a'), {href: URL.createObjectURL(blob), download: 'mtm-shapes.json'});
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+function importJSON() {
+  const input = Object.assign(document.createElement('input'), {type: 'file', accept: '.json'});
+  input.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!Array.isArray(data)) throw new Error();
+        saveUndo();
+        shapes = data;
+        data.forEach(s => { const n = parseInt(s.id?.replace(/\D/g,'')); if (n >= idCounter) idCounter = n+1; });
+        selectedId = null; renderAll(); showDefaultProps();
+      } catch { alert('File JSON tidak valid!'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ══════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════
+setTool('select');
+renderAll();
+</script>
+</body>
+</html>

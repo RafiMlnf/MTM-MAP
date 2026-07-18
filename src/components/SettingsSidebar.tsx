@@ -9,6 +9,8 @@ interface SettingsSidebarProps {
   onBlueprintOpacityChange: (val: number) => void;
   satelliteOpacity: number;
   onSatelliteOpacityChange: (val: number) => void;
+  shapeOpacity: number;
+  onShapeOpacityChange: (val: number) => void;
   showGrid: boolean;
   onShowGridChange: (val: boolean) => void;
   showRoads: boolean;
@@ -22,6 +24,8 @@ export default function SettingsSidebar({
   onBlueprintOpacityChange,
   satelliteOpacity,
   onSatelliteOpacityChange,
+  shapeOpacity,
+  onShapeOpacityChange,
   showGrid,
   onShowGridChange,
   showRoads,
@@ -52,12 +56,12 @@ export default function SettingsSidebar({
         <div className="settings-content">
           {/* Section 1: Opasitas Peta */}
           <div className="settings-section">
-            <h3>Opasitas Peta Latar</h3>
+            <h3>Opasitas Elemen Peta</h3>
             
             {/* L1 Satelit Opacity */}
             <div className="setting-control-group">
               <div className="setting-label-row">
-                <span>Citra Satelit L1:</span>
+                <span>Citra Peta Utama:</span>
                 <span className="setting-val">{Math.round(satelliteOpacity * 100)}%</span>
               </div>
               <input
@@ -71,58 +75,21 @@ export default function SettingsSidebar({
               />
             </div>
 
-            {/* L2 Blueprint Opacity */}
-            <div className="setting-control-group">
+            {/* Shape Opacity */}
+            <div className="setting-control-group" style={{ marginTop: '16px' }}>
               <div className="setting-label-row">
-                <span>Denah Blueprint L2:</span>
-                <span className="setting-val">{Math.round(blueprintOpacity * 100)}%</span>
+                <span>Opasitas Garis Area (Shape):</span>
+                <span className="setting-val">{Math.round(shapeOpacity * 100)}%</span>
               </div>
               <input
                 type="range"
                 min="0.0"
-                max="0.8"
+                max="1.0"
                 step="0.05"
-                value={blueprintOpacity}
-                onChange={(e) => onBlueprintOpacityChange(parseFloat(e.target.value))}
+                value={shapeOpacity}
+                onChange={(e) => onShapeOpacityChange(parseFloat(e.target.value))}
                 className="global-opacity-slider"
               />
-            </div>
-          </div>
-
-          {/* Section 2: Visibilitas Elemen */}
-          <div className="settings-section">
-            <h3>Visibilitas Elemen</h3>
-
-            {/* L1 Roads Switch */}
-            <div className="setting-switch-row">
-              <div className="setting-switch-info">
-                <span className="switch-title">Jalan & Marka (L1)</span>
-                <span className="switch-desc">Tampilkan overlay jalan aspal di Citra Satelit</span>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={showRoads}
-                  onChange={(e) => onShowRoadsChange(e.target.checked)}
-                />
-                <span className="switch-slider"></span>
-              </label>
-            </div>
-
-            {/* L2 Grid Switch */}
-            <div className="setting-switch-row">
-              <div className="setting-switch-info">
-                <span className="switch-title">Garis Grid (L2)</span>
-                <span className="switch-desc">Tampilkan garis-garis grid panduan denah</span>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={showGrid}
-                  onChange={(e) => onShowGridChange(e.target.checked)}
-                />
-                <span className="switch-slider"></span>
-              </label>
             </div>
           </div>
         </div>
