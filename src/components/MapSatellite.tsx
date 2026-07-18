@@ -287,13 +287,13 @@ export default function MapSatellite({
             </g>
           )}
 
-          {buildings.map((bld) => {
+          {buildings.map((bld, idx) => {
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
 
             return (
               <polygon
-                key={bld.id}
+                key={`${bld.id}-${idx}`}
                 id={bld.id}
                 points={bld.points}
                 className={`building-polygon ${isSelected ? 'selected' : ''} ${
@@ -322,7 +322,7 @@ export default function MapSatellite({
           })}
 
           {/* Render Icons on Buildings */}
-          {buildings.map((bld) => {
+          {buildings.map((bld, idx) => {
             if (!bld.icon || !SVG_ICONS[bld.icon]) return null;
 
             const coords = bld.points.split(' ').map((p) => p.split(',').map(Number));
@@ -337,7 +337,7 @@ export default function MapSatellite({
 
             return (
               <g
-                key={`icon-${bld.id}`}
+                key={`icon-${bld.id}-${idx}`}
                 transform={`translate(${centerX}, ${centerY}) scale(0.12) translate(-12, -12)`}
                 fill={color}
                 style={{ pointerEvents: 'none' }}
@@ -379,7 +379,7 @@ export default function MapSatellite({
         </svg>
 
         {/* Labels/Badges positioned dynamically */}
-        {buildings.map((bld) => {
+        {buildings.map((bld, idx) => {
           const coords = bld.points.split(' ').map((p) => p.split(',').map(Number));
           const xs = coords.map((c) => c[0]);
           const ys = coords.map((c) => c[1]);
@@ -390,7 +390,7 @@ export default function MapSatellite({
 
           return (
             <div
-              key={`label-${bld.id}`}
+              key={`label-${bld.id}-${idx}`}
               className={`building-badge-label ${
                 selectedBuildingId === bld.id ? 'active' : ''
               } ${hoveredId === bld.id ? 'hovered' : ''}`}

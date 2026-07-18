@@ -185,6 +185,29 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+    /* ── LIVE PUSH ── */
+    .tool-btn.live {
+      color: #f43f5e;
+      background: rgba(244,63,94,0.12);
+      border-color: rgba(244,63,94,0.4);
+    }
+    .tool-btn.live:hover { background: rgba(244,63,94,0.22); border-color: #f43f5e; }
+    .tool-btn.live.active-live { animation: live-pulse 1.8s ease-in-out infinite; }
+    @keyframes live-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(244,63,94,0.4); }
+      50% { box-shadow: 0 0 0 5px rgba(244,63,94,0); }
+    }
+    .auto-push-toggle {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 9.5px; color: var(--muted); white-space: nowrap;
+      cursor: pointer; padding: 4px 7px;
+      border: 1px solid transparent; border-radius: 5px;
+      transition: all .15s;
+    }
+    .auto-push-toggle:hover { background: var(--panel2); border-color: var(--border); }
+    .auto-push-toggle input[type=checkbox] { accent-color: #f43f5e; cursor: pointer; width: 11px; height: 11px; }
+    .status-live { color: #f43f5e; font-weight: 700; font-size: 9px; animation: live-pulse 1.8s ease-in-out infinite; }
+
     /* ── TOAST ── */
     .toast {
       position: fixed;
@@ -354,6 +377,16 @@
     Simpan <span class="kbd">Ctrl+S</span>
   </button>
 
+  <button class="tool-btn live" id="btn-live-push" onclick="pushToMap()" title="Push shapes ke Map Page secara langsung">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12"/><path d="M8 12h8"/><path d="M14 9l3 3-3 3"/></svg>
+    Live Push
+  </button>
+
+  <label class="auto-push-toggle" title="Auto-push ke Map setiap kali menyimpan">
+    <input type="checkbox" id="auto-push-toggle" onchange="toggleAutoPush(this.checked)">
+    Auto-Push
+  </label>
+
   <button class="tool-btn" onclick="showExport()" title="Export ke mapData.ts">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     Export TS
@@ -430,6 +463,11 @@
   <span>Tool: <span class="status-tool" id="status-tool">select</span></span>
   <span>Posisi: <span class="status-coords" id="status-coords">x:0 y:0</span></span>
   <span id="status-hint">Pilih tool dan klik di peta</span>
+  <span id="status-live-info" style="margin-left:auto; display:none;">
+    <span class="status-live">🔴 LIVE</span>
+    <span style="font-size:9px; color:var(--muted);" id="status-live-count"></span>
+    <span style="font-size:9px; color:var(--muted);" id="status-live-time"></span>
+  </span>
 </div>
 
 <!-- MODAL EXPORT -->
@@ -520,6 +558,36 @@ let layers = [
   { id: 1, name: 'Layer 1: Main Building', visible: true, expanded: true },
   { id: 2, name: 'Layer 2: Ruangan Gedung', visible: true, expanded: true },
   { id: 3, name: 'Layer 3: Pilihan Lantai', visible: true, expanded: true }
+];
+
+const PREDEFINED_BUILDINGS = [
+  { id: "bld-office", name: "OFFICE (Kantor Utama)", code: "Office", width: 25, length: 15, area: 375, details: "Pusat administrasi, manajemen, divisi HRD, keuangan, dan ruang pertemuan utama PT Menara Terus Makmur.", operationalStatus: "Aktif (Jam Kantor)" },
+  { id: "bld-dies", name: "PRODUCTION 1 (Produksi 1)", code: "Production 1", width: 25, length: 60, area: 1500, details: "Fabrikasi, penyimpanan, dan perawatan cetakan presisi tinggi (dies) untuk forging dan stamping.", operationalStatus: "Normal Operasional" },
+  { id: "bld-forging", name: "FORGING (Penempaan)", code: "Area Forging", width: 25, length: 30, area: 750, details: "Area utama proses hot and cold forging untuk pembentukan dasar material logam suku cadang otomotif.", operationalStatus: "Normal Operasional" },
+  { id: "bld-cutting", name: "CUTTING (Pemotongan Bahan)", code: "Area Cutting", width: 10, length: 35, area: 350, details: "Fasilitas pemotongan awal raw material (kawat baja/rod) sesuai ukuran standar produksi.", operationalStatus: "Normal Operasional" },
+  { id: "bld-shotblasting", name: "SHOTBLASTING (Pembersihan Logam)", code: "Area Blasting", width: 10, length: 20, area: 200, details: "Area pembersihan kerak hasil penempaan menggunakan tembakan partikel baja (steel shot) untuk finishing permukaan.", operationalStatus: "Normal Operasional" },
+  { id: "bld-admin-delivery", name: "admin delivery (Logistik & Pengiriman)", code: "Admin Delivery", width: 20, length: 30, area: 600, details: "Kantor admin logistik, perencanaan pengiriman barang jadi, dan koordinasi armada truk ekspedisi.", operationalStatus: "Sibuk (Bongkar Muat)" },
+  { id: "bld-packaging", name: "WIP FORGING PART", code: "WIP Forging Part", width: 25, length: 30, area: 750, details: "Area penyimpanan WIP (Work In Progress) Forging Part.", operationalStatus: "Normal Operasional" },
+  { id: "bld-pos-satpam", name: "POS SATPAM", code: "Pos Satpam", width: 6, length: 6, area: 36, details: "Pos penjagaan utama pintu gerbang pabrik untuk kontrol masuk/keluar karyawan, tamu, dan truk logistik.", operationalStatus: "Siaga 24 Jam" },
+  { id: "bld-masjid", name: "MASJID", code: "Fasilitas Masjid", width: 12, length: 15, area: 180, details: "Masjid utama kompleks pabrik PT MTM untuk sarana ibadah karyawan dan kegiatan keagamaan.", operationalStatus: "Buka" },
+  { id: "bld-tps", name: "TPS (Tempat Penampungan Sementara)", code: "Area TPS", width: 5, length: 15, area: 75, details: "Area penampungan sampah umum dan pemilahan limbah produksi sebelum diangkut dinas kebersihan luar.", operationalStatus: "Aktif" },
+  { id: "bld-kebun", name: "KEBUN (Ruang Terbuka Hijau)", code: "Taman Hijau", width: 15, length: 25, area: 375, details: "Area penghijauan, taman santai karyawan saat jam istirahat, dan resapan air pabrik.", operationalStatus: "Buka" },
+  { id: "bld-limbah-organik", name: "Limbah Organik", code: "Limbah Organik", width: 4, length: 5, area: 20, details: "Tempat penampungan sementara untuk limbah organik.", operationalStatus: "Aktif" },
+  { id: "bld-limbah-domestik", name: "Limbah Domestik", code: "Limbah Domestik", width: 2, length: 5, area: 10, details: "Tempat penampungan sementara untuk limbah domestik.", operationalStatus: "Aktif" },
+  { id: "bld-limbah-debu", name: "Limbah Debu", code: "Limbah Debu", width: 3, length: 5, area: 15, details: "Tempat penampungan sementara untuk limbah debu.", operationalStatus: "Aktif" },
+  { id: "bld-oli", name: "Oli / OII (Tempat Penampungan Oli Bekas)", code: "Oli", width: 6, length: 5, area: 30, details: "Area penyimpanan limbah cair oli bekas dari mesin produksi (OII/Oli).", operationalStatus: "Aktif" },
+  { id: "bld-kaleng-bekas", name: "Area Kaleng Bekas", code: "Kaleng Bekas", width: 3, length: 5, area: 15, details: "Tempat penampungan kaleng bekas pelarut atau bahan kimia.", operationalStatus: "Aktif" },
+  { id: "bld-b3", name: "B3 (Gudang Bahan Berbahaya & Beracun)", code: "Gudang Limbah B3", width: 4, length: 25, area: 100, details: "Gudang penyimpanan khusus bahan kimia dan limbah beracun B3 industri dengan standar keselamatan tinggi.", operationalStatus: "Normal Terkontrol" },
+  { id: "bld-gardu-listrik", name: "GARDU LISTRIK (Substasiun Listrik Pabrik)", code: "Gardu Listrik", width: 10, length: 10, area: 100, details: "Pusat pembagi daya listrik tegangan tinggi PLN untuk menyuplai seluruh kebutuhan mesin penempa dan kantor.", operationalStatus: "Normal Terkontrol" },
+  { id: "bld-production-2", name: "PRODUCTION 2 (Produksi 2)", code: "Production 2", width: 20, length: 35, area: 700, details: "Lini pemesinan tahap akhir, penguliran sekunder, pengeboran, dan pengujian kekuatan.", operationalStatus: "Normal Operasional" },
+  { id: "bld-dojo", name: "DOJO (Pusat Pelatihan Karyawan)", code: "Dojo", width: 12, length: 20, area: 240, details: "Tempat training keselamatan kerja (safety training), pelatihan teknik dasar karyawan baru, dan sertifikasi keahlian.", operationalStatus: "Aktif (Sesi Pelatihan)" },
+  { id: "bld-parkir-mobil", name: "PARKIR MOBIL (Fasilitas Parkir Staf/Tamu)", code: "Parkir Mobil", width: 6, length: 20, area: 120, details: "Area parkir kendaraan roda empat untuk staf manajemen, direksi, tamu perusahaan, dan operasional.", operationalStatus: "Normal" },
+  { id: "bld-parkir-motor", name: "PARKIR MOTOR (Fasilitas Parkir Karyawan)", code: "Parkir Motor", width: 6, length: 25, area: 150, details: "Fasilitas parkir beratap luas khusus untuk sepeda motor seluruh operator dan staf pabrik PT MTM.", operationalStatus: "Normal" },
+  { id: "bld-office-ehs", name: "Office EHS (Environment, Health, and Safety)", code: "Office EHS", width: 8, length: 5, area: 40, details: "Kantor divisi Environment, Health, and Safety (EHS) untuk pengawasan K3L lingkungan kerja.", operationalStatus: "Aktif" },
+  { id: "bld-trolly-dolly-rusak", name: "Trolly/Dolly Rusak", code: "Trolly/Dolly Rusak", width: 5, length: 5, area: 25, details: "Area penyimpanan trolly dan dolly yang rusak sebelum diperbaiki atau dibuang.", operationalStatus: "Aktif" },
+  { id: "bld-trafo", name: "TRAFO (Transformator Listrik Pabrik)", code: "Trafo", width: 8, length: 8, area: 64, details: "Transformator daya listrik pembagi tegangan utama pabrik.", operationalStatus: "Normal Terkontrol" },
+  { id: "bld-kompresor", name: "KOMPRESOR (Compressor Room)", code: "Compressor Room", width: 8, length: 8, area: 64, details: "Stasiun kompresor udara bertekanan tinggi untuk mensuplai sistem pneumatik mesin produksi.", operationalStatus: "Normal Operasional" },
+  { id: "bld-docking", name: "DOCKING AREA (Area Bongkar Muat)", code: "Area Docking", width: 10, length: 15, area: 150, details: "Area parkir truk dan kontainer untuk kegiatan bongkar muat raw material dan barang jadi.", operationalStatus: "Aktif (Bongkar Muat)" }
 ];
 
 try {
@@ -774,7 +842,14 @@ function onMouseDown(e) {
       selectShape(hit.id);
       isDragging = true;
       dragStartMouse = {x: pct.x, y: pct.y};
-      dragStartPts = shapes.find(s => s.id === hit.id).points.map(p => ({...p}));
+      const dragIds = getLinkedShapeIds(hit.id);
+      dragStartPts = dragIds.map(id => {
+        const sh = shapes.find(s => s.id === id);
+        return {
+          id: id,
+          points: sh.points.map(p => ({...p}))
+        };
+      });
     } else {
       selectShape(null);
       isPanning = true;
@@ -835,12 +910,15 @@ function onMouseMove(e) {
   if (isDragging && selectedId && currentTool === 'select') {
     const dx = pct.x - dragStartMouse.x;
     const dy = pct.y - dragStartMouse.y;
+    dragStartPts.forEach(item => {
+      const sh = shapes.find(s => s.id === item.id);
+      if (sh) {
+        sh.points = item.points.map(p => ({x: p.x + dx, y: p.y + dy}));
+      }
+    });
+    renderAll();
     const sh = shapes.find(s => s.id === selectedId);
-    if (sh) {
-      sh.points = dragStartPts.map(p => ({x: p.x + dx, y: p.y + dy}));
-      renderAll();
-      updatePropsCoords(sh);
-    }
+    if (sh) updatePropsCoords(sh);
     return;
   }
   if (isDrawing) renderPreview();
@@ -1067,6 +1145,41 @@ function renderAll() {
       }
     });
   }
+  // Gambarkan garis bantu putus-putus untuk shape bertautan
+  if (selectedId) {
+    const activeShape = shapes.find(s => s.id === selectedId);
+    if (activeShape) {
+      const drawLinkLine = (s1, s2) => {
+        const c1 = getCentroid(s1);
+        const c2 = getCentroid(s2);
+        const pt1 = pctToPx(c1.x, c1.y);
+        const pt2 = pctToPx(c2.x, c2.y);
+        
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', pt1.x);
+        line.setAttribute('y1', pt1.y);
+        line.setAttribute('x2', pt2.x);
+        line.setAttribute('y2', pt2.y);
+        line.setAttribute('stroke', '#8b5cf6'); // Purple accent
+        line.setAttribute('stroke-width', 2);
+        line.setAttribute('stroke-dasharray', '6 4');
+        line.setAttribute('style', 'pointer-events: none;');
+        gHandles.appendChild(line);
+      };
+
+      // 1. Jika shape aktif bertautan ke target
+      if (activeShape.linkedShapeId) {
+        const target = shapes.find(s => s.id === activeShape.linkedShapeId);
+        if (target) drawLinkLine(activeShape, target);
+      }
+      // 2. Jika ada shape lain yang bertautan ke shape aktif
+      shapes.forEach(s => {
+        if (s.linkedShapeId === activeShape.id) {
+          drawLinkLine(activeShape, s);
+        }
+      });
+    }
+  }
 
   renderShapeList();
 }
@@ -1147,6 +1260,26 @@ function showShapeProps(shape) {
       <label class="field-label">ID (untuk mapData)</label>
       <input class="field-input" value="${shape.id}" oninput="updateProp(this.value, 'id')">
     </div>
+    
+    <div class="field-group">
+      <label class="field-label">🔗 Hubungkan ke Data Gedung</label>
+      <select class="field-input" style="border: 1px solid var(--accent2);" onchange="linkToPredefinedBuilding('${shape.id}', this.value)">
+        <option value="">-- Auto-Fill dari mapData.ts --</option>
+        ${PREDEFINED_BUILDINGS.map(b => `<option value="${b.id}" ${shape.id === b.id ? 'selected' : ''}>${b.code} (${b.name})</option>`).join('')}
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">⛓️ Link Gerak dengan Shape Lain</label>
+      <select class="field-input" style="border: 1px solid var(--purple);" onchange="linkToShape('${shape.id}', this.value)">
+        <option value="">Tidak ada (Independen)</option>
+        ${shapes.filter(s => s.id !== shape.id).map(s => {
+          const typeIcon = s.type === 'label' ? '🏷️' : (s.type === 'rect' ? '▭' : '⬡');
+          return `<option value="${s.id}" ${shape.linkedShapeId === s.id ? 'selected' : ''}>${typeIcon} ${s.code || s.name || s.id}</option>`;
+        }).join('')}
+      </select>
+    </div>
+
     <div class="field-group">
       <label class="field-label">Nama Lengkap</label>
       <input class="field-input" value="${escHtml(shape.name)}" oninput="updatePropAndRender(this.value, 'name')">
@@ -1216,6 +1349,77 @@ function updatePropAndRender(value, key) {
 function updatePropsCoords(shape) {
   const el = document.getElementById('prop-coords');
   if (el) el.textContent = shape.points.map(p => `${fmt(p.x)},${fmt(p.y)}`).join(' ');
+}
+
+// Helper untuk relasi link shape
+function getCentroid(shape) {
+  if (!shape || !shape.points || !shape.points.length) return {x: 0, y: 0};
+  if (shape.type === 'label') {
+    return shape.points[0];
+  }
+  const xs = shape.points.map(p => p.x);
+  const ys = shape.points.map(p => p.y);
+  return {
+    x: (Math.max(...xs) + Math.min(...xs)) / 2,
+    y: (Math.max(...ys) + Math.min(...ys)) / 2
+  };
+}
+
+function getLinkedShapeIds(startId) {
+  const linked = new Set([startId]);
+  let added = true;
+  while (added) {
+    added = false;
+    shapes.forEach(s => {
+      if (s.linkedShapeId && linked.has(s.linkedShapeId) && !linked.has(s.id)) {
+        linked.add(s.id);
+        added = true;
+      }
+      if (s.linkedShapeId && linked.has(s.id) && !linked.has(s.linkedShapeId)) {
+        linked.add(s.linkedShapeId);
+        added = true;
+      }
+    });
+  }
+  return Array.from(linked);
+}
+
+function linkToPredefinedBuilding(shapeId, bldId) {
+  if (!bldId) return;
+  const shape = shapes.find(s => s.id === shapeId);
+  const bld = PREDEFINED_BUILDINGS.find(b => b.id === bldId);
+  if (!shape || !bld) return;
+  saveUndo();
+  
+  // Set properties
+  shape.id = bld.id;
+  shape.name = bld.name;
+  shape.code = bld.code;
+  shape.details = bld.details || '';
+  shape.operationalStatus = bld.operationalStatus || 'Aktif';
+  
+  selectedId = bld.id;
+  
+  saveSession();
+  renderAll();
+  showShapeProps(shape);
+  showToast(`✅ Shape berhasil dihubungkan ke data: ${bld.code}`);
+}
+
+function linkToShape(shapeId, targetShapeId) {
+  const shape = shapes.find(s => s.id === shapeId);
+  if (!shape) return;
+  saveUndo();
+  if (!targetShapeId) {
+    shape.linkedShapeId = null;
+    showToast(`✅ Tautan pergerakan shape dilepas`);
+  } else {
+    shape.linkedShapeId = targetShapeId;
+    showToast(`✅ Shape ditautkan pergerakan ke: ${targetShapeId}`);
+  }
+  saveSession();
+  renderAll();
+  showShapeProps(shape);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1380,8 +1584,9 @@ function renderShapeList() {
 function hitTest(px, py) {
   for (let i = shapes.length - 1; i >= 0; i--) {
     const s = shapes[i];
-    const layer = s.layer || 1;
-    if (!layerVisibility[layer]) continue;
+    const layerId = s.layer || 1;
+    const lay = layers.find(l => l.id === layerId);
+    if (lay && !lay.visible) continue;
     if (s.type === 'label') {
       const dx = Math.abs(px - s.points[0].x);
       const dy = Math.abs(py - s.points[0].y);
@@ -1472,7 +1677,7 @@ function showExport() {
     area: ${wM * hM},
     details: "${(s.details||'').replace(/"/g,'\\"')}",
     zones: [],
-    operationalStatus: "${s.operationalStatus || 'Aktif'}"${s.icon ? `,\n    icon: "${s.icon}"` : ''}${s.layer ? `,\n    layer: ${s.layer}` : ''}
+    operationalStatus: "${s.operationalStatus || 'Aktif'}"${s.icon ? `,\n    icon: "${s.icon}"` : ''}${s.layer ? `,\n    layer: ${s.layer}` : ''}${s.linkedShapeId ? `,\n    linkedShapeId: "${s.linkedShapeId}"` : ''}
   }`;
     }).join(',\n');
 
@@ -1488,7 +1693,7 @@ function showExport() {
     out += `// REFERENSI POSISI LABEL (hanya untuk referensi koordinat)\n`;
     out += `// ════════════════════════════════════════════════════\n`;
     labels.forEach(s => {
-      out += `// "${s.name}" → x:${fmt(s.points[0].x)}% y:${fmt(s.points[0].y)}%\n`;
+      out += `// "${s.name}" → x:${fmt(s.points[0].x)}% y:${fmt(s.points[0].y)}%${s.linkedShapeId ? ` (Linked to: ${s.linkedShapeId})` : ''}\n`;
     });
   }
 
@@ -1519,6 +1724,7 @@ function copyCode() {
 
 // ══════════════════════════════════════════════════════════
 // JSON BACKUP
+// ══════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════
 function exportJSON() {
   const blob = new Blob([JSON.stringify(shapes, null, 2)], {type: 'application/json'});
@@ -1600,7 +1806,10 @@ function loadShapesData(rawText) {
   // Parse points to editor format if they are in production string format
   const converted = parsed.map(item => {
     if (Array.isArray(item.points)) {
-      return item;
+      return {
+        ...item,
+        linkedShapeId: item.linkedShapeId || null
+      };
     }
     if (typeof item.points === 'string') {
       const pts = item.points.split(' ').map(p => {
@@ -1618,7 +1827,8 @@ function loadShapesData(rawText) {
         operationalStatus: item.operationalStatus || 'Aktif',
         fontSize: item.fontSize || 14,
         icon: item.icon || '',
-        layer: item.layer || 1
+        layer: item.layer || 1,
+        linkedShapeId: item.linkedShapeId || null
       };
     }
     return item;
@@ -1680,6 +1890,9 @@ function importJSON() {
 // ══════════════════════════════════════════════════════════
 function saveToBrowserManual() {
   saveSession();
+  if (autoPush) {
+    pushToMap(true); // silent push on save
+  }
   showToast('💾 Sesi berhasil disimpan ke browser!');
 }
 
@@ -1694,10 +1907,127 @@ function showToast(msg) {
 }
 
 // ══════════════════════════════════════════════════════════
+// LIVE PUSH (Editor → Map Page)
+// ══════════════════════════════════════════════════════════
+let autoPush = false;
+let livePushChannel = null;
+
+// Initialize BroadcastChannel for real-time cross-tab/same-tab comms
+try {
+  livePushChannel = new BroadcastChannel('mtm-map-sync');
+} catch(e) {
+  console.warn('BroadcastChannel not supported, cross-tab sync disabled.');
+}
+
+// Restore auto-push preference from localStorage
+try {
+  autoPush = localStorage.getItem('mtm_editor_auto_push') === 'true';
+} catch(e) {}
+
+function convertShapesToBuildings(shapeList) {
+  return shapeList
+    .filter(s => s.type !== 'label') // labels are editor-only
+    .map(s => {
+      const ptsStr = s.points.map(p => `${fmt(p.x)},${fmt(p.y)}`).join(' ');
+      const xs = s.points.map(p => p.x), ys = s.points.map(p => p.y);
+      const wPct = Math.max(...xs) - Math.min(...xs);
+      const hPct = Math.max(...ys) - Math.min(...ys);
+      const wM = Math.round(wPct * 200 / 100) || 10;
+      const hM = Math.round(hPct * 130 / 100) || 10;
+      return {
+        id: s.id,
+        name: s.name || 'Area',
+        code: s.code || s.name || 'Area',
+        points: ptsStr,
+        width: wM,
+        length: hM,
+        area: wM * hM,
+        details: s.details || '',
+        zones: [],
+        operationalStatus: s.operationalStatus || 'Aktif',
+        icon: s.icon || undefined,
+        color: s.color || '#3b82f6',
+        layer: s.layer || 1,
+        linkedShapeId: s.linkedShapeId || undefined
+      };
+    });
+}
+
+function pushToMap(silent = false) {
+  const buildings = convertShapesToBuildings(shapes);
+  const payload = {
+    buildings,
+    pushedAt: new Date().toISOString(),
+    editorShapeCount: shapes.length,
+    buildingCount: buildings.length
+  };
+
+  try {
+    localStorage.setItem('mtm_live_buildings', JSON.stringify(payload));
+    // Broadcast to other tabs/windows on same origin
+    if (livePushChannel) {
+      livePushChannel.postMessage({ type: 'LIVE_PUSH', payload });
+    }
+    updateLiveStatus(payload);
+    if (!silent) {
+      showToast(`📡 Live Push! ${buildings.length} shape → Map Page`);
+      const btn = document.getElementById('btn-live-push');
+      if (btn) {
+        btn.classList.add('active-live');
+        setTimeout(() => btn.classList.remove('active-live'), 2000);
+      }
+    }
+  } catch(e) {
+    if (!silent) alert('Gagal push ke map: ' + e.message);
+  }
+}
+
+function updateLiveStatus(payload) {
+  const infoEl = document.getElementById('status-live-info');
+  const countEl = document.getElementById('status-live-count');
+  const timeEl = document.getElementById('status-live-time');
+  if (!infoEl) return;
+
+  infoEl.style.display = 'flex';
+  infoEl.style.alignItems = 'center';
+  infoEl.style.gap = '8px';
+  if (countEl) countEl.textContent = `• ${payload.buildingCount} buildings`;
+  if (timeEl) {
+    const d = new Date(payload.pushedAt);
+    timeEl.textContent = `• ${d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit', second:'2-digit'})}`;
+  }
+}
+
+function toggleAutoPush(checked) {
+  autoPush = checked;
+  try {
+    localStorage.setItem('mtm_editor_auto_push', String(autoPush));
+  } catch(e) {}
+  showToast(autoPush ? '🔴 Auto-Push aktif — Map akan update otomatis saat disimpan' : '⚪ Auto-Push dimatikan');
+}
+
+function initLivePushUI() {
+  // Restore auto-push toggle state
+  const toggle = document.getElementById('auto-push-toggle');
+  if (toggle) toggle.checked = autoPush;
+
+  // Check if there is already live data in localStorage
+  try {
+    const existing = localStorage.getItem('mtm_live_buildings');
+    if (existing) {
+      const payload = JSON.parse(existing);
+      updateLiveStatus(payload);
+    }
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════════════════════════
 setTool('select');
 renderAll();
+initLivePushUI();
+
 </script>
 </body>
 </html>
