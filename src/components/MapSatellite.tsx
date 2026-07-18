@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BuildingData, roads } from '../data/mapData';
 
 const SVG_ICONS: Record<string, string> = {
@@ -20,6 +20,8 @@ interface MapSatelliteProps {
   bgOpacity: number;
   shapeOpacity: number;
   showRoads: boolean;
+  activeView: 'satellite' | 'layout';
+  onShowSettings: () => void;
 }
 
 export default function MapSatellite({
@@ -31,9 +33,12 @@ export default function MapSatellite({
   bgOpacity,
   shapeOpacity,
   showRoads,
+  activeView,
+  onShowSettings,
 }: MapSatelliteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const dragStartMouseRef = useRef({ x: 0, y: 0 });
 
   // Zoom & Pan states
   const [scale, setScale] = useState(0.65);
@@ -41,6 +46,17 @@ export default function MapSatellite({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [animateTransform, setAnimateTransform] = useState(true);
+
+  const scaleRef = useRef(scale);
+  const offsetRef = useRef(offset);
+
+  useEffect(() => {
+    scaleRef.current = scale;
+  }, [scale]);
+
+  useEffect(() => {
+    offsetRef.current = offset;
+  }, [offset]);
 
   const canvasWidth = 3323;
   const canvasHeight = 3159;
@@ -62,14 +78,13 @@ export default function MapSatellite({
     // Translate percentages (0-100) to actual canvas pixels
     const targetX = (centerX / 100) * canvasWidth;
     const targetY = (centerY / 100) * canvasHeight;
-    const targetZoom = 1.2;
+    const targetZoom = scale;
 
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       const containerHeight = containerRef.current.clientHeight;
 
       setAnimateTransform(true);
-      setScale(targetZoom);
       setOffset({
         x: containerWidth / 2 - targetX * targetZoom,
         y: containerHeight / 2 - targetY * targetZoom,
@@ -82,6 +97,7 @@ export default function MapSatellite({
     if (e.button !== 0) return;
     setIsDragging(true);
     setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+    dragStartMouseRef.current = { x: e.clientX, y: e.clientY };
     setAnimateTransform(false);
   };
 
@@ -95,6 +111,27 @@ export default function MapSatellite({
 
   const handleMouseUp = () => {
     setIsDragging(false);
+  };
+
+  const handleElementClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    const dx = e.clientX - dragStartMouseRef.current.x;
+    const dy = e.clientY - dragStartMouseRef.current.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    // Threshold is 5 pixels to distinguish drag vs click
+    if (distance < 5) {
+      onSelectBuilding(id);
+    }
+  };
+
+  const handleBackgroundClick = (e: React.MouseEvent) => {
+    const dx = e.clientX - dragStartMouseRef.current.x;
+    const dy = e.clientY - dragStartMouseRef.current.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    // Threshold is 5 pixels to distinguish drag vs click
+    if (distance < 5) {
+      onSelectBuilding('');
+    }
   };
 
   const handleZoomIn = () => {
@@ -121,15 +158,12 @@ export default function MapSatellite({
     }));
   };
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     if (!containerRef.current) return;
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
 
     if (containerWidth === 0 || containerHeight === 0) {
-      // Fallback scale/offset instead of calculating negative numbers during initial mount
-      setScale(0.2);
-      setOffset({ x: 200, y: 50 });
       return;
     }
 
@@ -143,7 +177,7 @@ export default function MapSatellite({
       x: (containerWidth - canvasWidth * baseScale) / 2,
       y: (containerHeight - canvasHeight * baseScale) / 2,
     });
-  };
+  }, [canvasWidth, canvasHeight]);
 
   useEffect(() => {
     const handleGlobalMouseUp = () => setIsDragging(false);
@@ -156,36 +190,34 @@ export default function MapSatellite({
       e.preventDefault();
       if (!container) return;
 
-      if (e.ctrlKey) {
-        // Zoom (pinch-to-zoom or Ctrl + Scroll)
-        const zoomIntensity = 0.0015;
-        const factor = Math.exp(-e.deltaY * zoomIntensity);
+      // Direct scroll wheel zoom (Ctrl not required)
+      const zoomIntensity = 0.0015;
+      const factor = Math.exp(-e.deltaY * zoomIntensity);
 
-        const rect = container.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-        setAnimateTransform(false);
-        setScale((prevScale) => {
-          const newScale = Math.max(0.2, Math.min(3.5, prevScale * factor));
-          setOffset((prevOffset) => {
-            const canvasMouseX = (mouseX - prevOffset.x) / prevScale;
-            const canvasMouseY = (mouseY - prevOffset.y) / prevScale;
-            return {
-              x: mouseX - canvasMouseX * newScale,
-              y: mouseY - canvasMouseY * newScale,
-            };
-          });
-          return newScale;
-        });
-      } else {
-        // Pan (2-finger touchpad scroll or regular scroll)
-        setAnimateTransform(false);
-        setOffset((prevOffset) => ({
-          x: prevOffset.x - e.deltaX,
-          y: prevOffset.y - e.deltaY,
-        }));
-      }
+      setAnimateTransform(false);
+
+      const currentScale = scaleRef.current;
+      const currentOffset = offsetRef.current;
+
+      const newScale = Math.max(0.2, Math.min(3.5, currentScale * factor));
+      const canvasMouseX = (mouseX - currentOffset.x) / currentScale;
+      const canvasMouseY = (mouseY - currentOffset.y) / currentScale;
+
+      const newOffset = {
+        x: mouseX - canvasMouseX * newScale,
+        y: mouseY - canvasMouseY * newScale,
+      };
+
+      // Sync refs immediately to prevent race conditions during rapid scrolling
+      scaleRef.current = newScale;
+      offsetRef.current = newOffset;
+
+      setScale(newScale);
+      setOffset(newOffset);
     };
 
     if (container) {
@@ -199,14 +231,23 @@ export default function MapSatellite({
       observer.observe(container);
     }
 
+    // Run immediately on mount
+    handleReset();
+
+    // Run after a short delay to ensure layout has settled
+    const timer = setTimeout(() => {
+      handleReset();
+    }, 100);
+
     return () => {
       window.removeEventListener('mouseup', handleGlobalMouseUp);
       if (container) {
         container.removeEventListener('wheel', handleWheelEvent);
         observer.disconnect();
       }
+      clearTimeout(timer);
     };
-  }, []);
+  }, [handleReset]);
 
   return (
     <div
@@ -216,23 +257,29 @@ export default function MapSatellite({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       style={{ cursor: isDragging ? 'grabbing' : 'default' }}
-      onClick={() => onSelectBuilding('')}
+      onClick={handleBackgroundClick}
     >
       {/* Zoom controls floating on map */}
       <div className="map-controls">
         <button onClick={handleZoomIn} title="Zoom In" className="control-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
         </button>
         <button onClick={handleZoomOut} title="Zoom Out" className="control-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
           </svg>
         </button>
         <button onClick={handleReset} title="Reset View" className="control-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+        </button>
+        <button onClick={onShowSettings} title="Buka Pengaturan" className="control-btn">
+          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
           </svg>
         </button>
       </div>
@@ -248,10 +295,10 @@ export default function MapSatellite({
           cursor: isDragging ? 'grabbing' : 'grab',
         }}
       >
-        {/* Base Satellite Image */}
+        {/* Base Satellite Image / Floor Plan */}
         <img
-          src="/map-img/mtmmap.jpg"
-          alt="Citra Satelit PT Menara Terus Makmur"
+          src={activeView === 'satellite' ? "/map-img/mtmmap.jpg" : "/map-img/L2.png"}
+          alt={activeView === 'satellite' ? "Citra Satelit PT Menara Terus Makmur" : "Layout Dalam Gedung"}
           className="blueprint-underlay"
           style={{ opacity: bgOpacity }}
           draggable="false"
@@ -281,15 +328,16 @@ export default function MapSatellite({
             </pattern>
           </defs>
           {/* Render roads under the buildings with rounded turns */}
-          {showRoads && (
+          {showRoads && activeView === 'satellite' && (
             <g>
               {/* No custom roads needed on the new mtmmap background */}
             </g>
           )}
 
-          {buildings.map((bld, idx) => {
+          {activeView === 'satellite' && buildings.map((bld, idx) => {
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
+            const baseColor = bld.color || '#3b82f6';
 
             return (
               <polygon
@@ -300,21 +348,20 @@ export default function MapSatellite({
                   isHovered ? 'hovered' : ''
                 }`}
                 style={{
-                  fill: isSelected 
-                    ? `rgba(4, 120, 87, ${shapeOpacity * 0.24})` 
+                  fill: baseColor,
+                  stroke: baseColor,
+                  fillOpacity: isSelected 
+                    ? shapeOpacity * 0.4 
                     : isHovered 
-                      ? `rgba(29, 78, 216, ${shapeOpacity * 0.36})` 
-                      : `rgba(29, 78, 216, ${shapeOpacity * 0.1})`,
-                  stroke: isSelected 
-                    ? `rgba(16, 185, 129, ${shapeOpacity})` 
+                      ? shapeOpacity * 0.5 
+                      : shapeOpacity * 0.2,
+                  strokeOpacity: isSelected 
+                    ? 1 
                     : isHovered 
-                      ? `rgba(29, 78, 216, ${shapeOpacity})` 
-                      : `rgba(29, 78, 216, ${shapeOpacity * 0.8})`
+                      ? 0.9 
+                      : 0.6
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectBuilding(bld.id);
-                }}
+                onClick={(e) => handleElementClick(e, bld.id)}
                 onMouseEnter={() => setHoveredId(bld.id)}
                 onMouseLeave={() => setHoveredId(null)}
               />
@@ -322,7 +369,7 @@ export default function MapSatellite({
           })}
 
           {/* Render Icons on Buildings */}
-          {buildings.map((bld, idx) => {
+          {activeView === 'satellite' && buildings.map((bld, idx) => {
             if (!bld.icon || !SVG_ICONS[bld.icon]) return null;
 
             const coords = bld.points.split(' ').map((p) => p.split(',').map(Number));
@@ -347,72 +394,38 @@ export default function MapSatellite({
           })}
 
           {/* Main Entrance Green Arrow, Yellow Gate, & Label */}
-          <g className="entrance-overlay">
-            <polygon
-              points="36,84.8 35.2,86.5 35.7,86.5 35.7,87.3 36.3,87.3 36.3,86.5 36.8,86.5"
-              fill="#10b981"
-              stroke="#047857"
-              strokeWidth="0.1"
-            />
-            {/* Yellow Gate Line */}
-            <line
-              x1="34.5"
-              y1="87.6"
-              x2="37.5"
-              y2="87.6"
-              stroke="#fbbf24"
-              strokeWidth="0.35"
-              strokeLinecap="round"
-            />
-            <text
-              x="36"
-              y="89.5"
-              fill="#047857"
-              fontSize="1.3"
-              fontWeight="bold"
-              textAnchor="middle"
-              style={{ letterSpacing: '0.1px', fontFamily: 'Inter, sans-serif' }}
-            >
-              PINTU MASUK
-            </text>
-          </g>
+          {activeView === 'satellite' && (
+            <g className="entrance-overlay">
+              <polygon
+                points="36,84.8 35.2,86.5 35.7,86.5 35.7,87.3 36.3,87.3 36.3,86.5 36.8,86.5"
+                fill="#10b981"
+                stroke="#047857"
+                strokeWidth="0.1"
+              />
+              {/* Yellow Gate Line */}
+              <line
+                x1="34.5"
+                y1="87.6"
+                x2="37.5"
+                y2="87.6"
+                stroke="#fbbf24"
+                strokeWidth="0.35"
+                strokeLinecap="round"
+              />
+              <text
+                x="36"
+                y="89.5"
+                fill="#047857"
+                fontSize="1.3"
+                fontWeight="bold"
+                textAnchor="middle"
+                style={{ letterSpacing: '0.1px', fontFamily: 'Inter, sans-serif' }}
+              >
+                PINTU MASUK
+              </text>
+            </g>
+          )}
         </svg>
-
-        {/* Labels/Badges positioned dynamically */}
-        {buildings.map((bld, idx) => {
-          const coords = bld.points.split(' ').map((p) => p.split(',').map(Number));
-          const xs = coords.map((c) => c[0]);
-          const ys = coords.map((c) => c[1]);
-          const centerX = (Math.max(...xs) + Math.min(...xs)) / 2;
-          const centerY = (Math.max(...ys) + Math.min(...ys)) / 2;
-
-          const isTopRow = centerY < 4;
-
-          return (
-            <div
-              key={`label-${bld.id}-${idx}`}
-              className={`building-badge-label ${
-                selectedBuildingId === bld.id ? 'active' : ''
-              } ${hoveredId === bld.id ? 'hovered' : ''}`}
-              style={{
-                left: `${centerX}%`,
-                top: isTopRow ? `${Math.min(...ys)}%` : `${centerY}%`,
-                transform: isTopRow ? 'translate(-50%, -125%)' : 'translate(-50%, -50%)',
-                position: 'absolute',
-                zIndex: 10,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelectBuilding(bld.id);
-              }}
-              onMouseEnter={() => setHoveredId(bld.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <div className="badge-code">{bld.code.split(' ')[0]} {bld.code.split(' ')[1] || ''}</div>
-              <div className="badge-tooltip">{bld.name}</div>
-            </div>
-          );
-        })}
       </div>
     </div>
   );

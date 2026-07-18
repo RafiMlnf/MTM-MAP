@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BuildingData, ZoneData } from '../data/mapData';
 
 interface SidebarProps {
@@ -15,6 +15,8 @@ interface SidebarProps {
   onTriggerSearchPan: (type: 'zone' | 'machine', id: string, zoneId?: string) => void;
   activeView: 'satellite' | 'layout';
   setActiveView: (view: 'satellite' | 'layout') => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
 export default function Sidebar({
@@ -29,7 +31,22 @@ export default function Sidebar({
   onTriggerSearchPan,
   activeView,
   setActiveView,
+  theme,
+  onToggleTheme,
 }: SidebarProps) {
+  const [expandedGroups, setExpandedGroups] = useState({
+    gedung: false,
+    taman: false,
+    zone: false,
+  });
+
+  const toggleGroup = (group: 'gedung' | 'taman' | 'zone') => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+  };
+
   // Find the currently selected objects
   const selectedBuilding = useMemo(() => {
     return buildings.find((b) => b.id === selectedBuildingId) || null;
@@ -43,6 +60,22 @@ export default function Sidebar({
     if (!selectedZone || !selectedMachineId) return null;
     return selectedZone.machines.find((m) => m.id === selectedMachineId) || null;
   }, [selectedZone, selectedMachineId]);
+
+  const mainBuildings = useMemo(() => {
+    return buildings
+      .filter(b => !b.id.toLowerCase().includes('taman') && !b.name.toLowerCase().includes('taman'))
+      .sort((a, b) => a.name.localeCompare(b.name, 'id-ID'));
+  }, [buildings]);
+
+  const gardenBuildings = useMemo(() => {
+    return buildings
+      .filter(b => b.id.toLowerCase().includes('taman') || b.name.toLowerCase().includes('taman'))
+      .sort((a, b) => a.name.localeCompare(b.name, 'id-ID'));
+  }, [buildings]);
+
+  const sortedZones = useMemo(() => {
+    return [...zones].sort((a, b) => a.name.localeCompare(b.name, 'id-ID'));
+  }, [zones]);
 
   // Calculations for selected zone
   const zoneStats = useMemo(() => {
@@ -75,13 +108,40 @@ export default function Sidebar({
     <aside className="sidebar-container">
       {/* Brand logo & header */}
       <div className="sidebar-header">
-        <div className="brand-logo">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.446l6.002-3.461c.496-.286.8-.813.8-1.385V6.243c0-.572-.304-1.1-.8-1.385L15.503 1.397a1.607 1.607 0 00-1.606 0L7.899 4.858a1.607 1.607 0 00-.8 1.385v9.117c0 .572.304 1.1.8 1.385l6.002 3.461a1.607 1.607 0 001.606 0z" />
-          </svg>
-          <span className="brand-name">PT MTM MAPS</span>
+        <div className="brand-wrapper" style={{ display: 'flex', alignItems: 'center', width: '100%', maxWidth: '170px', boxSizing: 'border-box' }}>
+          <img 
+            src="/assets/img/mtmwide.png" 
+            alt="PT MTM Logo" 
+            style={{ width: '100%', height: 'auto', maxHeight: '32px', objectFit: 'contain' }} 
+          />
         </div>
-        <p className="brand-tagline">Sistem Informasi Tata Letak & Alur Produksi</p>
+        <button className="theme-toggle-btn" onClick={onToggleTheme} title={theme === 'dark' ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap'}>
+          {theme === 'dark' ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Layer selector */}
+      <div className="view-mode-toggle">
+        <button
+          className={`toggle-btn ${activeView === 'satellite' ? 'active' : ''}`}
+          onClick={() => setActiveView('satellite')}
+        >
+          Gedung Utama
+        </button>
+        <button
+          className={`toggle-btn ${activeView === 'layout' ? 'active' : ''}`}
+          onClick={() => setActiveView('layout')}
+        >
+          Dalam Gedung
+        </button>
       </div>
 
       {/* Info Details & Lists */}
@@ -93,47 +153,152 @@ export default function Sidebar({
             
             <div className="tab-content">
               <div className="list-group">
-                <div style={{ padding: '4px 0', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a' }}>Gedung</div>
-                {buildings.map((bld) => (
-                  <div
-                    key={bld.id}
-                    className="list-item"
-                    style={{ cursor: 'default' }}
-                  >
-                    <div className="item-header">
-                      <span className="item-title">{bld.name}</span>
-                      <span className="item-badge">{bld.code.split(' ')[0]}</span>
+                {/* Gedung Utama Header */}
+                <div
+                  onClick={() => toggleGroup('gedung')}
+                  className="list-group-header"
+                  style={{
+                    padding: '8px 4px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: '#71717a',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    userSelect: 'none',
+                    borderBottom: '1px solid var(--border-color)',
+                    marginBottom: '4px'
+                  }}
+                >
+                  <span style={{
+                    fontSize: '8px',
+                    display: 'inline-block',
+                    transform: expandedGroups.gedung ? 'rotate(90deg)' : 'none',
+                    transition: 'transform 0.15s ease'
+                  }}>▶</span>
+                  Gedung Utama ({mainBuildings.length})
+                </div>
+                {expandedGroups.gedung && mainBuildings.map((bld, idx) => {
+                  const isSelected = selectedBuildingId === bld.id;
+                  return (
+                    <div
+                      key={`main-bld-${bld.id}-${idx}`}
+                      className={`list-item clickable ${isSelected ? 'selected-item' : ''}`}
+                      onClick={() => onSelectBuilding(bld.id)}
+                      style={{ paddingLeft: '20px' }}
+                    >
+                      <div className="item-header" style={{ width: '100%' }}>
+                        <span className="item-title">{bld.name}</span>
+                        <span className="item-badge">{bld.code.split(' ')[0]}</span>
+                      </div>
                     </div>
-                    <div className="item-footer">
-                      <span>Panjang: {bld.length}m, Lebar: {bld.width}m</span>
-                      <span className="item-status text-emerald">{bld.operationalStatus}</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
 
-                <div style={{ padding: '16px 0 4px 0', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a' }}>Area / Zone</div>
-                {zones.map((zone) => (
-                  <div
-                    key={zone.id}
-                    className="list-item"
-                    style={{ cursor: 'default' }}
-                  >
-                    <div className="item-header">
-                      <span className="item-title">{zone.name.split(' (')[0]}</span>
-                      <span className="item-badge outline">{zone.id}</span>
+                {/* Taman Header */}
+                <div
+                  onClick={() => toggleGroup('taman')}
+                  className="list-group-header"
+                  style={{
+                    padding: '8px 4px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: '#71717a',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    userSelect: 'none',
+                    borderBottom: '1px solid var(--border-color)',
+                    marginTop: '12px',
+                    marginBottom: '4px'
+                  }}
+                >
+                  <span style={{
+                    fontSize: '8px',
+                    display: 'inline-block',
+                    transform: expandedGroups.taman ? 'rotate(90deg)' : 'none',
+                    transition: 'transform 0.15s ease'
+                  }}>▶</span>
+                  Taman ({gardenBuildings.length})
+                </div>
+                {expandedGroups.taman && gardenBuildings.map((bld, idx) => {
+                  const isSelected = selectedBuildingId === bld.id;
+                  return (
+                    <div
+                      key={`garden-bld-${bld.id}-${idx}`}
+                      className={`list-item clickable ${isSelected ? 'selected-item' : ''}`}
+                      onClick={() => onSelectBuilding(bld.id)}
+                      style={{ paddingLeft: '20px' }}
+                    >
+                      <div className="item-header" style={{ width: '100%' }}>
+                        <span className="item-title">{bld.name}</span>
+                        <span className="item-badge outline">{bld.code.split(' ')[0]}</span>
+                      </div>
                     </div>
-                    <div className="item-footer">
-                      <span>Dimensi: {zone.width / 10}m x {zone.height / 10}m</span>
-                      <span className="text-zinc-400">{zone.machines.length} Mesin</span>
+                  );
+                })}
+
+                {/* Area / Zone Header */}
+                <div
+                  onClick={() => toggleGroup('zone')}
+                  className="list-group-header"
+                  style={{
+                    padding: '8px 4px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: '#71717a',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    userSelect: 'none',
+                    borderBottom: '1px solid var(--border-color)',
+                    marginTop: '12px',
+                    marginBottom: '4px'
+                  }}
+                >
+                  <span style={{
+                    fontSize: '8px',
+                    display: 'inline-block',
+                    transform: expandedGroups.zone ? 'rotate(90deg)' : 'none',
+                    transition: 'transform 0.15s ease'
+                  }}>▶</span>
+                  Area / Zone ({zones.length})
+                </div>
+                {expandedGroups.zone && sortedZones.map((zone, idx) => {
+                  const isSelected = selectedZoneId === zone.id;
+                  return (
+                    <div
+                      key={`zone-${zone.id}-${idx}`}
+                      className={`list-item clickable ${isSelected ? 'selected-item' : ''}`}
+                      onClick={() => onSelectZone(zone.id)}
+                      style={{ paddingLeft: '20px' }}
+                    >
+                      <div className="item-header" style={{ width: '100%' }}>
+                        <span className="item-title">{zone.name.split(' (')[0]}</span>
+                        <span className="item-badge outline">{zone.id}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
         ) : selectedMachine ? (
           /* Machine Detail Panel */
           <div className="detail-panel machine-details">
+            <button className="back-btn" onClick={() => onSelectMachine(selectedZone!.id, '')}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+              Kembali ke {selectedZone!.name.split(' (')[0]}
+            </button>
             <div className="detail-header">
               <div className="header-title-row">
                 <h2>Mesin {selectedMachine.name}</h2>
@@ -189,14 +354,6 @@ export default function Sidebar({
                   <span className="info-label">Tipe Stasiun</span>
                   <span className="info-value text-capitalize">{selectedMachine.type}</span>
                 </div>
-                {selectedMachine.width && selectedMachine.height && (
-                  <div className="info-cell col-2">
-                    <span className="info-label">Ukuran Area Mesin</span>
-                    <span className="info-value">
-                      {selectedMachine.width / 10}m x {selectedMachine.height / 10}m ({ (selectedMachine.width * selectedMachine.height) / 100 } m²)
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -208,6 +365,10 @@ export default function Sidebar({
         ) : selectedZone ? (
           /* Zone Detail Panel */
           <div className="detail-panel zone-details">
+            <button className="back-btn" onClick={() => onSelectZone('')}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+              Kembali ke Daftar
+            </button>
             <div className="detail-header">
               <h2>{selectedZone.name}</h2>
               <p className="detail-subtitle">Kode: {selectedZone.id}</p>
@@ -238,45 +399,28 @@ export default function Sidebar({
               <p className="detail-paragraph">{selectedZone.details}</p>
             </div>
 
-            <div className="detail-card">
-              <h3>Dimensi Fisik</h3>
-              <div className="info-grid">
-                <div className="info-cell">
-                  <span className="info-label">Lebar Real</span>
-                  <span className="info-value">{selectedZone.width / 10} Meter</span>
-                </div>
-                <div className="info-cell">
-                  <span className="info-label">Panjang Real</span>
-                  <span className="info-value">{selectedZone.height / 10} Meter</span>
-                </div>
-                <div className="info-cell col-2">
-                  <span className="info-label">Luas Tapak Area</span>
-                  <span className="info-value">
-                    {(selectedZone.width * selectedZone.height) / 100} m²
-                  </span>
-                </div>
-              </div>
-            </div>
-
             {selectedZone.machines.length > 0 && (
               <div className="detail-card list-section">
                 <h3>Mesin & Stasiun Kerja ({selectedZone.machines.length})</h3>
                 <div className="mini-list-group">
-                  {selectedZone.machines.map((mach) => (
-                    <div
-                      key={mach.id}
-                      className="mini-list-item"
-                      style={{ cursor: 'default' }}
-                    >
-                      <div className="mini-item-left">
-                        <span className={`status-dot ${mach.status}`} />
-                        <span className="mini-item-name">{mach.name}</span>
+                  {selectedZone.machines.map((mach, idx) => {
+                    const isSelected = selectedMachineId === mach.id;
+                    return (
+                      <div
+                        key={`${mach.id}-${idx}`}
+                        className={`mini-list-item clickable ${isSelected ? 'selected-item' : ''}`}
+                        onClick={() => onSelectMachine(selectedZone.id, mach.id)}
+                      >
+                        <div className="mini-item-left">
+                          <span className={`status-dot ${mach.status}`} />
+                          <span className="mini-item-name">{mach.name}</span>
+                        </div>
+                        <div className="mini-item-right">
+                          <span className="mini-item-eff">{mach.efficiency}% OEE</span>
+                        </div>
                       </div>
-                      <div className="mini-item-right">
-                        <span className="mini-item-eff">{mach.efficiency}% OEE</span>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -284,33 +428,13 @@ export default function Sidebar({
         ) : selectedBuilding ? (
           /* Building Detail Panel */
           <div className="detail-panel building-details">
+            <button className="back-btn" onClick={() => onSelectBuilding('')}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+              Kembali ke Daftar
+            </button>
             <div className="detail-header">
               <h2>{selectedBuilding.name}</h2>
-              <p className="detail-subtitle">{selectedBuilding.code}</p>
-            </div>
-
-            <div className="detail-card">
-              <h3>Spesifikasi Fisik Bangunan</h3>
-              <div className="info-grid">
-                <div className="info-cell">
-                  <span className="info-label">Panjang</span>
-                  <span className="info-value">{selectedBuilding.length} Meter</span>
-                </div>
-                <div className="info-cell">
-                  <span className="info-label">Lebar</span>
-                  <span className="info-value">{selectedBuilding.width} Meter</span>
-                </div>
-                <div className="info-cell col-2">
-                  <span className="info-label font-bold">Total Luas Lantai</span>
-                  <span className="info-value text-xl font-bold text-emerald-400">
-                    {selectedBuilding.area.toLocaleString('id-ID')} m²
-                  </span>
-                </div>
-                <div className="info-cell col-2">
-                  <span className="info-label">Status Operasional</span>
-                  <span className="info-value text-emerald-400">{selectedBuilding.operationalStatus}</span>
-                </div>
-              </div>
+              <p className="detail-subtitle">{selectedBuilding.code} • <span className="text-emerald-400">{selectedBuilding.operationalStatus}</span></p>
             </div>
 
             <div className="detail-card">
@@ -322,14 +446,14 @@ export default function Sidebar({
               <div className="detail-card list-section">
                 <h3>Area Internal di Dalam Gedung</h3>
                 <div className="mini-list-group">
-                  {selectedBuilding.zones.map((zoneId) => {
+                  {selectedBuilding.zones.map((zoneId, idx) => {
                     const matchedZone = zones.find((z) => z.id === zoneId);
                     if (!matchedZone) return null;
                     return (
                       <div
-                        key={zoneId}
-                        className="mini-list-item"
-                        style={{ cursor: 'default' }}
+                        key={`${zoneId}-${idx}`}
+                        className="mini-list-item clickable"
+                        onClick={() => onSelectZone(zoneId)}
                       >
                         <div className="mini-item-left">
                           <span className="mini-item-name">{matchedZone.name.split(' (')[0]}</span>

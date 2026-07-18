@@ -55,7 +55,8 @@
     }
     .tool-btn svg { width: 15px; height: 15px; }
     .tool-btn:hover { background: var(--panel2); color: var(--text); border-color: var(--border); }
-    .tool-btn.active { background: rgba(59,130,246,0.15); color: var(--accent); border-color: var(--accent); }
+    .tool-btn.active { background: var(--accent); color: #ffffff; border-color: var(--accent); }
+    .tool-btn.active-magnet { background: var(--purple); color: #ffffff; border-color: var(--purple); }
     .tool-btn.danger { color: var(--red); }
     .tool-btn.danger:hover { background: rgba(239,68,68,0.15); border-color: var(--red); }
     .tool-btn.success { color: var(--accent2); }
@@ -130,19 +131,19 @@
     .field-input:focus { outline: none; border-color: var(--accent); }
     textarea.field-input { min-height: 55px; }
     .btn-danger {
-      background: rgba(239,68,68,0.12); color: var(--red);
-      border: 1px solid rgba(239,68,68,0.3); border-radius: 5px;
+      background: var(--red); color: #ffffff;
+      border: 1px solid var(--red); border-radius: 5px;
       padding: 6px 12px; font-size: 11px; cursor: pointer;
       font-weight: 600; width: 100%; transition: all .15s;
     }
-    .btn-danger:hover { background: rgba(239,68,68,0.22); }
+    .btn-danger:hover { background: #dc2626; border-color: #dc2626; }
     .btn-export {
-      background: rgba(16,185,129,0.12); color: var(--accent2);
-      border: 1px solid rgba(16,185,129,0.35); border-radius: 5px;
+      background: var(--accent); color: #ffffff;
+      border: 1px solid var(--accent); border-radius: 5px;
       padding: 7px 12px; font-size: 11px; cursor: pointer;
       font-weight: 600; width: 100%; transition: all .15s;
     }
-    .btn-export:hover { background: rgba(16,185,129,0.22); }
+    .btn-export:hover { background: #2563eb; border-color: #2563eb; }
     .btn-ghost {
       background: var(--panel2); color: var(--text);
       border: 1px solid var(--border); border-radius: 5px;
@@ -308,6 +309,44 @@
     .layer-shapes-list.collapsed {
       display: none;
     }
+    
+    /* ── FLOATING ACTION BUTTONS ON MAP ── */
+    .floating-map-actions {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      z-index: 90;
+    }
+    .map-action-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      transition: all 0.15s ease;
+      border-radius: 4px;
+    }
+    .map-action-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .map-action-btn:hover {
+      background: var(--panel2);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .map-action-btn#map-btn-unlink:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
   </style>
 </head>
 <body>
@@ -317,7 +356,7 @@
 
 <!-- HEADER -->
 <header>
-  <div class="header-logo">🗺 PT MTM Map Editor</div>
+  <div class="header-logo">Editor</div>
   <div class="header-sep"></div>
 
   <!-- Tools -->
@@ -343,6 +382,13 @@
     <label>Warna</label>
     <input type="color" id="tool-color" value="#ef4444" title="Warna Shape">
   </div>
+  <button class="tool-btn" id="btn-magnet" onclick="toggleMagnet()" title="Magnet (Snap ke Grid/Titik Shape) [M]">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M5 2a4 4 0 0 0-4 4v7a8 8 0 0 0 16 0V6a4 4 0 0 0-4-4H5z"/>
+      <path d="M5 6v7a4 4 0 0 0 8 0V6"/>
+    </svg>
+    Magnet
+  </button>
   <div class="header-sep"></div>
 
   <button class="tool-btn" onclick="undo()" title="Undo Ctrl+Z">
@@ -424,6 +470,18 @@
         </svg>
       </div>
     </div>
+    
+    <!-- Floating Link/Unlink Action Buttons in bottom right of map area -->
+    <div class="floating-map-actions">
+      <button class="map-action-btn" id="map-btn-link" title="Link terpilih (Chain) [L]" onclick="linkSelectedShapes()">
+        <!-- Chain / Link icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+      </button>
+      <button class="map-action-btn" id="map-btn-unlink" title="Unlink terpilih [U]" onclick="unlinkSelectedShapes()">
+        <!-- Broken chain / Unlink icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3" /><line x1="8" y1="12" x2="16" y2="12" stroke="red" stroke-dasharray="3 3" /></svg>
+      </button>
+    </div>
   </div>
 
   <!-- RIGHT: properties -->
@@ -449,11 +507,21 @@
         <input type="range" class="opacity-slider" min="0.1" max="1.0" step="0.05" value="1.0" id="bg-opacity-slider" oninput="changeBgOpacity(this.value)">
       </div>
       <div class="sep"></div>
-      <button class="btn-export" style="background: rgba(59,130,246,0.12); color: var(--accent); border: 1px solid rgba(59,130,246,0.35);" onclick="saveToBrowserManual()">💾 Simpan di Browser</button>
-      <button class="btn-export" style="margin-top:4px;" onclick="showExport()">⬇ Export ke mapData.ts</button>
-      <button class="btn-ghost" style="margin-top:4px;" onclick="loadServerJSON()">🌐 Load map.json (Server)</button>
-      <button class="btn-ghost" style="margin-top:4px;" onclick="exportJSON()">📋 Simpan JSON</button>
-      <button class="btn-ghost" style="margin-top:4px;" onclick="importJSON()">📂 Buka JSON</button>
+      <button class="btn-export" onclick="saveToBrowserManual()">
+        <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Simpan di Browser
+      </button>
+      <button class="btn-export" style="margin-top:4px;" onclick="showExport()">
+        <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export ke mapData.ts
+      </button>
+      <button class="btn-ghost" style="margin-top:4px;" onclick="loadServerJSON()">
+        <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Load map.json (Server)
+      </button>
+      <button class="btn-ghost" style="margin-top:4px;" onclick="exportJSON()">
+        <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Simpan JSON
+      </button>
+      <button class="btn-ghost" style="margin-top:4px;" onclick="importJSON()">
+        <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Buka JSON
+      </button>
     </div>
   </div>
 </div>
@@ -464,7 +532,7 @@
   <span>Posisi: <span class="status-coords" id="status-coords">x:0 y:0</span></span>
   <span id="status-hint">Pilih tool dan klik di peta</span>
   <span id="status-live-info" style="margin-left:auto; display:none;">
-    <span class="status-live">🔴 LIVE</span>
+    <span class="status-live" style="background:#ef4444; color:#ffffff; padding:2px 6px; border-radius:3px; font-weight:700;">LIVE</span>
     <span style="font-size:9px; color:var(--muted);" id="status-live-count"></span>
     <span style="font-size:9px; color:var(--muted);" id="status-live-time"></span>
   </span>
@@ -474,7 +542,7 @@
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <div class="modal-header">
-      <h2>📄 Export → mapData.ts</h2>
+      <h2>Export → mapData.ts</h2>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
@@ -484,8 +552,10 @@
       <pre class="code-block" id="export-code"></pre>
     </div>
     <div class="modal-footer">
-      <button class="btn-copy" onclick="copyCode()">📋 Copy Semua</button>
-      <button class="btn-close-modal" onclick="closeModal()">Tutup</button>
+      <button class="btn-copy" onclick="copyCode()">
+        <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Copy Semua
+      </button>
+      <button class="btn-close-modal" onclick="closeModal()" style="background:var(--panel2); border:1px solid var(--border); color:var(--text);">Tutup</button>
     </div>
   </div>
 </div>
@@ -504,6 +574,7 @@ const SVG_ICONS = {
 
 let shapes = [];
 let selectedId = null;
+let selectedIds = new Set();
 let currentTool = 'select';
 let undoStack = [];
 let redoStack = [];
@@ -522,6 +593,14 @@ let spacePanning = false;
 let isDragging = false;
 let dragStartPts = [];
 let dragStartMouse = {x: 0, y: 0};
+
+// Magnet & Resize States
+let magnetEnabled = false;
+let isResizing = false;
+let activeResizeHandle = null;
+let initBBox = null;
+let resizeStartMouse = null;
+let resizeStartPts = [];
 
 let mapW = 0, mapH = 0;
 let idCounter = 1;
@@ -614,11 +693,13 @@ function toggleLayerVisibility(layerId) {
   const l = layers.find(layer => layer.id === layerId);
   if (!l) return;
   l.visible = !l.visible;
-  if (!l.visible && selectedId) {
-    const s = shapes.find(sh => sh.id === selectedId);
-    if (s && (s.layer || 1) === layerId) {
-      selectShape(null);
-    }
+  if (!l.visible && selectedIds.size > 0) {
+    let deselect = false;
+    selectedIds.forEach(id => {
+      const s = shapes.find(sh => sh.id === id);
+      if (s && (s.layer || 1) === layerId) deselect = true;
+    });
+    if (deselect) selectShape(null);
   }
   saveLayers();
   renderAll();
@@ -707,6 +788,7 @@ try {
   const savedShapes = localStorage.getItem('mtm_map_shapes');
   if (savedShapes) {
     shapes = JSON.parse(savedShapes);
+    ensureUuids(shapes);
     shapes.forEach(s => {
       if (s.id && s.id.startsWith('bld-new-')) {
         const num = parseInt(s.id.replace('bld-new-', ''), 10);
@@ -735,6 +817,27 @@ const gShapes = document.getElementById('g-shapes');
 const gPreview = document.getElementById('g-preview');
 const gHandles = document.getElementById('g-handles');
 const svgOverlay = document.getElementById('svg-overlay');
+
+function generateUuid() {
+  return 'uuid-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
+}
+
+function ensureUuids(arr) {
+  arr.forEach(s => {
+    if (!s.uuid) {
+      s.uuid = generateUuid();
+    }
+  });
+  // Resolve linkedShapeId to linkedShapeUuid
+  arr.forEach(s => {
+    if (s.linkedShapeId && !s.linkedShapeUuid) {
+      const target = arr.find(t => t.id === s.linkedShapeId);
+      if (target) {
+        s.linkedShapeUuid = target.uuid;
+      }
+    }
+  });
+}
 
 function newId() { return 'bld-new-' + (idCounter++); }
 
@@ -788,6 +891,86 @@ function pctToPx(px, py) {
 }
 function fmt(n) { return parseFloat(n.toFixed(2)); }
 
+function snapPoint(pt, excludeUuid = null) {
+  if (!magnetEnabled) return pt;
+  let bestPt = {...pt};
+  let minDist = 0.8; // threshold of 0.8% of map coordinate
+
+  // 1. Try to snap to other shapes' vertices
+  shapes.forEach(s => {
+    if (excludeUuid && (s.uuid === excludeUuid || s.id === excludeUuid)) return;
+    const layerId = s.layer || 1;
+    const lay = layers.find(l => l.id === layerId);
+    if (lay && !lay.visible) return;
+
+    s.points.forEach(p => {
+      const dist = Math.hypot(p.x - pt.x, p.y - pt.y);
+      if (dist < minDist) {
+        minDist = dist;
+        bestPt = { x: p.x, y: p.y };
+      }
+    });
+  });
+
+  // 2. If no vertex snap, snap to grid (e.g. increments of 0.5%)
+  if (minDist === 0.8) {
+    const gridX = Math.round(pt.x * 2) / 2;
+    const gridY = Math.round(pt.y * 2) / 2;
+    const dist = Math.hypot(gridX - pt.x, gridY - pt.y);
+    if (dist < 0.25) {
+      bestPt = { x: gridX, y: gridY };
+    }
+  }
+
+  return bestPt;
+}
+
+function toggleMagnet() {
+  magnetEnabled = !magnetEnabled;
+  const btn = document.getElementById('btn-magnet');
+  if (btn) {
+    if (magnetEnabled) {
+      btn.classList.add('active-magnet');
+    } else {
+      btn.classList.remove('active-magnet');
+    }
+  }
+}
+
+function getResizeHandles(shape) {
+  const xs = shape.points.map(p => p.x);
+  const ys = shape.points.map(p => p.y);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const midX = (minX + maxX) / 2;
+  const midY = (minY + maxY) / 2;
+
+  return [
+    { type: 'TL', x: minX, y: minY },
+    { type: 'TM', x: midX, y: minY },
+    { type: 'TR', x: maxX, y: minY },
+    { type: 'LM', x: minX, y: midY },
+    { type: 'RM', x: maxX, y: midY },
+    { type: 'BL', x: minX, y: maxY },
+    { type: 'BM', x: midX, y: maxY },
+    { type: 'BR', x: maxX, y: maxY }
+  ];
+}
+
+function getCursorForHandle(type) {
+  const cursors = {
+    'TL': 'nwse-resize',
+    'TR': 'nesw-resize',
+    'BL': 'nesw-resize',
+    'BR': 'nwse-resize',
+    'TM': 'ns-resize',
+    'BM': 'ns-resize',
+    'LM': 'ew-resize',
+    'RM': 'ew-resize'
+  };
+  return cursors[type] || 'default';
+}
+
 // ══════════════════════════════════════════════════════════
 // TOOLS
 // ══════════════════════════════════════════════════════════
@@ -834,24 +1017,55 @@ function onMouseDown(e) {
   if (e.button !== 0) return;
 
   const mp = clientToMapPx(e.clientX, e.clientY);
-  const pct = pxToPct(mp.x, mp.y);
+  let pct = pxToPct(mp.x, mp.y);
+  pct = snapPoint(pct, (selectedId || null));
 
   if (currentTool === 'select') {
+    // 1. Check if clicked on any resize handle of the currently selected single shape
+    if (selectedId && selectedIds.size === 1) {
+      const activeShape = shapes.find(s => s.uuid === selectedId);
+      if (activeShape && activeShape.type !== 'label') {
+        const handles = getResizeHandles(activeShape);
+        const clickedHandle = handles.find(h => Math.hypot(h.x - pct.x, h.y - pct.y) < 1.0 / zoom);
+        if (clickedHandle) {
+          isResizing = true;
+          activeResizeHandle = clickedHandle.type;
+          const xs = activeShape.points.map(p => p.x);
+          const ys = activeShape.points.map(p => p.y);
+          initBBox = {
+            minX: Math.min(...xs),
+            maxX: Math.max(...xs),
+            minY: Math.min(...ys),
+            maxY: Math.max(...ys)
+          };
+          resizeStartMouse = { x: pct.x, y: pct.y };
+          resizeStartPts = activeShape.points.map(p => ({...p}));
+          return;
+        }
+      }
+    }
+
+    // 2. Normal hitTest selection dragging
     const hit = hitTest(pct.x, pct.y);
     if (hit) {
-      selectShape(hit.id);
+      selectShape(hit.uuid, e.ctrlKey);
       isDragging = true;
       dragStartMouse = {x: pct.x, y: pct.y};
-      const dragIds = getLinkedShapeIds(hit.id);
-      dragStartPts = dragIds.map(id => {
-        const sh = shapes.find(s => s.id === id);
+      const dragUuids = Array.from(selectedIds);
+      const linkedUuids = getLinkedShapeIds(hit.uuid);
+      const dragSet = new Set(dragUuids);
+      linkedUuids.forEach(u => dragSet.add(u));
+      dragStartPts = Array.from(dragSet).map(uuid => {
+        const sh = shapes.find(s => s.uuid === uuid);
         return {
-          id: id,
+          id: uuid,
           points: sh.points.map(p => ({...p}))
         };
       });
     } else {
-      selectShape(null);
+      if (!e.ctrlKey) {
+        selectShape(null);
+      }
       isPanning = true;
       panStart = {x: e.clientX - panX, y: e.clientY - panY};
       viewport.style.cursor = 'grabbing';
@@ -884,12 +1098,12 @@ function onMouseDown(e) {
     const text = prompt('Teks label:', 'Nama Area');
     if (!text) return;
     saveUndo();
-    const s = { id: newId(), type: 'label', points: [{x: pct.x, y: pct.y}],
+    const s = { uuid: generateUuid(), id: newId(), type: 'label', points: [{x: pct.x, y: pct.y}],
       color: document.getElementById('tool-color').value,
       name: text, code: text, details: '', operationalStatus: 'Aktif', fontSize: 14,
       layer: activeLayer };
     shapes.push(s);
-    selectShape(s.id);
+    selectShape(s.uuid);
     renderAll();
     saveSession();
   }
@@ -903,21 +1117,59 @@ function onMouseMove(e) {
     return;
   }
   const mp = clientToMapPx(e.clientX, e.clientY);
-  const pct = pxToPct(mp.x, mp.y);
+  let pct = pxToPct(mp.x, mp.y);
+  pct = snapPoint(pct, (isDragging || isResizing ? selectedId : null));
   mousePos = pct;
   document.getElementById('status-coords').textContent = `x:${fmt(pct.x)} y:${fmt(pct.y)}`;
+
+  if (isResizing && selectedId) {
+    const activeShape = shapes.find(s => s.uuid === selectedId);
+    if (activeShape) {
+      const dx = pct.x - resizeStartMouse.x;
+      const dy = pct.y - resizeStartMouse.y;
+
+      let newMinX = initBBox.minX;
+      let newMaxX = initBBox.maxX;
+      let newMinY = initBBox.minY;
+      let newMaxY = initBBox.maxY;
+
+      if (activeResizeHandle.includes('L')) newMinX = Math.min(initBBox.maxX - 0.5, initBBox.minX + dx);
+      if (activeResizeHandle.includes('R')) newMaxX = Math.max(initBBox.minX + 0.5, initBBox.maxX + dx);
+      if (activeResizeHandle.includes('T')) newMinY = Math.min(initBBox.maxY - 0.5, initBBox.minY + dy);
+      if (activeResizeHandle.includes('B')) newMaxY = Math.max(initBBox.minY + 0.5, initBBox.maxY + dy);
+
+      const oldW = initBBox.maxX - initBBox.minX;
+      const oldH = initBBox.maxY - initBBox.minY;
+      const newW = newMaxX - newMinX;
+      const newH = newMaxY - newMinY;
+
+      if (oldW > 0 && oldH > 0) {
+        activeShape.points = resizeStartPts.map(p => {
+          const rx = (p.x - initBBox.minX) / oldW;
+          const ry = (p.y - initBBox.minY) / oldH;
+          return {
+            x: newMinX + rx * newW,
+            y: newMinY + ry * newH
+          };
+        });
+      }
+      renderAll();
+      updatePropsCoords(activeShape);
+      return;
+    }
+  }
 
   if (isDragging && selectedId && currentTool === 'select') {
     const dx = pct.x - dragStartMouse.x;
     const dy = pct.y - dragStartMouse.y;
     dragStartPts.forEach(item => {
-      const sh = shapes.find(s => s.id === item.id);
+      const sh = shapes.find(s => s.uuid === item.id || s.id === item.id);
       if (sh) {
         sh.points = item.points.map(p => ({x: p.x + dx, y: p.y + dy}));
       }
     });
     renderAll();
-    const sh = shapes.find(s => s.id === selectedId);
+    const sh = shapes.find(s => s.uuid === selectedId);
     if (sh) updatePropsCoords(sh);
     return;
   }
@@ -930,6 +1182,13 @@ function onMouseUp(e) {
     viewport.style.cursor = spacePanning ? 'grab' : (currentTool === 'select' ? 'default' : 'crosshair');
     return;
   }
+  if (isResizing) {
+    saveUndo();
+    isResizing = false;
+    activeResizeHandle = null;
+    saveSession();
+    return;
+  }
   if (isDragging && selectedId) {
     saveUndo();
     isDragging = false;
@@ -939,21 +1198,22 @@ function onMouseUp(e) {
   }
 
   const mp = clientToMapPx(e.clientX, e.clientY);
-  const pct = pxToPct(mp.x, mp.y);
+  let pct = pxToPct(mp.x, mp.y);
+  pct = snapPoint(pct, (selectedId || null));
 
   if (currentTool === 'rect' && isDrawing && rectStart) {
     const x1 = Math.min(rectStart.x, pct.x), y1 = Math.min(rectStart.y, pct.y);
     const x2 = Math.max(rectStart.x, pct.x), y2 = Math.max(rectStart.y, pct.y);
     if (Math.abs(x2-x1) > 0.3 && Math.abs(y2-y1) > 0.3) {
       saveUndo();
-      const s = { id: newId(), type: 'rect',
+      const s = { uuid: generateUuid(), id: newId(), type: 'rect',
         points: [{x:x1,y:y1},{x:x2,y:y1},{x:x2,y:y2},{x:x1,y:y2}],
         color: document.getElementById('tool-color').value,
         name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif',
         layer: activeLayer };
       shapes.push(s);
       isDrawing = false; rectStart = null; gPreview.innerHTML = '';
-      selectShape(s.id); renderAll(); saveSession();
+      selectShape(s.uuid); renderAll(); saveSession();
     } else {
       isDrawing = false; rectStart = null; gPreview.innerHTML = '';
     }
@@ -1004,10 +1264,13 @@ window.addEventListener('keydown', e => {
   if (e.key === 'p' || e.key === 'P') setTool('poly');
   if (e.key === 't' || e.key === 'T') setTool('label');
   if (e.key === 'Escape') cancelDrawing();
+  if (e.key === 'm' || e.key === 'M') { e.preventDefault(); toggleMagnet(); }
   if (e.key === 'Enter' && currentTool === 'poly' && drawPoints.length >= 3) finishPolygon();
   if ((e.key === 'Delete' || e.key === 'Backspace') && !isDragging) deleteSelected();
   if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
   if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
+  if (e.key === 'l' || e.key === 'L') { e.preventDefault(); linkSelectedShapes(); }
+  if (e.key === 'u' || e.key === 'U') { e.preventDefault(); unlinkSelectedShapes(); }
   if (e.key === '0') resetView();
   if (e.key === '+' || e.key === '=') changeZoom(0.25);
   if (e.key === '-') changeZoom(-0.25);
@@ -1030,13 +1293,13 @@ function finishDrawing() { cancelDrawing(); }
 function finishPolygon() {
   if (drawPoints.length < 3) return;
   saveUndo();
-  const s = { id: newId(), type: 'poly', points: [...drawPoints],
+  const s = { uuid: generateUuid(), id: newId(), type: 'poly', points: [...drawPoints],
     color: document.getElementById('tool-color').value,
     name: 'Area Baru', code: 'New Area', details: '', operationalStatus: 'Aktif',
     layer: activeLayer };
   shapes.push(s);
   drawPoints = []; isDrawing = false; gPreview.innerHTML = '';
-  selectShape(s.id); renderAll(); saveSession();
+  selectShape(s.uuid); renderAll(); saveSession();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1057,7 +1320,7 @@ function renderAll() {
 
     const layerShapes = shapes.filter(s => (s.layer || 1) === layer.id);
     layerShapes.forEach(shape => {
-      const isSelected = shape.id === selectedId;
+      const isSelected = selectedIds.has(shape.id);
       const color = shape.color || '#ef4444';
 
       if (shape.type === 'label') {
@@ -1094,7 +1357,7 @@ function renderAll() {
         hitRect.setAttribute('fill', 'transparent'); hitRect.style.cursor = 'pointer';
 
         g.appendChild(hitRect); g.appendChild(text);
-        g.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
+        g.onclick = ev => { ev.stopPropagation(); selectShape(shape.id, ev.ctrlKey); };
         gShapes.appendChild(g);
 
         if (isSelected) {
@@ -1117,7 +1380,7 @@ function renderAll() {
       poly.setAttribute('stroke-opacity', isSelected ? 1 : 0.8);
       poly.setAttribute('class', 'shape-poly' + (isSelected ? ' selected' : ''));
       poly.style.cursor = 'pointer';
-      poly.onclick = ev => { ev.stopPropagation(); selectShape(shape.id); };
+      poly.onclick = ev => { ev.stopPropagation(); selectShape(shape.id, ev.ctrlKey); };
       gShapes.appendChild(poly);
 
       if (shape.icon && SVG_ICONS[shape.icon]) {
@@ -1134,14 +1397,53 @@ function renderAll() {
       }
 
       if (isSelected) {
-        shape.points.forEach(p => {
-          const px = pctToPx(p.x, p.y);
-          const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
-          c.setAttribute('r', 5); c.setAttribute('fill', 'white');
-          c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
-          gHandles.appendChild(c);
-        });
+        if (shape.type !== 'label' && selectedIds.size === 1) {
+          const xs = shape.points.map(p => p.x);
+          const ys = shape.points.map(p => p.y);
+          const minX = Math.min(...xs), maxX = Math.max(...xs);
+          const minY = Math.min(...ys), maxY = Math.max(...ys);
+
+          const bboxMin = pctToPx(minX, minY);
+          const bboxMax = pctToPx(maxX, maxY);
+
+          // Draw Bounding Box dashed outline
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('x', bboxMin.x);
+          rect.setAttribute('y', bboxMin.y);
+          rect.setAttribute('width', bboxMax.x - bboxMin.x);
+          rect.setAttribute('height', bboxMax.y - bboxMin.y);
+          rect.setAttribute('fill', 'none');
+          rect.setAttribute('stroke', '#8b5cf6');
+          rect.setAttribute('stroke-width', 1.5);
+          rect.setAttribute('stroke-dasharray', '4,4');
+          gHandles.appendChild(rect);
+
+          // Draw 8 Handles
+          const resizeHandles = getResizeHandles(shape);
+          resizeHandles.forEach(h => {
+            const px = pctToPx(h.x, h.y);
+            const c = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            c.setAttribute('x', px.x - 4);
+            c.setAttribute('y', px.y - 4);
+            c.setAttribute('width', 8);
+            c.setAttribute('height', 8);
+            c.setAttribute('fill', '#ffffff');
+            c.setAttribute('stroke', '#8b5cf6');
+            c.setAttribute('stroke-width', 1.5);
+            c.style.cursor = getCursorForHandle(h.type);
+            gHandles.appendChild(c);
+          });
+        } else {
+          // Draw standard vertex circles for labels or multi-select
+          shape.points.forEach(p => {
+            const px = pctToPx(p.x, p.y);
+            const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
+            c.setAttribute('r', 5); c.setAttribute('fill', 'white');
+            c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 2);
+            gHandles.appendChild(c);
+          });
+        }
       }
     });
   }
@@ -1219,12 +1521,39 @@ function renderPreview() {
 // ══════════════════════════════════════════════════════════
 // SELECTION & PROPERTIES
 // ══════════════════════════════════════════════════════════
-function selectShape(id) {
-  selectedId = id;
+function selectShape(id, isCtrl = false) {
+  if (isCtrl) {
+    if (id) {
+      if (selectedIds.has(id)) {
+        selectedIds.delete(id);
+      } else {
+        selectedIds.add(id);
+      }
+      if (selectedId === id && !selectedIds.has(id)) {
+        selectedId = selectedIds.size > 0 ? Array.from(selectedIds)[0] : null;
+      } else if (!selectedId && selectedIds.size > 0) {
+        selectedId = id;
+      }
+    }
+  } else {
+    selectedIds.clear();
+    if (id) {
+      selectedId = id;
+      selectedIds.add(id);
+    } else {
+      selectedId = null;
+    }
+  }
+
   renderAll();
-  if (!id) { showDefaultProps(); return; }
-  const shape = shapes.find(s => s.id === id);
-  if (shape) showShapeProps(shape);
+  renderShapeList();
+
+  if (selectedId) {
+    const shape = shapes.find(s => s.id === selectedId);
+    if (shape) showShapeProps(shape);
+  } else {
+    showDefaultProps();
+  }
 }
 
 function showDefaultProps() {
@@ -1270,14 +1599,12 @@ function showShapeProps(shape) {
     </div>
 
     <div class="field-group">
-      <label class="field-label">⛓️ Link Gerak dengan Shape Lain</label>
-      <select class="field-input" style="border: 1px solid var(--purple);" onchange="linkToShape('${shape.id}', this.value)">
-        <option value="">Tidak ada (Independen)</option>
-        ${shapes.filter(s => s.id !== shape.id).map(s => {
-          const typeIcon = s.type === 'label' ? '🏷️' : (s.type === 'rect' ? '▭' : '⬡');
-          return `<option value="${s.id}" ${shape.linkedShapeId === s.id ? 'selected' : ''}>${typeIcon} ${s.code || s.name || s.id}</option>`;
-        }).join('')}
-      </select>
+      <label class="field-label">⛓️ Status Tautan Gerak</label>
+      <div style="font-size: 11px; color: var(--muted); padding: 5px 0;">
+        ${shape.linkedShapeId 
+          ? `Terdampak gerakan: <strong style="color: var(--purple);">${shapes.find(s => s.id === shape.linkedShapeId)?.code || shapes.find(s => s.id === shape.linkedShapeId)?.name || shape.linkedShapeId}</strong>` 
+          : 'Independen (Tidak ditautkan)'}
+      </div>
     </div>
 
     <div class="field-group">
@@ -1406,20 +1733,52 @@ function linkToPredefinedBuilding(shapeId, bldId) {
   showToast(`✅ Shape berhasil dihubungkan ke data: ${bld.code}`);
 }
 
-function linkToShape(shapeId, targetShapeId) {
-  const shape = shapes.find(s => s.id === shapeId);
-  if (!shape) return;
+function linkSelectedShapes() {
+  const ids = Array.from(selectedIds);
+  if (ids.length < 2) {
+    showToast("⚠ Pilih minimal 2 shape (gunakan Ctrl+klik) untuk menghubungkannya!");
+    return;
+  }
   saveUndo();
-  if (!targetShapeId) {
-    shape.linkedShapeId = null;
-    showToast(`✅ Tautan pergerakan shape dilepas`);
-  } else {
-    shape.linkedShapeId = targetShapeId;
-    showToast(`✅ Shape ditautkan pergerakan ke: ${targetShapeId}`);
+  // Chain selection link
+  for (let i = 1; i < ids.length; i++) {
+    const currentShape = shapes.find(s => s.id === ids[i]);
+    if (currentShape) {
+      currentShape.linkedShapeId = ids[i - 1];
+    }
   }
   saveSession();
   renderAll();
-  showShapeProps(shape);
+  if (selectedId) {
+    showShapeProps(shapes.find(s => s.id === selectedId));
+  }
+  showToast(`⛓️ Berhasil menautkan ${ids.length} area secara berantai!`);
+}
+
+function unlinkSelectedShapes() {
+  const ids = Array.from(selectedIds);
+  if (ids.length === 0) {
+    showToast("⚠ Pilih minimal 1 shape untuk melepas tautannya!");
+    return;
+  }
+  saveUndo();
+  let count = 0;
+  shapes.forEach(s => {
+    if (selectedIds.has(s.id) && s.linkedShapeId) {
+      s.linkedShapeId = null;
+      count++;
+    }
+    if (s.linkedShapeId && selectedIds.has(s.linkedShapeId)) {
+      s.linkedShapeId = null;
+      count++;
+    }
+  });
+  saveSession();
+  renderAll();
+  if (selectedId) {
+    showShapeProps(shapes.find(s => s.id === selectedId));
+  }
+  showToast(`🔓 Berhasil melepas ${count} hubungan tautan gerak!`);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1540,13 +1899,13 @@ function renderShapeList() {
     } else {
       layerShapes.forEach(s => {
         const item = document.createElement('div');
-        item.className = `shape-item ${s.id === selectedId ? 'selected' : ''}`;
+        item.className = `shape-item ${selectedIds.has(s.id) ? 'selected' : ''}`;
         item.setAttribute('draggable', 'true');
         item.setAttribute('ondragstart', `dragShape(event, '${s.id}')`);
 
         item.onclick = (e) => {
           e.stopPropagation();
-          selectShape(s.id);
+          selectShape(s.id, e.ctrlKey);
         };
 
         const icon = document.createElement('div');
@@ -1607,11 +1966,25 @@ function pointInPolygon(px, py, pts) {
 // ══════════════════════════════════════════════════════════
 // DELETE
 // ══════════════════════════════════════════════════════════
-function deleteSelected() { if (selectedId) deleteShape(selectedId); }
+function deleteSelected() {
+  if (selectedIds.size > 0) {
+    saveUndo();
+    shapes = shapes.filter(s => !selectedIds.has(s.id));
+    selectedIds.clear();
+    selectedId = null;
+    renderAll();
+    showDefaultProps();
+    saveSession();
+    showToast("🗑 Shapes terpilih berhasil dihapus");
+  } else if (selectedId) {
+    deleteShape(selectedId);
+  }
+}
 function deleteShape(id) {
   saveUndo();
   shapes = shapes.filter(s => s.id !== id);
-  if (selectedId === id) selectedId = null;
+  selectedIds.delete(id);
+  if (selectedId === id) selectedId = selectedIds.size > 0 ? Array.from(selectedIds)[0] : null;
   renderAll(); showDefaultProps(); saveSession();
 }
 
@@ -1640,12 +2013,14 @@ function undo() {
   if (!undoStack.length) return;
   redoStack.push(JSON.stringify(shapes));
   shapes = JSON.parse(undoStack.pop());
-  selectedId = null; renderAll(); showDefaultProps(); saveSession();
+  ensureUuids(shapes);
+  selectedId = null; selectedIds.clear(); renderAll(); showDefaultProps(); saveSession();
 }
 function redo() {
   if (!redoStack.length) return;
   undoStack.push(JSON.stringify(shapes));
   shapes = JSON.parse(redoStack.pop());
+  ensureUuids(shapes);
   renderAll(); showDefaultProps(); saveSession();
 }
 
@@ -1667,6 +2042,9 @@ function showExport() {
       // Rough meter estimate (map ~200m wide based on image)
       const wM = Math.round(wPct * 200 / 100) || 10;
       const hM = Math.round(hPct * 130 / 100) || 10;
+      const target = shapes.find(t => t.uuid === s.linkedShapeUuid);
+      const resolvedLinkedShapeId = target ? target.id : s.linkedShapeId;
+      const linkedIdPart = resolvedLinkedShapeId ? `,\n    linkedShapeId: "${resolvedLinkedShapeId}"` : '';
       return `  {
     id: "${s.id}",
     name: "${s.name}",
@@ -1677,7 +2055,7 @@ function showExport() {
     area: ${wM * hM},
     details: "${(s.details||'').replace(/"/g,'\\"')}",
     zones: [],
-    operationalStatus: "${s.operationalStatus || 'Aktif'}"${s.icon ? `,\n    icon: "${s.icon}"` : ''}${s.layer ? `,\n    layer: ${s.layer}` : ''}${s.linkedShapeId ? `,\n    linkedShapeId: "${s.linkedShapeId}"` : ''}
+    operationalStatus: "${s.operationalStatus || 'Aktif'}"${s.icon ? `,\n    icon: "${s.icon}"` : ''}${s.layer ? `,\n    layer: ${s.layer}` : ''}${linkedIdPart}
   }`;
     }).join(',\n');
 
@@ -1693,7 +2071,9 @@ function showExport() {
     out += `// REFERENSI POSISI LABEL (hanya untuk referensi koordinat)\n`;
     out += `// ════════════════════════════════════════════════════\n`;
     labels.forEach(s => {
-      out += `// "${s.name}" → x:${fmt(s.points[0].x)}% y:${fmt(s.points[0].y)}%${s.linkedShapeId ? ` (Linked to: ${s.linkedShapeId})` : ''}\n`;
+      const target = shapes.find(t => t.uuid === s.linkedShapeUuid);
+      const resolvedLinkedShapeId = target ? target.id : s.linkedShapeId;
+      out += `// "${s.name}" → x:${fmt(s.points[0].x)}% y:${fmt(s.points[0].y)}%${resolvedLinkedShapeId ? ` (Linked to: ${resolvedLinkedShapeId})` : ''}\n`;
     });
   }
 
@@ -1836,6 +2216,7 @@ function loadShapesData(rawText) {
 
   saveUndo();
   shapes = converted;
+  ensureUuids(shapes);
   
   // Update idCounter to avoid duplicate IDs
   converted.forEach(s => {
@@ -1847,7 +2228,7 @@ function loadShapesData(rawText) {
     }
   });
 
-  selectedId = null;
+  selectedId = null; selectedIds.clear();
   renderAll();
   showDefaultProps();
   saveSession();
@@ -1934,6 +2315,8 @@ function convertShapesToBuildings(shapeList) {
       const hPct = Math.max(...ys) - Math.min(...ys);
       const wM = Math.round(wPct * 200 / 100) || 10;
       const hM = Math.round(hPct * 130 / 100) || 10;
+      const target = shapeList.find(t => t.uuid === s.linkedShapeUuid);
+      const resolvedLinkedShapeId = target ? target.id : (s.linkedShapeId || undefined);
       return {
         id: s.id,
         name: s.name || 'Area',
@@ -1948,7 +2331,7 @@ function convertShapesToBuildings(shapeList) {
         icon: s.icon || undefined,
         color: s.color || '#3b82f6',
         layer: s.layer || 1,
-        linkedShapeId: s.linkedShapeId || undefined
+        linkedShapeId: resolvedLinkedShapeId
       };
     });
 }

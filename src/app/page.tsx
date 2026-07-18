@@ -11,6 +11,7 @@ const LIVE_STORAGE_KEY = 'mtm_live_buildings';
 const BROADCAST_CHANNEL = 'mtm-map-sync';
 
 export default function Home() {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activeView, setActiveView] = useState<'satellite' | 'layout'>('satellite');
 
   // Selection states
@@ -97,6 +98,28 @@ export default function Home() {
     };
   }, [applyLivePayload]);
 
+  // Load theme preference on mount
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('mtm_map_theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        setTheme(savedTheme);
+      }
+    } catch (_) {
+      // ignore
+    }
+  }, []);
+
+  const handleToggleTheme = () => {
+    setTheme(prev => {
+      const newTheme = prev === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('mtm_map_theme', newTheme);
+      } catch (_) {}
+      return newTheme;
+    });
+  };
+
   const resetToStaticData = () => {
     setLiveBuildings(null);
     setLiveInfo(null);
@@ -139,67 +162,91 @@ export default function Home() {
     : null;
 
   return (
-    <div className="app-container">
-      {/* Sleek Interactive Sidebar */}
-      <Sidebar
-        buildings={activeBuildings}
-        zones={zones}
-        selectedBuildingId={selectedBuildingId}
-        selectedZoneId={selectedZoneId}
-        selectedMachineId={selectedMachineId}
-        onSelectBuilding={handleSelectBuilding}
-        onSelectZone={handleSelectZone}
-        onSelectMachine={handleSelectMachine}
-        onTriggerSearchPan={handleTriggerSearchPan}
-        activeView={activeView}
-        setActiveView={setActiveView}
-      />
-
-      {/* Main Workspace */}
-      <main className="map-workspace">
-        {/* Floating Settings Gear Button */}
-        <button
-          onClick={() => setShowSettingsSidebar(true)}
-          className="floating-settings-btn"
-          title="Buka Pengaturan"
-        >
-          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
-          </svg>
-        </button>
-
-        {/* ── LIVE MODE BADGE ── */}
-        {liveInfo && (
-          <div className={`live-mode-badge${liveFlash ? ' live-flash' : ''}`}>
-            <span className="live-dot" />
-            <span className="live-badge-text">
-              LIVE
-              <span className="live-badge-count"> {liveInfo.count} shapes</span>
-              {liveTime && <span className="live-badge-time"> · {liveTime}</span>}
-            </span>
-            <button
-              className="live-reset-btn"
-              onClick={resetToStaticData}
-              title="Kembali ke data statis mapData.ts"
-            >
-              ✕ Reset
-            </button>
-          </div>
-        )}
-
-        {/* Dynamic Map Layers */}
-        <MapSatellite
+    <div className={`app-container theme-${theme}`}>
+      <div className="app-content-wrapper" style={{ display: 'flex', flex: 1, width: '100%', overflow: 'hidden' }}>
+        {/* Sleek Interactive Sidebar */}
+        <Sidebar
           buildings={activeBuildings}
+          zones={zones}
           selectedBuildingId={selectedBuildingId}
+          selectedZoneId={selectedZoneId}
+          selectedMachineId={selectedMachineId}
           onSelectBuilding={handleSelectBuilding}
-          hoveredId={hoveredBuildingId}
-          setHoveredId={setHoveredBuildingId}
-          bgOpacity={satelliteOpacity}
-          shapeOpacity={shapeOpacity}
-          showRoads={showRoadsL1}
+          onSelectZone={handleSelectZone}
+          onSelectMachine={handleSelectMachine}
+          onTriggerSearchPan={handleTriggerSearchPan}
+          activeView={activeView}
+          setActiveView={setActiveView}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
         />
-      </main>
+
+        {/* Main Workspace */}
+        <main className="map-workspace">
+          {/* Dynamic Map Layers */}
+          <MapSatellite
+            buildings={activeBuildings}
+            selectedBuildingId={selectedBuildingId}
+            onSelectBuilding={handleSelectBuilding}
+            hoveredId={hoveredBuildingId}
+            setHoveredId={setHoveredBuildingId}
+            bgOpacity={satelliteOpacity}
+            shapeOpacity={shapeOpacity}
+            showRoads={showRoadsL1}
+            activeView={activeView}
+            onShowSettings={() => setShowSettingsSidebar(true)}
+          />
+        </main>
+      </div>
+
+
+      {/* Compact Footer Bar for Physical Sizing Specifications */}
+      <footer className="app-footer-bar">
+        <div className="footer-cell left-cell">
+          <span className="footer-icon">📐</span>
+          <span>
+            {(() => {
+              const activeBldId = hoveredBuildingId || selectedBuildingId;
+              const selectedBuilding = activeBldId ? activeBuildings.find(b => b.id === activeBldId) : null;
+              const selectedZone = selectedZoneId ? zones.find(z => z.id === selectedZoneId) : null;
+              const selectedMachine = (selectedZone && selectedMachineId) ? selectedZone.machines.find(m => m.id === selectedMachineId) : null;
+
+              if (selectedMachine) {
+                const area = (selectedMachine.width * selectedMachine.height) / 100;
+                return `Ukuran Mesin "${selectedMachine.name}": ${selectedMachine.width / 10}m x ${selectedMachine.height / 10}m (Luas Tapak: ${area} m²)`;
+              }
+              if (selectedZone) {
+                const area = (selectedZone.width * selectedZone.height) / 100;
+                return `Ukuran Area/Zona "${selectedZone.name.split(' (')[0]}": ${selectedZone.width / 10}m x ${selectedZone.height / 10}m (Luas Tapak: ${area} m²)`;
+              }
+              if (selectedBuilding) {
+                return `Ukuran Bangunan "${selectedBuilding.name}": ${selectedBuilding.length}m x ${selectedBuilding.width}m (Total Luas Lantai: ${selectedBuilding.area.toLocaleString('id-ID')} m²)`;
+              }
+              return 'Pilih atau arahkan kursor ke objek (gedung, area, atau mesin) untuk melihat detail dimensi ukuran fisik';
+            })()}
+          </span>
+        </div>
+        <div className="footer-cell right-cell">
+          {(() => {
+            const activeBldId = hoveredBuildingId || selectedBuildingId;
+            const selectedBuilding = activeBldId ? activeBuildings.find(b => b.id === activeBldId) : null;
+            const selectedZone = selectedZoneId ? zones.find(z => z.id === selectedZoneId) : null;
+            const selectedMachine = (selectedZone && selectedMachineId) ? selectedZone.machines.find(m => m.id === selectedMachineId) : null;
+
+            if (selectedMachine) {
+              return `Mesin: ${selectedMachine.name} (${selectedMachine.id})`;
+            }
+            if (selectedZone) {
+              return `Area: ${selectedZone.name.split(' (')[0]} (${selectedZone.id})`;
+            }
+            if (selectedBuilding) {
+              const isHovered = hoveredBuildingId === selectedBuilding.id && selectedBuildingId !== selectedBuilding.id;
+              return `${isHovered ? 'Sorotan: ' : 'Gedung: '}${selectedBuilding.name} (${selectedBuilding.code})`;
+            }
+            return 'PT Menara Terus Makmur';
+          })()}
+        </div>
+      </footer>
 
       {/* Floating Right Settings Drawer */}
       <SettingsSidebar
