@@ -38,6 +38,12 @@ export interface BuildingData {
   zones: string[];
   operationalStatus: string;
   icon?: string;
+  color?: string;
+  layer?: number;
+  linkedShapeId?: string;
+  parentShapeId?: string;
+  hatched?: boolean;
+  isRoad?: boolean;
 }
 
 export const buildings: BuildingData[] = [

@@ -17,6 +17,7 @@ interface SidebarProps {
   setActiveView: (view: 'satellite' | 'layout') => void;
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
+  hoveredBuildingId: string | null;
 }
 
 export default function Sidebar({
@@ -33,6 +34,7 @@ export default function Sidebar({
   setActiveView,
   theme,
   onToggleTheme,
+  hoveredBuildingId,
 }: SidebarProps) {
   const [expandedGroups, setExpandedGroups] = useState({
     gedung: false,
@@ -470,6 +472,33 @@ export default function Sidebar({
           </div>
         ) : null}
       </div>
+
+      {/* Floating Hover Info Banner at the bottom of the sidebar */}
+      {hoveredBuildingId && (() => {
+        const hoveredBld = buildings.find(b => b.id === hoveredBuildingId);
+        if (!hoveredBld) return null;
+        return (
+          <div 
+            style={{
+              padding: '10px 14px',
+              background: 'rgba(59, 130, 246, 0.08)',
+              borderTop: '1.5px solid var(--primary)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px',
+              animation: 'fadeIn 0.2s ease-out'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '9px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>Menyorot Area</span>
+              <span style={{ fontSize: '9.5px', background: 'rgba(255,255,255,0.06)', padding: '1px 5px', borderRadius: '3px', color: 'var(--text-main)', border: '1px solid var(--border-color)', fontWeight: 'bold' }}>{hoveredBld.code}</span>
+            </div>
+            <div style={{ fontSize: '12.5px', fontWeight: 'bold', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {hoveredBld.name}
+            </div>
+          </div>
+        );
+      })()}
     </aside>
   );
 }

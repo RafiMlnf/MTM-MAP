@@ -6,9 +6,10 @@ import { BuildingData, roads } from '../data/mapData';
 const SVG_ICONS: Record<string, string> = {
   mesin: `<path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L1.97 8.24a.5.5 0 0 0 .12.64l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.12.22.37.29.6.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.42.5.42h3.84c.24 0 .44-.17.49-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>`,
   listrik: `<path d="M11.5 2L3 13h7v9l8.5-11h-7z"/>`,
-  taman: `<path d="M12 2C7.58 2 4 5.58 4 10c0 2.9 1.54 5.43 3.86 6.86l-.86 3.14h10l-.86-3.14C18.46 15.43 20 12.9 20 10c0-4.42-3.58-8-8-8zm1 14h-2v3h2v-3z"/>`,
+  taman: `<path d="M5 21a1 1 0 0 1-1-1c0-4.5 3-9 7-11a1 1 0 0 1 1.5 1c-.5 4-2.5 8-6.5 10a1 1 0 0 1-1 1zm7 0a1 1 0 0 1-1-1c0-5.5 2-11 6-13a1 1 0 0 1 1.5 1c-.5 5-2.5 10-5.5 12a1 1 0 0 1-1 1zm5 0a1 1 0 0 1-1-1c0-3.5 1.5-7 4-9a1 1 0 0 1 1.5 1c-.5 3-1.5 6-3.5 8a1 1 0 0 1-1 1z"/>`,
   masjid: `<path d="M12 2c.4 0 .7.3.7.7v1.1c2 .2 3.8 1.3 4.8 3.1.2-.1.4-.2.6-.2 1 0 1.9.9 1.9 1.9 0 .4-.1.8-.4 1.1l-1.3 5.4c.5.3.7.8.7 1.4v2.5c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-2.5c0-.6.3-1.1.7-1.4l-1.3-5.4C4.1 9.9 4 9.5 4 9.1c0-1 .9-1.9 1.9-1.9.2 0 .4.1.6.2C7.5 5.6 9.3 4.5 11.3 4.3V2.7c0-.4.3-.7.7-.7zm0 3.3c-3.1 0-5.7 2.3-6.1 5.3h12.2C17.7 7.6 15.1 5.3 12 5.3zM7 16.5v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z"/>`,
-  parkir: `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 11h-3v3H8V8h5c1.66 0 3 1.34 3 3s-1.34 3-3 3zm0-4h-3v2h3c.55 0 1-.45 1-1s-.45-1-1-1z"/>`
+  parkir: `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 11h-3v3H8V8h5c1.66 0 3 1.34 3 3s-1.34 3-3 3zm0-4h-3v2h3c.55 0 1-.45 1-1s-.45-1-1-1z"/>`,
+  areal: `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>`
 };
 
 interface MapSatelliteProps {
@@ -46,6 +47,7 @@ export default function MapSatellite({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [animateTransform, setAnimateTransform] = useState(true);
+  const [focusBuildingId, setFocusBuildingId] = useState<string | null>(null);
 
   const scaleRef = useRef(scale);
   const offsetRef = useRef(offset);
@@ -260,6 +262,33 @@ export default function MapSatellite({
       onClick={handleBackgroundClick}
     >
       {/* Zoom controls floating on map */}
+      {focusBuildingId && (
+        <button
+          onClick={(e) => { e.stopPropagation(); setFocusBuildingId(null); }}
+          style={{
+            position: 'absolute',
+            top: 20,
+            left: 20,
+            zIndex: 99,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            backgroundColor: '#0f172a',
+            border: '1px solid #334155',
+            borderRadius: 6,
+            color: '#f8fafc',
+            padding: '8px 16px',
+            fontSize: '12px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+            transition: 'background 0.2s',
+          }}
+        >
+          <span>⬅ Kembali ke Area Utama</span>
+        </button>
+      )}
+
       <div className="map-controls">
         <button onClick={handleZoomIn} title="Zoom In" className="control-btn">
           <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -326,7 +355,50 @@ export default function MapSatellite({
                 strokeWidth="0.8"
               />
             </pattern>
+            {/* Generic hatching pattern for hatched shapes */}
+            <pattern
+              id="hatch-pattern"
+              width="3"
+              height="3"
+              patternTransform="rotate(45 0 0)"
+              patternUnits="userSpaceOnUse"
+            >
+              <line x1="0" y1="0" x2="0" y2="3" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" />
+            </pattern>
+
+            {/* Drill-down clipPath: even-odd rule punches a hole at the parent polygon.
+                The outer rect (0 0 → 100 100) MINUS the parent polygon = only outside is clipped/visible */}
+            {focusBuildingId && (() => {
+              const parentBld = buildings.find(b => b.id === focusBuildingId);
+              if (!parentBld) return null;
+              // Convert "x,y x,y ..." to SVG path "M x y L x y ... Z"
+              const pts = parentBld.points.trim().split(/\s+/).map(p => {
+                const [x, y] = p.split(',').map(Number);
+                return `${x} ${y}`;
+              });
+              const innerPath = `M ${pts.join(' L ')} Z`;
+              const outerRect  = `M 0 0 L 100 0 L 100 100 L 0 100 Z`;
+              return (
+                <clipPath id="outside-parent-clip">
+                  <path d={`${outerRect} ${innerPath}`} clipRule="evenodd" />
+                </clipPath>
+              );
+            })()}
           </defs>
+
+          {/* Dark overlay OUTSIDE parent shape — rendered before child shapes so children appear on top */}
+          {focusBuildingId && (
+            <rect
+              x="0"
+              y="0"
+              width="100"
+              height="100"
+              fill="rgba(4, 6, 11, 0.68)"
+              clipPath="url(#outside-parent-clip)"
+              style={{ pointerEvents: 'none' }}
+            />
+          )}
+
           {/* Render roads under the buildings with rounded turns */}
           {showRoads && activeView === 'satellite' && (
             <g>
@@ -338,33 +410,121 @@ export default function MapSatellite({
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
             const baseColor = bld.color || '#3b82f6';
+            const isFocusedParent = focusBuildingId === bld.id;
+
+            if (focusBuildingId) {
+              const isChild = bld.parentShapeId === focusBuildingId;
+              if (!isFocusedParent && !isChild) return null;
+            } else {
+              // Hide child shapes by default — only if parent exists AND this shape is not itself a parent
+              const isChildShape = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
+              const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
+              if (isChildShape && !isAlsoParent) return null;
+            }
+
+            if (isFocusedParent) {
+              return (
+                <polygon
+                  key={`${bld.id}-${idx}`}
+                  points={bld.points}
+                  fill="none"
+                  stroke="#a78bfa"
+                  strokeWidth={0.25}
+                  strokeDasharray="0.8,0.8"
+                  style={{ pointerEvents: 'none' }}
+                />
+              );
+            }
+
+            if (bld.isRoad) {
+              return (
+                <g 
+                  key={`${bld.id}-${idx}`}
+                  onClick={(e) => handleElementClick(e, bld.id)}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
+                    if (hasChildren) setFocusBuildingId(bld.id);
+                  }}
+                  onMouseEnter={() => setHoveredId(bld.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <polyline
+                    points={bld.points}
+                    fill="none"
+                    stroke={baseColor}
+                    strokeWidth={isSelected ? 2.2 : 1.6}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                      strokeOpacity: isSelected 
+                        ? 0.95 
+                        : isHovered 
+                          ? 0.9 
+                          : 0.8
+                    }}
+                  />
+                  <polyline
+                    points={bld.points}
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth={0.18}
+                    strokeDasharray="1.0,1.0"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                      strokeOpacity: isSelected ? 0.98 : 0.9
+                    }}
+                  />
+                </g>
+              );
+            }
 
             return (
+              <>
               <polygon
                 key={`${bld.id}-${idx}`}
                 id={bld.id}
                 points={bld.points}
                 className={`building-polygon ${isSelected ? 'selected' : ''} ${
                   isHovered ? 'hovered' : ''
-                }`}
+                } ${bld.icon === 'listrik' ? 'shape-pulse-slow' : ''}`}
                 style={{
                   fill: baseColor,
                   stroke: baseColor,
-                  fillOpacity: isSelected 
-                    ? shapeOpacity * 0.4 
-                    : isHovered 
-                      ? shapeOpacity * 0.5 
-                      : shapeOpacity * 0.2,
+                  fillOpacity: bld.icon === 'listrik'
+                    ? undefined
+                    : isSelected 
+                      ? shapeOpacity * 0.7 
+                      : isHovered 
+                        ? shapeOpacity * 0.8 
+                        : shapeOpacity * 0.45,
                   strokeOpacity: isSelected 
                     ? 1 
                     : isHovered 
-                      ? 0.9 
-                      : 0.6
+                      ? 0.98 
+                      : 0.85
                 }}
                 onClick={(e) => handleElementClick(e, bld.id)}
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
+                  if (hasChildren) setFocusBuildingId(bld.id);
+                }}
                 onMouseEnter={() => setHoveredId(bld.id)}
                 onMouseLeave={() => setHoveredId(null)}
               />
+              {bld.hatched && (
+                <polygon
+                  key={`hatch-${bld.id}-${idx}`}
+                  points={bld.points}
+                  fill="url(#hatch-pattern)"
+                  stroke="none"
+                  style={{ pointerEvents: 'none', opacity: 0.85 }}
+                />
+              )}
+            </>
             );
           })}
 
@@ -372,15 +532,22 @@ export default function MapSatellite({
           {activeView === 'satellite' && buildings.map((bld, idx) => {
             if (!bld.icon || !SVG_ICONS[bld.icon]) return null;
 
+            if (focusBuildingId) {
+              const isChild = bld.parentShapeId === focusBuildingId;
+              if (!isChild) return null;
+            } else {
+              const isChildShape = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
+              const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
+              if (isChildShape && !isAlsoParent) return null;
+            }
+
             const coords = bld.points.split(' ').map((p) => p.split(',').map(Number));
             const xs = coords.map((c) => c[0]);
             const ys = coords.map((c) => c[1]);
             const centerX = (Math.max(...xs) + Math.min(...xs)) / 2;
             const centerY = (Math.max(...ys) + Math.min(...ys)) / 2;
 
-            const isSelected = selectedBuildingId === bld.id;
-            const isHovered = hoveredId === bld.id;
-            const color = isSelected ? '#10b981' : (isHovered ? '#1d4ed8' : 'rgba(29, 78, 216, 0.75)');
+            const color = bld.color || '#3b82f6';
 
             return (
               <g
@@ -393,38 +560,7 @@ export default function MapSatellite({
             );
           })}
 
-          {/* Main Entrance Green Arrow, Yellow Gate, & Label */}
-          {activeView === 'satellite' && (
-            <g className="entrance-overlay">
-              <polygon
-                points="36,84.8 35.2,86.5 35.7,86.5 35.7,87.3 36.3,87.3 36.3,86.5 36.8,86.5"
-                fill="#10b981"
-                stroke="#047857"
-                strokeWidth="0.1"
-              />
-              {/* Yellow Gate Line */}
-              <line
-                x1="34.5"
-                y1="87.6"
-                x2="37.5"
-                y2="87.6"
-                stroke="#fbbf24"
-                strokeWidth="0.35"
-                strokeLinecap="round"
-              />
-              <text
-                x="36"
-                y="89.5"
-                fill="#047857"
-                fontSize="1.3"
-                fontWeight="bold"
-                textAnchor="middle"
-                style={{ letterSpacing: '0.1px', fontFamily: 'Inter, sans-serif' }}
-              >
-                PINTU MASUK
-              </text>
-            </g>
-          )}
+          {/* Entrance-overlay removed */}
         </svg>
       </div>
     </div>

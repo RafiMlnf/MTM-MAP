@@ -179,6 +179,7 @@ export default function Home() {
           setActiveView={setActiveView}
           theme={theme}
           onToggleTheme={handleToggleTheme}
+          hoveredBuildingId={hoveredBuildingId}
         />
 
         {/* Main Workspace */}
