@@ -482,7 +482,7 @@ export default function MapSatellite({
             }
 
             return (
-              <>
+              <React.Fragment key={`${bld.id}-${idx}`}>
               <polygon
                 key={`${bld.id}-${idx}`}
                 id={bld.id}
@@ -524,7 +524,7 @@ export default function MapSatellite({
                   style={{ pointerEvents: 'none', opacity: 0.85 }}
                 />
               )}
-            </>
+            </React.Fragment>
             );
           })}
 

@@ -399,6 +399,12 @@
       0%, 100% { fill-opacity: 0.35; }
       50% { fill-opacity: 0.85; }
     }
+    
+    /* ── DRAG & DROP OVER LAYERS ── */
+    .layer-group-header.dragover, .layer-shapes-list.dragover {
+      background: rgba(59, 130, 246, 0.25) !important;
+      border: 1px dashed var(--accent) !important;
+    }
   </style>
 </head>
 <body>
@@ -851,18 +857,56 @@ function moveLayer(index, direction) {
 function dragShape(ev, shapeId) {
   ev.dataTransfer.setData("shapeId", shapeId);
 }
+function dragLayer(ev, layerId) {
+  if (ev.target.closest('.layer-action-btn') || ev.target.closest('.layer-visibility-btn') || ev.target.closest('button')) {
+    ev.preventDefault();
+    return;
+  }
+  ev.dataTransfer.setData("layerId", layerId.toString());
+}
 function allowDrop(ev) {
   ev.preventDefault();
 }
-function dropShape(ev, targetLayerId) {
+function dragEnter(ev) {
   ev.preventDefault();
+  const el = ev.currentTarget;
+  if (el) el.classList.add('dragover');
+}
+function dragLeave(ev) {
+  const el = ev.currentTarget;
+  if (el) el.classList.remove('dragover');
+}
+function dropOnLayer(ev, targetLayerId) {
+  ev.preventDefault();
+  const el = ev.currentTarget;
+  if (el) el.classList.remove('dragover');
+  
   const shapeId = ev.dataTransfer.getData("shapeId");
-  if (!shapeId) return;
-  const sh = shapes.find(s => s.id === shapeId);
-  if (sh) {
-    sh.layer = targetLayerId;
-    saveSession();
-    renderAll();
+  const layerIdStr = ev.dataTransfer.getData("layerId");
+  
+  if (shapeId) {
+    const sh = shapes.find(s => s.uuid === shapeId || s.id === shapeId);
+    if (sh) {
+      saveUndo();
+      sh.layer = targetLayerId;
+      saveSession();
+      renderAll();
+      showToast(`📁 Shape dipindahkan ke layer: ${layers.find(l => l.id === targetLayerId)?.name}`);
+    }
+  } else if (layerIdStr) {
+    const sourceLayerId = parseInt(layerIdStr, 10);
+    if (sourceLayerId === targetLayerId) return;
+    
+    const sourceIdx = layers.findIndex(l => l.id === sourceLayerId);
+    const targetIdx = layers.findIndex(l => l.id === targetLayerId);
+    if (sourceIdx !== -1 && targetIdx !== -1) {
+      saveUndo();
+      const [movedLayer] = layers.splice(sourceIdx, 1);
+      layers.splice(targetIdx, 0, movedLayer);
+      saveLayers();
+      renderAll();
+      showToast(`↔️ Urutan layer diubah`);
+    }
   }
 }
 
@@ -2343,8 +2387,12 @@ function renderShapeList() {
 
     const header = document.createElement('div');
     header.className = `layer-group-header ${activeLayer === layer.id ? 'active' : ''}`;
+    header.setAttribute('draggable', 'true');
+    header.setAttribute('ondragstart', `dragLayer(event, ${layer.id})`);
     header.setAttribute('ondragover', 'allowDrop(event)');
-    header.setAttribute('ondrop', `dropShape(event, ${layer.id})`);
+    header.setAttribute('ondragenter', 'dragEnter(event)');
+    header.setAttribute('ondragleave', 'dragLeave(event)');
+    header.setAttribute('ondrop', `dropOnLayer(event, ${layer.id})`);
 
     header.onclick = (e) => {
       if (e.target.closest('.layer-action-btn') || e.target.closest('.layer-visibility-btn')) return;
@@ -2439,7 +2487,9 @@ function renderShapeList() {
     const container = document.createElement('div');
     container.className = `layer-shapes-list ${layer.expanded ? '' : 'collapsed'}`;
     container.setAttribute('ondragover', 'allowDrop(event)');
-    container.setAttribute('ondrop', `dropShape(event, ${layer.id})`);
+    container.setAttribute('ondragenter', 'dragEnter(event)');
+    container.setAttribute('ondragleave', 'dragLeave(event)');
+    container.setAttribute('ondrop', `dropOnLayer(event, ${layer.id})`);
 
     if (layerShapes.length === 0) {
       const empty = document.createElement('div');
@@ -2516,11 +2566,18 @@ function renderShapeList() {
             if (childrenInThisLayer.length === 0) return;
 
             // Gambar folder layer child dengan visual menjorok
+            const isChildLayerActive = activeLayer === cl.id || selectedLayerIdForProps === cl.id;
             const childLayerFolder = document.createElement('div');
-            childLayerFolder.style.cssText = 'margin-left: 10px; padding: 2px 6px; font-size: 9px; color: var(--purple); display: flex; align-items: center; gap: 4px; border-left: 1px dashed var(--purple); background: rgba(167, 139, 250, 0.05); margin-top: 1px; margin-bottom: 1px; cursor: pointer;';
-            childLayerFolder.innerHTML = `<span style="opacity: 0.7;">↳ 📂</span><span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">${escHtml(cl.name)}</span><span style="color: var(--muted); font-size: 8px;">(${childrenInThisLayer.length})</span>`;
+            childLayerFolder.className = `layer-group-header ${isChildLayerActive ? 'active' : ''}`;
+            childLayerFolder.style.cssText = `margin-left: 10px; padding: 3px 6px; font-size: 9px; color: var(--purple); display: flex; align-items: center; gap: 4px; border-left: 2px solid var(--purple); background: ${isChildLayerActive ? 'rgba(167, 139, 250, 0.2)' : 'rgba(167, 139, 250, 0.08)'}; margin-top: 2px; margin-bottom: 2px; cursor: pointer; border-radius: 4px; transition: all 0.15s;`;
+            childLayerFolder.innerHTML = `<span style="opacity: 0.8;">↳ 📂</span><span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">${escHtml(cl.name)}</span><span style="color: var(--muted); font-size: 8px;">(${childrenInThisLayer.length})</span>`;
             
-            // Klik folder child layer untuk membuka propertinya
+            childLayerFolder.setAttribute('ondragover', 'allowDrop(event)');
+            childLayerFolder.setAttribute('ondragenter', 'dragEnter(event)');
+            childLayerFolder.setAttribute('ondragleave', 'dragLeave(event)');
+            childLayerFolder.setAttribute('ondrop', `dropOnLayer(event, ${cl.id})`);
+
+            // Klik folder child layer untuk membuka propertinya & menetapkannya sebagai activeLayer
             childLayerFolder.onclick = (e) => {
               e.stopPropagation();
               activeLayer = cl.id;
