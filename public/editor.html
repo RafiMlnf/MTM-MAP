@@ -2,9 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>PT MTM - Visual Map Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Google Sans", sans-serif !important; }
     :root {
       --bg: #0f1117;
       --panel: #161b27;
@@ -19,7 +22,7 @@
       --muted: #64748b;
     }
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Google Sans';
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -1565,7 +1568,7 @@ function renderAll() {
         text.setAttribute('stroke', 'rgba(0,0,0,0.8)'); text.setAttribute('stroke-width', fs * 0.2);
         text.setAttribute('paint-order', 'stroke'); text.setAttribute('text-anchor', 'middle');
         text.setAttribute('dominant-baseline', 'middle'); text.setAttribute('class', 'shape-label-text');
-        text.setAttribute('font-family', 'Segoe UI, system-ui, sans-serif');
+        text.setAttribute('font-family', 'Google Sans');
         text.textContent = shape.name;
 
         const hitRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');

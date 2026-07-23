@@ -1,0 +1,5710 @@
+[
+  {
+    "id": "bld-new-1",
+    "type": "rect",
+    "points": [
+      {
+        "x": 38.495188936965285,
+        "y": 14.14756888161861
+      },
+      {
+        "x": 47.04246843445801,
+        "y": 14.14756888161861
+      },
+      {
+        "x": 47.04246843445801,
+        "y": 35.777567305857794
+      },
+      {
+        "x": 38.495188936965285,
+        "y": 35.777567305857794
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Shotblasting",
+    "code": "Shotblasting",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-zb2cafos1-1784507442279"
+  },
+  {
+    "id": "bld-new-2",
+    "type": "rect",
+    "points": [
+      {
+        "x": 93.77998679545567,
+        "y": 90.27863177028705
+      },
+      {
+        "x": 96.37088985907923,
+        "y": 90.27863177028705
+      },
+      {
+        "x": 96.37088985907923,
+        "y": 93.91251206169618
+      },
+      {
+        "x": 93.77998679545567,
+        "y": 93.91251206169618
+      }
+    ],
+    "color": "#e4f042",
+    "name": "Gardu Listrik",
+    "code": "Gardu Listrik",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-c00hufikf-1784507442279",
+    "hatched": false,
+    "layer": 1784508980953,
+    "icon": "listrik"
+  },
+  {
+    "id": "bld-new-3",
+    "type": "rect",
+    "points": [
+      {
+        "x": 86.89104989842295,
+        "y": 67.46464177391823
+      },
+      {
+        "x": 98.20293158685126,
+        "y": 67.46464177391823
+      },
+      {
+        "x": 98.20293158685126,
+        "y": 86.61463315138458
+      },
+      {
+        "x": 86.89104989842295,
+        "y": 86.61463315138458
+      }
+    ],
+    "color": "#42f04e",
+    "name": "Taman",
+    "code": "Taman",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-5ytitiagr-1784507442279",
+    "icon": "taman",
+    "layer": 1784507665788,
+    "hatched": true
+  },
+  {
+    "id": "bld-new-5",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.52661782277129,
+        "y": 86.84588284024684
+      },
+      {
+        "x": 93.70131706961585,
+        "y": 86.84588284024684
+      },
+      {
+        "x": 93.70131706961585,
+        "y": 96.36462309515953
+      },
+      {
+        "x": 71.52661782277129,
+        "y": 96.36462309515953
+      }
+    ],
+    "color": "#4e42f0",
+    "name": "Parkir Motor",
+    "code": "Parkir Motor",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-4e07bag01-1784507442279",
+    "hatched": true,
+    "layer": 1784508686805,
+    "icon": "parkir"
+  },
+  {
+    "id": "bld-new-6",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.56044697058711,
+        "y": 82.19877295819256
+      },
+      {
+        "x": 77.20124252075361,
+        "y": 82.19877295819256
+      },
+      {
+        "x": 77.20124252075361,
+        "y": 86.84078181078812
+      },
+      {
+        "x": 71.56044697058711,
+        "y": 86.84078181078812
+      }
+    ],
+    "color": "#4e42f0",
+    "name": "Parkir Motor 2",
+    "code": "Parkir Motor 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-4vkfzmq7e-1784507442279",
+    "linkedShapeUuid": null,
+    "layer": 1784508686805,
+    "hatched": true,
+    "icon": "parkir"
+  },
+  {
+    "id": "bld-new-7",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.56097716347034,
+        "y": 74.25644879874213
+      },
+      {
+        "x": 77.18496197183775,
+        "y": 74.25644879874213
+      },
+      {
+        "x": 77.18496197183775,
+        "y": 81.31186217456255
+      },
+      {
+        "x": 71.56097716347034,
+        "y": 81.31186217456255
+      }
+    ],
+    "color": "#4e42f0",
+    "name": "Parkir Mobil 1",
+    "code": "Parkir Mobil 1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-9wg30ha2q-1784507442279",
+    "linkedShapeUuid": null,
+    "hatched": true,
+    "layer": 1784508686805,
+    "icon": "parkir"
+  },
+  {
+    "id": "bld-new-8",
+    "type": "rect",
+    "points": [
+      {
+        "x": 67.56477992960691,
+        "y": 74.25727247442514
+      },
+      {
+        "x": 71.00731249939601,
+        "y": 74.25727247442514
+      },
+      {
+        "x": 71.00731249939601,
+        "y": 92.47808563087678
+      },
+      {
+        "x": 67.56477992960691,
+        "y": 92.47808563087678
+      }
+    ],
+    "color": "#5742f0",
+    "name": "Parkir Mobil 2",
+    "code": "Parkir Mobil 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-x8wf6uasu-1784507442279",
+    "linkedShapeUuid": null,
+    "hatched": true,
+    "layer": 1784508686805,
+    "icon": "parkir"
+  },
+  {
+    "id": "bld-new-9",
+    "type": "rect",
+    "points": [
+      {
+        "x": 37.62527306362245,
+        "y": 77.07297462142158
+      },
+      {
+        "x": 43.689194232066946,
+        "y": 77.07297462142158
+      },
+      {
+        "x": 43.689194232066946,
+        "y": 82.58054325822297
+      },
+      {
+        "x": 37.62527306362245,
+        "y": 82.58054325822297
+      }
+    ],
+    "color": "#42f057",
+    "name": "Taman Koperasi",
+    "code": "T-Koperasi",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-p2z3g1dug-1784507442279",
+    "layer": 1784507665788,
+    "locked": true
+  },
+  {
+    "id": "bld-new-10",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.480603400739296,
+        "y": 66.29448985900216
+      },
+      {
+        "x": 11.650343572198834,
+        "y": 66.29448985900216
+      },
+      {
+        "x": 11.650343572198834,
+        "y": 68.84844383140756
+      },
+      {
+        "x": 5.480603400739296,
+        "y": 68.84844383140756
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Mushola",
+    "code": "Mushola",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-1atqzhy3a-1784507442279",
+    "layer": 1
+  },
+  {
+    "id": "bld-new-11",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.250772531279319,
+        "y": 38.85756496575531
+      },
+      {
+        "x": 11.59209980167908,
+        "y": 38.85756496575531
+      },
+      {
+        "x": 11.59209980167908,
+        "y": 48.463031033709626
+      },
+      {
+        "x": 5.250772531279319,
+        "y": 48.463031033709626
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Maintenance Workshop",
+    "code": "Maintenance Workshop",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-u28o6877p-1784507442279"
+  },
+  {
+    "id": "bld-new-12",
+    "type": "rect",
+    "points": [
+      {
+        "x": 7.399182498015221,
+        "y": 27.34013422025134
+      },
+      {
+        "x": 11.4603426611084,
+        "y": 27.34013422025134
+      },
+      {
+        "x": 11.4603426611084,
+        "y": 33.438326919424824
+      },
+      {
+        "x": 7.399182498015221,
+        "y": 33.438326919424824
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Coolling Tower",
+    "code": "Coolling Tower",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-8xaaenwvs-1784507442279"
+  },
+  {
+    "id": "bld-new-13",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.260098137302021,
+        "y": 21.04627758420597
+      },
+      {
+        "x": 11.553346328965494,
+        "y": 21.04627758420597
+      },
+      {
+        "x": 11.553346328965494,
+        "y": 23.818183356557558
+      },
+      {
+        "x": 5.260098137302021,
+        "y": 23.818183356557558
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Oil Stock",
+    "code": "Oil Stock",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-ka4matpln-1784507442279"
+  },
+  {
+    "id": "bld-new-15",
+    "type": "rect",
+    "points": [
+      {
+        "x": 8.520401503896876,
+        "y": 15.665519320229372
+      },
+      {
+        "x": 11.558521320562003,
+        "y": 15.665519320229372
+      },
+      {
+        "x": 11.558521320562003,
+        "y": 20.948445615770034
+      },
+      {
+        "x": 8.520401503896876,
+        "y": 20.948445615770034
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Tangki Solar",
+    "code": "Tangki Solar",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-g1fm0tz59-1784507442279"
+  },
+  {
+    "id": "bld-new-16",
+    "type": "rect",
+    "points": [
+      {
+        "x": 56.91380431079313,
+        "y": 11.532830957308713
+      },
+      {
+        "x": 66.40775482927033,
+        "y": 11.532830957308713
+      },
+      {
+        "x": 66.40775482927033,
+        "y": 28.473108874079113
+      },
+      {
+        "x": 56.91380431079313,
+        "y": 28.473108874079113
+      }
+    ],
+    "color": "#57f042",
+    "name": "Taman Belakang",
+    "code": "T-Belakang",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-mzx04vofv-1784507442279",
+    "layer": 1784507665788,
+    "locked": true,
+    "hatched": false
+  },
+  {
+    "id": "bld-new-17",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.41253776992635,
+        "y": 5.179042820019848
+      },
+      {
+        "x": 79.1928672272746,
+        "y": 5.179042820019848
+      },
+      {
+        "x": 79.1928672272746,
+        "y": 10.743944992066984
+      },
+      {
+        "x": 71.41253776992635,
+        "y": 10.743944992066984
+      }
+    ],
+    "color": "#edf042",
+    "name": "TRAFO ROOM",
+    "code": "TRAFO",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-ardc4wti6-1784507442279",
+    "layer": 1784508980953,
+    "hatched": false,
+    "icon": "listrik"
+  },
+  {
+    "id": "bld-new-18",
+    "type": "rect",
+    "points": [
+      {
+        "x": 78.57122125988522,
+        "y": 1.6473260501482505
+      },
+      {
+        "x": 83.72975163484887,
+        "y": 1.6473260501482505
+      },
+      {
+        "x": 83.72975163484887,
+        "y": 2.980413385589599
+      },
+      {
+        "x": 78.57122125988522,
+        "y": 2.980413385589599
+      }
+    ],
+    "color": "#ef4444",
+    "name": "OLI",
+    "code": "OLI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-e28lnw0sx-1784507442279"
+  },
+  {
+    "id": "bld-new-21",
+    "type": "rect",
+    "points": [
+      {
+        "x": 83.79993572158307,
+        "y": 1.6515146948901984
+      },
+      {
+        "x": 86.81785145115364,
+        "y": 1.6515146948901984
+      },
+      {
+        "x": 86.81785145115364,
+        "y": 2.980413385589599
+      },
+      {
+        "x": 83.79993572158307,
+        "y": 2.980413385589599
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Area Kaleng Bekas",
+    "code": "Area Kaleng Bekas",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-hyo4udd1k-1784507442279"
+  },
+  {
+    "id": "bld-new-22",
+    "type": "rect",
+    "points": [
+      {
+        "x": 86.81785145115364,
+        "y": 1.6557033396321472
+      },
+      {
+        "x": 91.13417278530692,
+        "y": 1.6557033396321472
+      },
+      {
+        "x": 91.13417278530692,
+        "y": 2.980413385589599
+      },
+      {
+        "x": 86.81785145115364,
+        "y": 2.980413385589599
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Office EHS",
+    "code": "Office EHS",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-pjds6cjv6-1784507442279"
+  },
+  {
+    "id": "bld-new-23",
+    "type": "rect",
+    "points": [
+      {
+        "x": 91.13417278530692,
+        "y": 1.6549929689321392
+      },
+      {
+        "x": 94.5030089485485,
+        "y": 1.6549929689321392
+      },
+      {
+        "x": 94.5030089485485,
+        "y": 2.988080304373488
+      },
+      {
+        "x": 91.13417278530692,
+        "y": 2.988080304373488
+      }
+    ],
+    "color": "#ef4444",
+    "name": "TROLLEY/DOLLY RUSAK",
+    "code": "TROLLY-DOLLY",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-ea60d9ix6-1784507442279"
+  },
+  {
+    "id": "bld-new-24",
+    "type": "rect",
+    "points": [
+      {
+        "x": 75.98500519490787,
+        "y": 1.6626598877160281
+      },
+      {
+        "x": 78.58181640407325,
+        "y": 1.6626598877160281
+      },
+      {
+        "x": 78.58181640407325,
+        "y": 2.9922689491154366
+      },
+      {
+        "x": 75.98500519490787,
+        "y": 2.9922689491154366
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Limbah Debu",
+    "code": "Limbah Debu",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-zts17twu9-1784507442279"
+  },
+  {
+    "id": "bld-new-25",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.43694131217593,
+        "y": 1.648036420848259
+      },
+      {
+        "x": 74.89384523972473,
+        "y": 1.648036420848259
+      },
+      {
+        "x": 74.89384523972473,
+        "y": 2.9880803043734887
+      },
+      {
+        "x": 71.43694131217593,
+        "y": 2.9880803043734887
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Limbah Organik",
+    "code": "Limbah Organik",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-mjjkp2bdv-1784507442279"
+  },
+  {
+    "id": "bld-new-26",
+    "type": "rect",
+    "points": [
+      {
+        "x": 74.9365741697289,
+        "y": 1.649733692238635
+      },
+      {
+        "x": 75.95775423297127,
+        "y": 1.649733692238635
+      },
+      {
+        "x": 75.95775423297127,
+        "y": 2.9915978073703844
+      },
+      {
+        "x": 74.9365741697289,
+        "y": 2.9915978073703844
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Limbah Domestik",
+    "code": "Limbah Domestik",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-bjdx6mq9n-1784507442279"
+  },
+  {
+    "id": "bld-new-28",
+    "type": "rect",
+    "points": [
+      {
+        "x": 39.33702041007892,
+        "y": 60.655375301351825
+      },
+      {
+        "x": 43.68344023273844,
+        "y": 60.655375301351825
+      },
+      {
+        "x": 43.68344023273844,
+        "y": 74.37638280032967
+      },
+      {
+        "x": 39.33702041007892,
+        "y": 74.37638280032967
+      }
+    ],
+    "color": "#42f045",
+    "name": "Taman Depan GA",
+    "code": "T-GA",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-k3uc09swl-1784507442279",
+    "layer": 1784507665788,
+    "icon": "taman",
+    "locked": true
+  },
+  {
+    "id": "bld-new-29",
+    "type": "rect",
+    "points": [
+      {
+        "x": 57.78073750209085,
+        "y": 82.60886739450724
+      },
+      {
+        "x": 67.06638333126958,
+        "y": 82.60886739450724
+      },
+      {
+        "x": 67.06638333126958,
+        "y": 93.2087367420846
+      },
+      {
+        "x": 57.78073750209085,
+        "y": 93.2087367420846
+      }
+    ],
+    "color": "#eb85ff",
+    "name": "MASJID",
+    "code": "MASJID",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-ip8rpguyb-1784507442279",
+    "hatched": false,
+    "layer": 1784594760758
+  },
+  {
+    "id": "bld-new-31",
+    "type": "rect",
+    "points": [
+      {
+        "x": 7.380305640572162,
+        "y": 87.91686459583795
+      },
+      {
+        "x": 11.618220263483394,
+        "y": 87.91686459583795
+      },
+      {
+        "x": 11.618220263483394,
+        "y": 90.5647734280741
+      },
+      {
+        "x": 7.380305640572162,
+        "y": 90.5647734280741
+      }
+    ],
+    "color": "#edf042",
+    "name": "Gardu Listrik",
+    "code": "Gardu Listrik",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-72flotha7-1784507442279",
+    "layer": 1784508980953,
+    "icon": "listrik"
+  },
+  {
+    "id": "bld-new-33",
+    "type": "rect",
+    "points": [
+      {
+        "x": 14.41522193461426,
+        "y": 96.45723728652922
+      },
+      {
+        "x": 34.699373650043356,
+        "y": 96.45723728652922
+      },
+      {
+        "x": 34.699373650043356,
+        "y": 98.81281762454988
+      },
+      {
+        "x": 14.41522193461426,
+        "y": 98.81281762454988
+      }
+    ],
+    "color": "#57f042",
+    "name": "Taman Depan",
+    "code": "T-Depan1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-rtgy8u3jm-1784507442279",
+    "layer": 1784507665788,
+    "locked": true
+  },
+  {
+    "id": "bld-new-34",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.1782408743767405,
+        "y": 96.44745273535784
+      },
+      {
+        "x": 14.41522193461426,
+        "y": 96.44745273535784
+      },
+      {
+        "x": 14.41522193461426,
+        "y": 98.82260217572126
+      },
+      {
+        "x": 5.1782408743767405,
+        "y": 98.82260217572126
+      }
+    ],
+    "color": "#2516fe",
+    "name": "Tempat Parkir",
+    "code": "Tempat Parkir",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-7j1n5n6ir-1784507442279",
+    "icon": "parkir",
+    "layer": 1784508686805,
+    "hatched": true,
+    "locked": true
+  },
+  {
+    "id": "bld-new-35",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.2452027106137855,
+        "y": 52.71860520917528
+      },
+      {
+        "x": 8.411380337288152,
+        "y": 52.71860520917528
+      },
+      {
+        "x": 8.411380337288152,
+        "y": 58.013216336749764
+      },
+      {
+        "x": 5.2452027106137855,
+        "y": 58.013216336749764
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Spare Part Maintenance Area",
+    "code": "Spare Part Maintenance Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-9yymwzikv-1784507442279"
+  },
+  {
+    "id": "bld-new-36",
+    "type": "rect",
+    "points": [
+      {
+        "x": 42.17127581634353,
+        "y": 83.2539137178235
+      },
+      {
+        "x": 57.72639979483909,
+        "y": 83.2539137178235
+      },
+      {
+        "x": 57.72639979483909,
+        "y": 90.50217737074628
+      },
+      {
+        "x": 42.17127581634353,
+        "y": 90.50217737074628
+      }
+    ],
+    "color": "#42f05f",
+    "name": "Taman",
+    "code": "Taman",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-r0zaoi6pt-1784507442279",
+    "icon": "taman",
+    "layer": 1784507665788,
+    "locked": true
+  },
+  {
+    "id": "bld-new-37",
+    "type": "rect",
+    "points": [
+      {
+        "x": 58.013772538935356,
+        "y": 61.25205648269987
+      },
+      {
+        "x": 64.25386641074026,
+        "y": 61.25205648269987
+      },
+      {
+        "x": 64.25386641074026,
+        "y": 64.87955744616401
+      },
+      {
+        "x": 58.013772538935356,
+        "y": 64.87955744616401
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SHIPPING 2",
+    "code": "SHIPPING 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-eur3v9x3p-1784507442279",
+    "layer": 1784594720629,
+    "parentShapeUuid": "uuid-ktfa5cmba-1784594920302",
+    "parentShapeId": "bld-new-147"
+  },
+  {
+    "id": "bld-new-38",
+    "type": "rect",
+    "points": [
+      {
+        "x": 38.63663893701488,
+        "y": 39.83933010270048
+      },
+      {
+        "x": 42.331431361109885,
+        "y": 39.83933010270048
+      },
+      {
+        "x": 42.331431361109885,
+        "y": 46.78523716412267
+      },
+      {
+        "x": 38.63663893701488,
+        "y": 46.78523716412267
+      }
+    ],
+    "color": "#e4f042",
+    "name": "Gardu Listrik",
+    "code": "Gardu Listrk",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-eo72f7xuy-1784507442279",
+    "layer": 1784508980953,
+    "icon": "listrik"
+  },
+  {
+    "id": "bld-new-39",
+    "type": "rect",
+    "points": [
+      {
+        "x": 43.37069731858476,
+        "y": 39.83933010270048
+      },
+      {
+        "x": 47.5084989687217,
+        "y": 39.83933010270048
+      },
+      {
+        "x": 47.5084989687217,
+        "y": 44.810136131086836
+      },
+      {
+        "x": 43.37069731858476,
+        "y": 44.810136131086836
+      }
+    ],
+    "color": "#e4f042",
+    "name": "Colling Tower",
+    "code": "Coolling Tower",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-s9v1gnczd-1784507442279",
+    "layer": 1784508980953,
+    "icon": "listrik"
+  },
+  {
+    "id": "bld-new-40",
+    "type": "rect",
+    "points": [
+      {
+        "x": 48.243099239661895,
+        "y": 12.41034708177207
+      },
+      {
+        "x": 56.77001443484856,
+        "y": 12.41034708177207
+      },
+      {
+        "x": 56.77001443484856,
+        "y": 28.30225606456732
+      },
+      {
+        "x": 48.243099239661895,
+        "y": 28.30225606456732
+      }
+    ],
+    "color": "#ef4444",
+    "name": "WIP Forging Part",
+    "code": "WIP Forging Part",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-lukm65zmo-1784507442279"
+  },
+  {
+    "id": "bld-new-41",
+    "type": "rect",
+    "points": [
+      {
+        "x": 39.90991141657814,
+        "y": 6.148589466268504
+      },
+      {
+        "x": 66.30652886857084,
+        "y": 6.148589466268504
+      },
+      {
+        "x": 66.30652886857084,
+        "y": 11.54665637618537
+      },
+      {
+        "x": 39.90991141657814,
+        "y": 11.54665637618537
+      }
+    ],
+    "color": "#ef4444",
+    "name": "RAW MATERIAL",
+    "code": "RAW MATERIAL",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": "bld-new-152",
+    "uuid": "uuid-xy589tf46-1784507442279",
+    "linkedShapeUuid": "uuid-8obk7hkv4-1784600168081",
+    "layer": 1784600291176
+  },
+  {
+    "id": "bld-new-43",
+    "type": "rect",
+    "points": [
+      {
+        "x": 6.004996975882612,
+        "y": 91.0895770738644
+      },
+      {
+        "x": 17.2946404939507,
+        "y": 91.0895770738644
+      },
+      {
+        "x": 17.2946404939507,
+        "y": 93.33517290838982
+      },
+      {
+        "x": 6.004996975882612,
+        "y": 93.33517290838982
+      }
+    ],
+    "color": "#242bff",
+    "name": "Tempat Parkir",
+    "code": "Tempat Parkir",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-vsqviqq5j-1784507442279",
+    "hatched": true,
+    "layer": 1784508686805,
+    "icon": "parkir",
+    "locked": true
+  },
+  {
+    "id": "bld-new-44",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.150636286560166,
+        "y": 77.03593414275136
+      },
+      {
+        "x": 11.65949702341034,
+        "y": 77.03593414275136
+      },
+      {
+        "x": 11.65949702341034,
+        "y": 90.78694666150366
+      },
+      {
+        "x": 5.150636286560166,
+        "y": 90.78694666150366
+      }
+    ],
+    "color": "#2b00ff",
+    "name": "Tempat Parkir",
+    "code": "Tempat Parkir",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-jq964tzwt-1784507442279",
+    "icon": "parkir",
+    "layer": 1784508686805,
+    "hatched": true
+  },
+  {
+    "id": "bld-new-47",
+    "type": "rect",
+    "points": [
+      {
+        "x": 79.22302494047656,
+        "y": 5.163140254103401
+      },
+      {
+        "x": 84.41124950613678,
+        "y": 5.163140254103401
+      },
+      {
+        "x": 84.41124950613678,
+        "y": 13.360406857917436
+      },
+      {
+        "x": 79.22302494047656,
+        "y": 13.360406857917436
+      }
+    ],
+    "color": "#f0ea42",
+    "name": "COMPRESSOR ROOM",
+    "code": "COMPRESSOR",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-sb2glkz6q-1784507442279",
+    "layer": 1784508980953,
+    "icon": "listrik"
+  },
+  {
+    "id": "bld-new-48",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.50630906788866,
+        "y": 63.58334521901706
+      },
+      {
+        "x": 8.47248296136316,
+        "y": 63.58334521901706
+      },
+      {
+        "x": 8.47248296136316,
+        "y": 66.08573083711768
+      },
+      {
+        "x": 5.50630906788866,
+        "y": 66.08573083711768
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Machine Development Area",
+    "code": "Machine Development Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-l2wc0q8si-1784507442279"
+  },
+  {
+    "id": "bld-new-49",
+    "type": "rect",
+    "points": [
+      {
+        "x": 10.329798425633047,
+        "y": 62.22613514492643
+      },
+      {
+        "x": 11.643063547278766,
+        "y": 62.22613514492643
+      },
+      {
+        "x": 11.643063547278766,
+        "y": 64.5319895529111
+      },
+      {
+        "x": 10.329798425633047,
+        "y": 64.5319895529111
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Area Wakom",
+    "code": "Area Wakom",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-si8zclg0k-1784507442279"
+  },
+  {
+    "id": "bld-new-54",
+    "type": "rect",
+    "points": [
+      {
+        "x": 38.875307732029796,
+        "y": 97.27124794076907
+      },
+      {
+        "x": 59.10186216960968,
+        "y": 97.27124794076907
+      },
+      {
+        "x": 59.10186216960968,
+        "y": 98.82400704101235
+      },
+      {
+        "x": 38.875307732029796,
+        "y": 98.82400704101235
+      }
+    ],
+    "color": "#4ef042",
+    "name": "Taman Depan 2",
+    "code": "T-Depan2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-y5eizyvzf-1784507442279",
+    "layer": 1784507665788,
+    "locked": true
+  },
+  {
+    "id": "bld-new-56",
+    "type": "rect",
+    "points": [
+      {
+        "x": 57.58799327063484,
+        "y": 1.0396743296376878
+      },
+      {
+        "x": 65.1415624113047,
+        "y": 1.0396743296376878
+      },
+      {
+        "x": 65.1415624113047,
+        "y": 3.2735986855300085
+      },
+      {
+        "x": 57.58799327063484,
+        "y": 3.2735986855300085
+      }
+    ],
+    "color": "#ef4444",
+    "name": "TPS",
+    "code": "TPS",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-wekr6epcp-1784507442279",
+    "locked": true
+  },
+  {
+    "id": "bld-new-58",
+    "type": "rect",
+    "points": [
+      {
+        "x": 78.15797487230441,
+        "y": 67.47491452350954
+      },
+      {
+        "x": 86.90466925744114,
+        "y": 67.47491452350954
+      },
+      {
+        "x": 86.90466925744114,
+        "y": 86.7524043530151
+      },
+      {
+        "x": 78.15797487230441,
+        "y": 86.7524043530151
+      }
+    ],
+    "color": "#ef4444",
+    "name": "DOJO",
+    "code": "DOJO",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-50d3co2r2-1784507442279",
+    "hatched": true,
+    "locked": true
+  },
+  {
+    "id": "bld-new-59",
+    "type": "rect",
+    "points": [
+      {
+        "x": 37.63288054512547,
+        "y": 91.07139176162616
+      },
+      {
+        "x": 41.13593261882333,
+        "y": 91.07139176162616
+      },
+      {
+        "x": 41.13593261882333,
+        "y": 92.66329053822791
+      },
+      {
+        "x": 37.63288054512547,
+        "y": 92.66329053822791
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Pos Security",
+    "code": "Pos Security",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-h7dycljct-1784507442279"
+  },
+  {
+    "id": "bld-new-60",
+    "type": "rect",
+    "points": [
+      {
+        "x": 40.23400761783502,
+        "y": 91.77105260158142
+      },
+      {
+        "x": 41.116844416980356,
+        "y": 91.77105260158142
+      },
+      {
+        "x": 41.116844416980356,
+        "y": 92.6706361415452
+      },
+      {
+        "x": 40.23400761783502,
+        "y": 92.6706361415452
+      }
+    ],
+    "color": "#e876fe",
+    "name": "ATM",
+    "code": "ATM",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-vwzysac3h-1784507442279"
+  },
+  {
+    "id": "bld-new-61",
+    "type": "rect",
+    "points": [
+      {
+        "x": 37.62781340783771,
+        "y": 83.27361607883655
+      },
+      {
+        "x": 41.17880315271125,
+        "y": 83.27361607883655
+      },
+      {
+        "x": 41.17880315271125,
+        "y": 89.43478025976759
+      },
+      {
+        "x": 37.62781340783771,
+        "y": 89.43478025976759
+      }
+    ],
+    "color": "#2c29ff",
+    "name": "Parkir Mobil",
+    "code": "Parkir Mobil",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": null,
+    "uuid": "uuid-kla4dlsci-1784507442279",
+    "hatched": true,
+    "layer": 1784508686805,
+    "icon": "parkir"
+  },
+  {
+    "id": "bld-new-62",
+    "type": "rect",
+    "points": [
+      {
+        "x": 13.804800154331692,
+        "y": 82.56656514353682
+      },
+      {
+        "x": 34.629567939141864,
+        "y": 82.56656514353682
+      },
+      {
+        "x": 34.629567939141864,
+        "y": 90.82313382291804
+      },
+      {
+        "x": 13.804800154331692,
+        "y": 90.82313382291804
+      }
+    ],
+    "color": "#42d3f0",
+    "name": "OFFICE",
+    "code": "OFFICE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "linkedShapeId": "bld-new-178",
+    "uuid": "uuid-xbyzb5ywh-1784507442279",
+    "layer": 1784526121296,
+    "hatched": true,
+    "parentShapeUuid": "uuid-oo0uefxcv-1784526469891",
+    "parentShapeId": "bld-new-140",
+    "linkedShapeUuid": "uuid-i7ddthwpe-1784616088512"
+  },
+  {
+    "uuid": "uuid-t743qzhhx-1784508707903",
+    "id": "bld-new-63",
+    "type": "rect",
+    "points": [
+      {
+        "x": 37.606556814466934,
+        "y": 51.07337568975153
+      },
+      {
+        "x": 47.26073967572141,
+        "y": 51.07337568975153
+      },
+      {
+        "x": 47.26073967572141,
+        "y": 55.88013966230753
+      },
+      {
+        "x": 37.606556814466934,
+        "y": 55.88013966230753
+      }
+    ],
+    "color": "#fcff47",
+    "name": "Dock Area",
+    "code": "Dock Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508602124,
+    "hatched": true,
+    "icon": ""
+  },
+  {
+    "uuid": "uuid-la9qdbo39-1784508730973",
+    "id": "bld-new-64",
+    "type": "rect",
+    "points": [
+      {
+        "x": 45.75467198275939,
+        "y": 56.511920032482855
+      },
+      {
+        "x": 50.97402774425688,
+        "y": 56.511920032482855
+      },
+      {
+        "x": 50.97402774425688,
+        "y": 57.91039763250351
+      },
+      {
+        "x": 45.75467198275939,
+        "y": 57.91039763250351
+      }
+    ],
+    "color": "#f0ea42",
+    "name": "DOCK TRUCK HPI",
+    "code": "DOCK HPI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508602124,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-b6amt7fu6-1784508737373",
+    "id": "bld-new-65",
+    "type": "rect",
+    "points": [
+      {
+        "x": 50.97402774425688,
+        "y": 56.511920032482855
+      },
+      {
+        "x": 56.14414430045722,
+        "y": 56.511920032482855
+      },
+      {
+        "x": 56.14414430045722,
+        "y": 57.92334649917037
+      },
+      {
+        "x": 50.97402774425688,
+        "y": 57.92334649917037
+      }
+    ],
+    "color": "#dbf042",
+    "name": "DOCK EXPORT",
+    "code": "DOCK EXPORT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508602124,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-68vwa7vw3-1784510213214",
+    "id": "bld-new-66",
+    "type": "rect",
+    "points": [
+      {
+        "x": 37.64066143996526,
+        "y": 38.82963158353926
+      },
+      {
+        "x": 48.411379562396405,
+        "y": 38.82963158353926
+      },
+      {
+        "x": 48.411379562396405,
+        "y": 49.882655281504064
+      },
+      {
+        "x": 37.64066143996526,
+        "y": 49.882655281504064
+      }
+    ],
+    "color": "#42f05f",
+    "name": "Taman Tengah",
+    "code": "T-Tengah",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784507665788,
+    "icon": "taman",
+    "hatched": false,
+    "locked": true
+  },
+  {
+    "uuid": "uuid-kw55h5elc-1784514369249",
+    "id": "bld-new-67",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.9068068648181,
+        "y": 22.491953723691623
+      },
+      {
+        "x": 77.2216285094417,
+        "y": 22.491953723691623
+      },
+      {
+        "x": 77.2216285094417,
+        "y": 28.009374000756214
+      },
+      {
+        "x": 71.9068068648181,
+        "y": 28.009374000756214
+      }
+    ],
+    "color": "#ef4444",
+    "name": "BOX KOSONG",
+    "code": "BOX KOSONG",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "hatched": false
+  },
+  {
+    "uuid": "uuid-ivpfmyskn-1784514433387",
+    "id": "bld-new-69",
+    "type": "rect",
+    "points": [
+      {
+        "x": 87.07890099177891,
+        "y": 50.512218776686204
+      },
+      {
+        "x": 90.13857284126098,
+        "y": 50.512218776686204
+      },
+      {
+        "x": 90.13857284126098,
+        "y": 56.759924777139716
+      },
+      {
+        "x": 87.07890099177891,
+        "y": 56.759924777139716
+      }
+    ],
+    "color": "#ef4444",
+    "name": "HUB FRONT D28N - D80N",
+    "code": "D80N",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-67llc2t2l-1784514470644",
+    "id": "bld-new-70",
+    "type": "rect",
+    "points": [
+      {
+        "x": 90.88849241221244,
+        "y": 47.40414281181413
+      },
+      {
+        "x": 93.91816747885647,
+        "y": 47.40414281181413
+      },
+      {
+        "x": 93.91816747885647,
+        "y": 56.759924777139716
+      },
+      {
+        "x": 90.88849241221244,
+        "y": 56.759924777139716
+      }
+    ],
+    "color": "#ef4444",
+    "name": "HUB FRONT D34T",
+    "code": "HF D34T",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-4j3ngr52h-1784514505380",
+    "id": "bld-new-71",
+    "type": "rect",
+    "points": [
+      {
+        "x": 83.56927739972593,
+        "y": 50.74887430700642
+      },
+      {
+        "x": 86.5689556835319,
+        "y": 50.74887430700642
+      },
+      {
+        "x": 86.5689556835319,
+        "y": 56.759924777139716
+      },
+      {
+        "x": 83.56927739972593,
+        "y": 56.759924777139716
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SPINDLE 24CF",
+    "code": "SPINDLE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true
+  },
+  {
+    "uuid": "uuid-hdcj33yrv-1784514528588",
+    "id": "bld-new-72",
+    "type": "rect",
+    "points": [
+      {
+        "x": 83.67426613965914,
+        "y": 42.74991738218337
+      },
+      {
+        "x": 86.70394120630316,
+        "y": 42.74991738218337
+      },
+      {
+        "x": 86.70394120630316,
+        "y": 49.881137362498976
+      },
+      {
+        "x": 83.67426613965914,
+        "y": 49.881137362498976
+      }
+    ],
+    "color": "#ef4444",
+    "name": "HUB FRONT D14N",
+    "code": "HF D14N ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-lstju25wk-1784514571428",
+    "id": "bld-new-74",
+    "type": "rect",
+    "points": [
+      {
+        "x": 92.07473609057642,
+        "y": 57.68095731134116
+      },
+      {
+        "x": 94.21917484789421,
+        "y": 57.68095731134116
+      },
+      {
+        "x": 94.21917484789421,
+        "y": 61.21070771958546
+      },
+      {
+        "x": 92.07473609057642,
+        "y": 61.21070771958546
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SCRAP PROD 2",
+    "code": "SCRAP PROD 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-bmr5hecef-1784515366473",
+    "id": "bld-new-77",
+    "type": "rect",
+    "points": [
+      {
+        "x": 83.97139007383461,
+        "y": 57.683524183612036
+      },
+      {
+        "x": 86.96823443872077,
+        "y": 57.683524183612036
+      },
+      {
+        "x": 86.96823443872077,
+        "y": 59.75533136083592
+      },
+      {
+        "x": 83.97139007383461,
+        "y": 59.75533136083592
+      }
+    ],
+    "color": "#ef4444",
+    "name": "AREA WAKOM 1 PROD 2 ",
+    "code": "WAKOM 1 PROD 2 ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-vlv2prhsd-1784515461244",
+    "id": "bld-new-79",
+    "type": "rect",
+    "points": [
+      {
+        "x": 91.12782286988741,
+        "y": 37.16756524448256
+      },
+      {
+        "x": 93.79476139152726,
+        "y": 37.16756524448256
+      },
+      {
+        "x": 93.79476139152726,
+        "y": 41.202482437426006
+      },
+      {
+        "x": 91.12782286988741,
+        "y": 41.202482437426006
+      }
+    ],
+    "color": "#ef4444",
+    "name": "BROACHING HC",
+    "code": "BROACHING HC ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-uird9tstl-1784515508372",
+    "id": "bld-new-80",
+    "type": "rect",
+    "points": [
+      {
+        "x": 85.4893880324698,
+        "y": 37.18488248565399
+      },
+      {
+        "x": 88.06578234504163,
+        "y": 37.18488248565399
+      },
+      {
+        "x": 88.06578234504163,
+        "y": 40.56174451408307
+      },
+      {
+        "x": 85.4893880324698,
+        "y": 40.56174451408307
+      }
+    ],
+    "color": "#ef4444",
+    "name": "HUB CLUTCH A",
+    "code": "HUB CLUTCH A",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-pvilk4pqn-1784515595183",
+    "id": "bld-new-83",
+    "type": "rect",
+    "points": [
+      {
+        "x": 88.06578234504163,
+        "y": 37.18488248565399
+      },
+      {
+        "x": 90.69156440801422,
+        "y": 37.18488248565399
+      },
+      {
+        "x": 90.69156440801422,
+        "y": 40.57906175525449
+      },
+      {
+        "x": 88.06578234504163,
+        "y": 40.57906175525449
+      }
+    ],
+    "color": "#ef4444",
+    "name": "HUB CLUTCH B",
+    "code": "HUB CLUTCH B",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-9pl8ojxdx-1784515633166",
+    "id": "bld-new-84",
+    "type": "rect",
+    "points": [
+      {
+        "x": 83.55165427004792,
+        "y": 37.159665090593876
+      },
+      {
+        "x": 85.2826290542526,
+        "y": 37.159665090593876
+      },
+      {
+        "x": 85.2826290542526,
+        "y": 40.26816859499827
+      },
+      {
+        "x": 83.55165427004792,
+        "y": 40.26816859499827
+      }
+    ],
+    "color": "#ef4444",
+    "name": "AREA WAKOM 2 PROD 2",
+    "code": "WAKOM 2 PROD 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-7nxp2o2bv-1784515649504",
+    "id": "bld-new-87",
+    "type": "rect",
+    "points": [
+      {
+        "x": 83.53800260311826,
+        "y": 40.286107218699584
+      },
+      {
+        "x": 84.83902206393903,
+        "y": 40.286107218699584
+      },
+      {
+        "x": 84.83902206393903,
+        "y": 41.21273780604256
+      },
+      {
+        "x": 83.53800260311826,
+        "y": 41.21273780604256
+      }
+    ],
+    "color": "#ef4444",
+    "name": "QC & FACILITY",
+    "code": "QC & FACILITY",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-17r7qfxvt-1784515778665",
+    "id": "bld-new-88",
+    "type": "rect",
+    "points": [
+      {
+        "x": 72.00313771203221,
+        "y": 58.36187329786736
+      },
+      {
+        "x": 76.72763100902662,
+        "y": 58.36187329786736
+      },
+      {
+        "x": 76.72763100902662,
+        "y": 61.73815886376902
+      },
+      {
+        "x": 72.00313771203221,
+        "y": 61.73815886376902
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KZLG R3",
+    "code": "KZLG R3",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-haga8xfdm-1784515802170",
+    "id": "bld-new-89",
+    "type": "rect",
+    "points": [
+      {
+        "x": 72.01813610345124,
+        "y": 61.753935899123704
+      },
+      {
+        "x": 76.74262940044564,
+        "y": 61.753935899123704
+      },
+      {
+        "x": 76.74262940044564,
+        "y": 65.4299851367643
+      },
+      {
+        "x": 72.01813610345124,
+        "y": 65.4299851367643
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KZLG R2",
+    "code": "KZLG R2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "linkedShapeId": "bld-new-91",
+    "linkedShapeUuid": "uuid-1aw0s2t7k-1784515832578",
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-klw5qbulc-1784515817681",
+    "id": "bld-new-90",
+    "type": "rect",
+    "points": [
+      {
+        "x": 76.74262940044564,
+        "y": 58.34609626251268
+      },
+      {
+        "x": 81.75209213440161,
+        "y": 58.34609626251268
+      },
+      {
+        "x": 81.75209213440161,
+        "y": 61.72238182841434
+      },
+      {
+        "x": 76.74262940044564,
+        "y": 61.72238182841434
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KZLG R4",
+    "code": "KZLG R4",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "linkedShapeId": "bld-new-88",
+    "linkedShapeUuid": "uuid-17r7qfxvt-1784515778665",
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-1aw0s2t7k-1784515832578",
+    "id": "bld-new-91",
+    "type": "rect",
+    "points": [
+      {
+        "x": 76.75762779186466,
+        "y": 61.73815886376902
+      },
+      {
+        "x": 81.78208891723968,
+        "y": 61.73815886376902
+      },
+      {
+        "x": 81.78208891723968,
+        "y": 65.44576217211898
+      },
+      {
+        "x": 76.75762779186466,
+        "y": 65.44576217211898
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KZL6 R1",
+    "code": "KZL6 R1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "linkedShapeId": "bld-new-90",
+    "linkedShapeUuid": "uuid-klw5qbulc-1784515817681",
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-0bnr7k8qw-1784515894156",
+    "id": "bld-new-92",
+    "type": "rect",
+    "points": [
+      {
+        "x": 82.99342977668135,
+        "y": 57.70033366429662
+      },
+      {
+        "x": 83.98128810181575,
+        "y": 57.70033366429662
+      },
+      {
+        "x": 83.98128810181575,
+        "y": 59.759376574870224
+      },
+      {
+        "x": 82.99342977668135,
+        "y": 59.759376574870224
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ADMIN PROD 2",
+    "code": "ADMIN PROD 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-sc7umwphz-1784515921539",
+    "id": "bld-new-93",
+    "type": "rect",
+    "points": [
+      {
+        "x": 78.12835253536821,
+        "y": 41.81410166296021
+      },
+      {
+        "x": 81.76875684143717,
+        "y": 41.81410166296021
+      },
+      {
+        "x": 81.76875684143717,
+        "y": 44.52998569778296
+      },
+      {
+        "x": 78.12835253536821,
+        "y": 44.52998569778296
+      }
+    ],
+    "color": "#ef4444",
+    "name": "LINE KAYABA",
+    "code": "LINE KAYABA    ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-tqttafhj7-1784515950931",
+    "id": "bld-new-95",
+    "type": "rect",
+    "points": [
+      {
+        "x": 72.43537984396248,
+        "y": 41.814101662960205
+      },
+      {
+        "x": 77.49580001410091,
+        "y": 41.814101662960205
+      },
+      {
+        "x": 77.49580001410091,
+        "y": 44.84231236178758
+      },
+      {
+        "x": 72.43537984396248,
+        "y": 44.84231236178758
+      }
+    ],
+    "color": "#ef4444",
+    "name": "LINE ROTOR",
+    "code": "LINE ROTOR",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-da6fibgdp-1784515974492",
+    "id": "bld-new-96",
+    "type": "rect",
+    "points": [
+      {
+        "x": 78.77381429176341,
+        "y": 37.1699399634133
+      },
+      {
+        "x": 81.76875684143717,
+        "y": 37.1699399634133
+      },
+      {
+        "x": 81.76875684143717,
+        "y": 41.203027755125085
+      },
+      {
+        "x": 78.77381429176341,
+        "y": 41.203027755125085
+      }
+    ],
+    "color": "#ef4444",
+    "name": "CONE RACE",
+    "code": "CONE RACE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-nrqwxj7rc-1784515987677",
+    "id": "bld-new-97",
+    "type": "rect",
+    "points": [
+      {
+        "x": 72.43537984396248,
+        "y": 37.156360543239174
+      },
+      {
+        "x": 75.2883208072293,
+        "y": 37.156360543239174
+      },
+      {
+        "x": 75.2883208072293,
+        "y": 41.216607175299195
+      },
+      {
+        "x": 72.43537984396248,
+        "y": 41.216607175299195
+      }
+    ],
+    "color": "#ef4444",
+    "name": "LOWER BALL JOINT L/R",
+    "code": "LOWER BALL JOINT L/R",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "linkedShapeId": "bld-new-98",
+    "linkedShapeUuid": "uuid-iht1d04kd-1784516001430"
+  },
+  {
+    "uuid": "uuid-iht1d04kd-1784516001430",
+    "id": "bld-new-98",
+    "type": "rect",
+    "points": [
+      {
+        "x": 75.3139929410703,
+        "y": 40.393445434063594
+      },
+      {
+        "x": 77.405569518361,
+        "y": 40.393445434063594
+      },
+      {
+        "x": 77.405569518361,
+        "y": 41.22091127663055
+      },
+      {
+        "x": 75.3139929410703,
+        "y": 41.22091127663055
+      }
+    ],
+    "color": "#ef4444",
+    "name": "LOWER BALL JOINT L/R",
+    "code": "LOWER BALL JOINT L/R",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-inj1od8c2-1784516023749",
+    "id": "bld-new-99",
+    "type": "rect",
+    "points": [
+      {
+        "x": 75.84617321303504,
+        "y": 37.169008659479026
+      },
+      {
+        "x": 78.21956059420968,
+        "y": 37.169008659479026
+      },
+      {
+        "x": 78.21956059420968,
+        "y": 41.21573994448827
+      },
+      {
+        "x": 75.84617321303504,
+        "y": 41.21573994448827
+      }
+    ],
+    "color": "#ef4444",
+    "name": "BALL RACE",
+    "code": "BALL RACE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-gcpg817zb-1784516407772",
+    "id": "bld-new-101",
+    "type": "rect",
+    "points": [
+      {
+        "x": 72.00798529196697,
+        "y": 46.807639915229366
+      },
+      {
+        "x": 76.39898161201121,
+        "y": 46.807639915229366
+      },
+      {
+        "x": 76.39898161201121,
+        "y": 52.12524193084559
+      },
+      {
+        "x": 72.00798529196697,
+        "y": 52.12524193084559
+      }
+    ],
+    "color": "#ef4444",
+    "name": "UNDER BRACKET 67",
+    "code": "UB67",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-yqacw98ix-1784516518550",
+    "id": "bld-new-102",
+    "type": "rect",
+    "points": [
+      {
+        "x": 87.14145380933269,
+        "y": 43.996444860648836
+      },
+      {
+        "x": 92.55634850914373,
+        "y": 43.996444860648836
+      },
+      {
+        "x": 92.55634850914373,
+        "y": 48.87484563349576
+      },
+      {
+        "x": 87.14145380933269,
+        "y": 48.87484563349576
+      }
+    ],
+    "color": "#ef4444",
+    "name": "HPM",
+    "code": "HPM",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-3si5wd2k2-1784516546703",
+    "id": "bld-new-103",
+    "type": "rect",
+    "points": [
+      {
+        "x": 94.66795949999468,
+        "y": 42.30691718865345
+      },
+      {
+        "x": 95.68924264340497,
+        "y": 42.30691718865345
+      },
+      {
+        "x": 95.68924264340497,
+        "y": 46.128774676858406
+      },
+      {
+        "x": 94.66795949999468,
+        "y": 46.128774676858406
+      }
+    ],
+    "color": "#ef4444",
+    "name": "WC 1 PROD 2",
+    "code": "WC 1 PROD 2 ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-rz2tp4msj-1784516578096",
+    "id": "bld-new-106",
+    "type": "rect",
+    "points": [
+      {
+        "x": 94.8971168770998,
+        "y": 18.041140938710956
+      },
+      {
+        "x": 95.90516931819171,
+        "y": 18.041140938710956
+      },
+      {
+        "x": 95.90516931819171,
+        "y": 21.873993228553086
+      },
+      {
+        "x": 94.8971168770998,
+        "y": 21.873993228553086
+      }
+    ],
+    "color": "#ef4444",
+    "name": "WC 2 PROD 2",
+    "code": "WC 2 PROD 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-hs8q8eotb-1784516603839",
+    "id": "bld-new-107",
+    "type": "rect",
+    "points": [
+      {
+        "x": 92.06496991610639,
+        "y": 61.23581803814163
+      },
+      {
+        "x": 94.22090285308454,
+        "y": 61.23581803814163
+      },
+      {
+        "x": 94.22090285308454,
+        "y": 61.56684086951781
+      },
+      {
+        "x": 92.06496991610639,
+        "y": 61.56684086951781
+      }
+    ],
+    "color": "#ef4444",
+    "name": "LEMARI APD PROD 2",
+    "code": "LEMARI APD PROD 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-lfelopew8-1784516676457",
+    "id": "bld-new-108",
+    "type": "rect",
+    "points": [
+      {
+        "x": 84.39547348874093,
+        "y": 27.394631728583015
+      },
+      {
+        "x": 94.34475972249518,
+        "y": 27.394631728583015
+      },
+      {
+        "x": 94.34475972249518,
+        "y": 35.60626338364929
+      },
+      {
+        "x": 84.39547348874093,
+        "y": 35.60626338364929
+      }
+    ],
+    "color": "#ef4444",
+    "name": "WIP WHCO PROD 2",
+    "code": "WIP WHCO PROD 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "linkedShapeId": "bld-new-110",
+    "linkedShapeUuid": "uuid-x3ofw7suo-1784516704721"
+  },
+  {
+    "uuid": "uuid-x3ofw7suo-1784516704721",
+    "id": "bld-new-110",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.88233272551923,
+        "y": 30.997283851761598
+      },
+      {
+        "x": 82.9030805536778,
+        "y": 30.997283851761598
+      },
+      {
+        "x": 82.9030805536778,
+        "y": 36.12955363617802
+      },
+      {
+        "x": 71.88233272551923,
+        "y": 36.12955363617802
+      }
+    ],
+    "color": "#ef4444",
+    "name": "WIP WHCO PROD 2",
+    "code": "WIP WHCO PROD 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323
+  },
+  {
+    "uuid": "uuid-i2jqehe8q-1784517732867",
+    "id": "bld-new-111",
+    "type": "rect",
+    "points": [
+      {
+        "x": 13.764856736841017,
+        "y": 6.101249790207594
+      },
+      {
+        "x": 21.669561371728683,
+        "y": 6.101249790207594
+      },
+      {
+        "x": 21.669561371728683,
+        "y": 8.387896422995254
+      },
+      {
+        "x": 13.764856736841017,
+        "y": 8.387896422995254
+      }
+    ],
+    "color": "#ef4444",
+    "name": "CENTRAK DATA DELTA",
+    "code": "CENTRAK DATA DELTA",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-nzsoob72j-1784517791132",
+    "id": "bld-new-112",
+    "type": "rect",
+    "points": [
+      {
+        "x": 29.410959077873027,
+        "y": 91.0770386578553
+      },
+      {
+        "x": 34.63492838116916,
+        "y": 91.0770386578553
+      },
+      {
+        "x": 34.63492838116916,
+        "y": 93.53232850780724
+      },
+      {
+        "x": 29.410959077873027,
+        "y": 93.53232850780724
+      }
+    ],
+    "color": "#1100ff",
+    "name": "Area Baru",
+    "code": "New Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508686805,
+    "hatched": true,
+    "icon": "parkir"
+  },
+  {
+    "uuid": "uuid-6vx3fc1xy-1784520975348",
+    "id": "bld-new-113",
+    "type": "rect",
+    "points": [
+      {
+        "x": 64.49863484606584,
+        "y": 47.10932714274304
+      },
+      {
+        "x": 66.37884492997345,
+        "y": 47.10932714274304
+      },
+      {
+        "x": 66.37884492997345,
+        "y": 55.90972554654674
+      },
+      {
+        "x": 64.49863484606584,
+        "y": 55.90972554654674
+      }
+    ],
+    "color": "#ef4444",
+    "name": "TRANSIT AREA BOX KOSONG",
+    "code": "TRANSIT BOX KOSONG",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508980953,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-o37h7jpyz-1784521036253",
+    "id": "bld-new-114",
+    "type": "rect",
+    "points": [
+      {
+        "x": 60.929608258146885,
+        "y": 58.62356455718223
+      },
+      {
+        "x": 66.11781852310573,
+        "y": 58.62356455718223
+      },
+      {
+        "x": 66.11781852310573,
+        "y": 59.95434817201277
+      },
+      {
+        "x": 60.929608258146885,
+        "y": 59.95434817201277
+      }
+    ],
+    "color": "#e4f042",
+    "name": "DOCK TRUCK",
+    "code": "DOCK TRUCK",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508980953,
+    "hatched": true,
+    "locked": true
+  },
+  {
+    "uuid": "uuid-d781bbuvc-1784521120416",
+    "id": "bld-new-115",
+    "type": "rect",
+    "points": [
+      {
+        "x": 73.23864124913909,
+        "y": 67.50689506639486
+      },
+      {
+        "x": 77.04647893095994,
+        "y": 67.50689506639486
+      },
+      {
+        "x": 77.04647893095994,
+        "y": 72.25652612866779
+      },
+      {
+        "x": 73.23864124913909,
+        "y": 72.25652612866779
+      }
+    ],
+    "color": "#e4f042",
+    "name": "AREA PALLET KOSONG",
+    "code": "AREA PALLET KOSONG",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784521135565,
+    "hatched": true,
+    "icon": ""
+  },
+  {
+    "uuid": "uuid-yp5g1g5y7-1784521417748",
+    "id": "bld-new-117",
+    "type": "rect",
+    "points": [
+      {
+        "x": 42.17019447843783,
+        "y": 90.50607283562302
+      },
+      {
+        "x": 45.63780211371213,
+        "y": 90.50607283562302
+      },
+      {
+        "x": 45.63780211371213,
+        "y": 92.66415561819092
+      },
+      {
+        "x": 42.17019447843783,
+        "y": 92.66415561819092
+      }
+    ],
+    "color": "#42f06e",
+    "name": "Area Baru",
+    "code": "New Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784507665788,
+    "icon": "taman",
+    "linkedShapeId": "bld-new-36",
+    "linkedShapeUuid": "uuid-r0zaoi6pt-1784507442279",
+    "locked": true
+  },
+  {
+    "uuid": "uuid-pjh6pmpmh-1784521451823",
+    "id": "bld-new-118",
+    "type": "rect",
+    "points": [
+      {
+        "x": 45.6400471398521,
+        "y": 90.56736699768366
+      },
+      {
+        "x": 56.83255675860027,
+        "y": 90.56736699768366
+      },
+      {
+        "x": 56.83255675860027,
+        "y": 93.21096965112586
+      },
+      {
+        "x": 45.6400471398521,
+        "y": 93.21096965112586
+      }
+    ],
+    "color": "#4400ff",
+    "name": "PARKIR TAMU",
+    "code": "PARKIR TAMU",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508686805,
+    "hatched": true,
+    "icon": "parkir"
+  },
+  {
+    "uuid": "uuid-3z0mz79k0-1784522647826",
+    "id": "bld-new-124",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.219174178090533,
+        "y": 13.592645061172872
+      },
+      {
+        "x": 29.395168478522194,
+        "y": 13.592645061172872
+      },
+      {
+        "x": 29.395168478522194,
+        "y": 22.95533359555149
+      },
+      {
+        "x": 24.219174178090533,
+        "y": 22.95533359555149
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 8",
+    "code": "F8",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-sd2msjuih-1784524983002",
+    "id": "bld-new-125",
+    "type": "rect",
+    "points": [
+      {
+        "x": 29.39984462964157,
+        "y": 14.292403054624097
+      },
+      {
+        "x": 34.6282983317668,
+        "y": 14.292403054624097
+      },
+      {
+        "x": 34.6282983317668,
+        "y": 22.95610894792927
+      },
+      {
+        "x": 29.39984462964157,
+        "y": 22.95610894792927
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 10",
+    "code": "F10",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-x4qnahcl8-1784525750486",
+    "id": "bld-new-127",
+    "type": "rect",
+    "points": [
+      {
+        "x": 13.794709738901012,
+        "y": 88.07178989360985
+      },
+      {
+        "x": 19.01504379812965,
+        "y": 88.07178989360985
+      },
+      {
+        "x": 19.01504379812965,
+        "y": 90.8087753274453
+      },
+      {
+        "x": 13.794709738901012,
+        "y": 90.8087753274453
+      }
+    ],
+    "color": "#42dbf0",
+    "name": "KANTIN OFFICE",
+    "code": "KANTIN OFFICE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-29chmse8w-1784525792553",
+    "id": "bld-new-131",
+    "type": "rect",
+    "points": [
+      {
+        "x": 19.642346605383924,
+        "y": 88.9894706391941
+      },
+      {
+        "x": 21.594363424893253,
+        "y": 88.9894706391941
+      },
+      {
+        "x": 21.594363424893253,
+        "y": 90.77891575918446
+      },
+      {
+        "x": 19.642346605383924,
+        "y": 90.77891575918446
+      }
+    ],
+    "color": "#42edf0",
+    "name": "SCREW JACK",
+    "code": "SCREW JACK",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-4afbi1gvf-1784525807851",
+    "id": "bld-new-132",
+    "type": "rect",
+    "points": [
+      {
+        "x": 13.803495637931709,
+        "y": 85.31391421966046
+      },
+      {
+        "x": 16.41977950579941,
+        "y": 85.31391421966046
+      },
+      {
+        "x": 16.41977950579941,
+        "y": 88.03610866636248
+      },
+      {
+        "x": 13.803495637931709,
+        "y": 88.03610866636248
+      }
+    ],
+    "color": "#42cdf0",
+    "name": "UNDER BRACKET MEETING ROOM 2",
+    "code": "UB MEETING ROOM 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-yfmy954dr-1784525819245",
+    "id": "bld-new-134",
+    "type": "rect",
+    "points": [
+      {
+        "x": 16.412670038767164,
+        "y": 85.31391421966046
+      },
+      {
+        "x": 19.47685032966656,
+        "y": 85.31391421966046
+      },
+      {
+        "x": 19.47685032966656,
+        "y": 88.051065778707
+      },
+      {
+        "x": 16.412670038767164,
+        "y": 88.051065778707
+      }
+    ],
+    "color": "#42dbf0",
+    "name": "UNDER BRACKET MEETING ROOM 1",
+    "code": "UB MEETING ROOM 1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-w4sb816mf-1784525838701",
+    "id": "bld-new-135",
+    "type": "rect",
+    "points": [
+      {
+        "x": 19.48537459799999,
+        "y": 85.31908190483294
+      },
+      {
+        "x": 21.603995773610247,
+        "y": 85.31908190483294
+      },
+      {
+        "x": 21.603995773610247,
+        "y": 88.05623346387948
+      },
+      {
+        "x": 19.48537459799999,
+        "y": 88.05623346387948
+      }
+    ],
+    "color": "#42e4f0",
+    "name": "STERING STEM MEETING ROOM",
+    "code": "STERING STEM MEETING ROOM",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-9iuawk8rn-1784525861830",
+    "id": "bld-new-136",
+    "type": "rect",
+    "points": [
+      {
+        "x": 31.99332497444245,
+        "y": 85.3201823976478
+      },
+      {
+        "x": 34.61679223275577,
+        "y": 85.3201823976478
+      },
+      {
+        "x": 34.61679223275577,
+        "y": 90.13127976736799
+      },
+      {
+        "x": 31.99332497444245,
+        "y": 90.13127976736799
+      }
+    ],
+    "color": "#42bcf0",
+    "name": "GA OFFICE",
+    "code": "GA OFFICE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-botz5drpt-1784525889834",
+    "id": "bld-new-137",
+    "type": "rect",
+    "points": [
+      {
+        "x": 26.803977310070277,
+        "y": 88.97760117528196
+      },
+      {
+        "x": 28.092858089585814,
+        "y": 88.97760117528196
+      },
+      {
+        "x": 28.092858089585814,
+        "y": 90.77481546394277
+      },
+      {
+        "x": 26.803977310070277,
+        "y": 90.77481546394277
+      }
+    ],
+    "color": "#42cdf0",
+    "name": "KITCHEN ROOM",
+    "code": "KITCHEN ROOM",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "hatched": true,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-4d2pqapgq-1784525899376",
+    "id": "bld-new-138",
+    "type": "rect",
+    "points": [
+      {
+        "x": 28.142814708946883,
+        "y": 89.43363634587344
+      },
+      {
+        "x": 29.391730192973576,
+        "y": 89.43363634587344
+      },
+      {
+        "x": 29.391730192973576,
+        "y": 90.75920279301332
+      },
+      {
+        "x": 28.142814708946883,
+        "y": 90.75920279301332
+      }
+    ],
+    "color": "#42c4f0",
+    "name": "WC OFFICE 1",
+    "code": "WC OFFICE 1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-r29gb9se5-1784530263583",
+    "id": "bld-new-139",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.242640716127122,
+        "y": 23.85535554418091
+      },
+      {
+        "x": 11.53301408738935,
+        "y": 23.85535554418091
+      },
+      {
+        "x": 11.53301408738935,
+        "y": 30.32809399977389
+      },
+      {
+        "x": 5.242640716127122,
+        "y": 30.32809399977389
+      }
+    ],
+    "color": "#f0e142",
+    "name": "Area Baru",
+    "code": "New Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508980953,
+    "icon": "listrik"
+  },
+  {
+    "uuid": "uuid-ctww8xfwl-1784530293722",
+    "id": "bld-new-140",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.230524513123356,
+        "y": 30.386583827152457
+      },
+      {
+        "x": 11.544950875445338,
+        "y": 30.386583827152457
+      },
+      {
+        "x": 11.544950875445338,
+        "y": 36.02855539064063
+      },
+      {
+        "x": 5.230524513123356,
+        "y": 36.02855539064063
+      }
+    ],
+    "color": "#edf042",
+    "name": "Area Baru",
+    "code": "New Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784508980953,
+    "icon": "listrik"
+  },
+  {
+    "uuid": "uuid-dw1v2dg3j-1784593983603",
+    "id": "bld-new-141",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.163029532823369,
+        "y": 13.51305621489125
+      },
+      {
+        "x": 7.979697118578061,
+        "y": 13.51305621489125
+      },
+      {
+        "x": 7.979697118578061,
+        "y": 14.851137982544142
+      },
+      {
+        "x": 5.163029532823369,
+        "y": 14.851137982544142
+      }
+    ],
+    "color": "#ef4444",
+    "name": "COVER STOCK",
+    "code": "COVER STOCK",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594008636
+  },
+  {
+    "uuid": "uuid-z58vn1yvk-1784594082966",
+    "id": "bld-new-142",
+    "type": "rect",
+    "points": [
+      {
+        "x": 7.978753705124161,
+        "y": 13.51069633595775
+      },
+      {
+        "x": 10.807037504059817,
+        "y": 13.51069633595775
+      },
+      {
+        "x": 10.807037504059817,
+        "y": 14.845896749066718
+      },
+      {
+        "x": 7.978753705124161,
+        "y": 14.845896749066718
+      }
+    ],
+    "color": "#ef4444",
+    "name": "NEW STORE 4",
+    "code": "NEW STORE 4",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594008636
+  },
+  {
+    "uuid": "uuid-tyvpo88lb-1784594121407",
+    "id": "bld-new-143",
+    "type": "rect",
+    "points": [
+      {
+        "x": 10.873804460310975,
+        "y": 13.507006244168545
+      },
+      {
+        "x": 13.629987824566678,
+        "y": 13.507006244168545
+      },
+      {
+        "x": 13.629987824566678,
+        "y": 14.85173394576305
+      },
+      {
+        "x": 10.873804460310975,
+        "y": 14.85173394576305
+      }
+    ],
+    "color": "#ef4444",
+    "name": "NEW STORE 5",
+    "code": "NEW STORE 5",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594008636
+  },
+  {
+    "uuid": "uuid-m4onrs4eh-1784594275511",
+    "id": "bld-new-144",
+    "type": "rect",
+    "points": [
+      {
+        "x": 13.841904816276609,
+        "y": 38.86660199849049
+      },
+      {
+        "x": 34.60966571951913,
+        "y": 38.86660199849049
+      },
+      {
+        "x": 34.60966571951913,
+        "y": 82.56172411699536
+      },
+      {
+        "x": 13.841904816276609,
+        "y": 82.56172411699536
+      }
+    ],
+    "color": "#ef4444",
+    "name": "PRODUCTION 1",
+    "code": "PRODUCTION 1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784522334253,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-8pn035sfd-1784594669362",
+    "id": "bld-new-145",
+    "type": "rect",
+    "points": [
+      {
+        "x": 64.4535685796902,
+        "y": 77.76637609023375
+      },
+      {
+        "x": 67.22124366254472,
+        "y": 77.76637609023375
+      },
+      {
+        "x": 67.22124366254472,
+        "y": 85.2344537817027
+      },
+      {
+        "x": 64.4535685796902,
+        "y": 85.2344537817027
+      }
+    ],
+    "color": "#e27cfe",
+    "name": "TEMPAT WUDHU",
+    "code": "TEMPAT WUDHU",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594760758
+  },
+  {
+    "uuid": "uuid-pbbnclh8t-1784594818426",
+    "id": "bld-new-146",
+    "type": "rect",
+    "points": [
+      {
+        "x": 64.62764304867434,
+        "y": 73.0088467267631
+      },
+      {
+        "x": 65.94240145529376,
+        "y": 73.0088467267631
+      },
+      {
+        "x": 65.94240145529376,
+        "y": 77.53140444961262
+      },
+      {
+        "x": 64.62764304867434,
+        "y": 77.53140444961262
+      }
+    ],
+    "color": "#ef4444",
+    "name": "TOILET PACKAGING",
+    "code": "TOILET PACKAGING",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-ktfa5cmba-1784594920302",
+    "id": "bld-new-147",
+    "type": "rect",
+    "points": [
+      {
+        "x": 48.84070772368115,
+        "y": 60.706081106093635
+      },
+      {
+        "x": 64.57371957672294,
+        "y": 60.706081106093635
+      },
+      {
+        "x": 64.57371957672294,
+        "y": 82.55180882743215
+      },
+      {
+        "x": 48.84070772368115,
+        "y": 82.55180882743215
+      }
+    ],
+    "color": "#ef4444",
+    "name": "PACKAGING",
+    "code": "PACKAGING",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594897381,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-so9v3cq9i-1784599993891",
+    "id": "bld-new-148",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.211347605667424,
+        "y": 25.218520253487135
+      },
+      {
+        "x": 29.392023591120154,
+        "y": 25.218520253487135
+      },
+      {
+        "x": 29.392023591120154,
+        "y": 36.16052570994906
+      },
+      {
+        "x": 24.211347605667424,
+        "y": 36.16052570994906
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 6",
+    "code": "F6",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-cbun8k9hs-1784600007772",
+    "id": "bld-new-149",
+    "type": "rect",
+    "points": [
+      {
+        "x": 29.392023591120154,
+        "y": 25.197149149079976
+      },
+      {
+        "x": 34.61333232939997,
+        "y": 25.197149149079976
+      },
+      {
+        "x": 34.61333232939997,
+        "y": 36.13915460554191
+      },
+      {
+        "x": 29.392023591120154,
+        "y": 36.13915460554191
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 7",
+    "code": "F7",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-lqgmrvmb4-1784600121287",
+    "id": "bld-new-150",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.19109943139808,
+        "y": 6.099431879089897
+      },
+      {
+        "x": 34.63631425821099,
+        "y": 6.099431879089897
+      },
+      {
+        "x": 34.63631425821099,
+        "y": 11.450682875917389
+      },
+      {
+        "x": 24.19109943139808,
+        "y": 11.450682875917389
+      }
+    ],
+    "color": "#ef4444",
+    "name": "CUTTING",
+    "code": "CUTTING",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-yjfwhc8bp-1784600150057",
+    "id": "bld-new-151",
+    "type": "rect",
+    "points": [
+      {
+        "x": 39.91453042401681,
+        "y": 5.1057702006171946
+      },
+      {
+        "x": 45.34630603092631,
+        "y": 5.1057702006171946
+      },
+      {
+        "x": 45.34630603092631,
+        "y": 6.084984707573451
+      },
+      {
+        "x": 39.91453042401681,
+        "y": 6.084984707573451
+      }
+    ],
+    "color": "#ef4444",
+    "name": "RAW MATERIAL",
+    "code": "RAW MATERIAL",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784600291176,
+    "linkedShapeId": "bld-new-41",
+    "linkedShapeUuid": "uuid-xy589tf46-1784507442279"
+  },
+  {
+    "uuid": "uuid-8obk7hkv4-1784600168081",
+    "id": "bld-new-152",
+    "type": "rect",
+    "points": [
+      {
+        "x": 48.24083359770165,
+        "y": 11.609408992410446
+      },
+      {
+        "x": 56.81473668864998,
+        "y": 11.609408992410446
+      },
+      {
+        "x": 56.81473668864998,
+        "y": 12.347960617413667
+      },
+      {
+        "x": 48.24083359770165,
+        "y": 12.347960617413667
+      }
+    ],
+    "color": "#ef4444",
+    "name": "RAW MATERIAL",
+    "code": "RAW MATERIAL",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784600291176
+  },
+  {
+    "uuid": "uuid-n14cyfpx6-1784600448395",
+    "id": "bld-new-154",
+    "type": "rect",
+    "points": [
+      {
+        "x": 14.692480852076848,
+        "y": 26.603467219075178
+      },
+      {
+        "x": 21.630872833576507,
+        "y": 26.603467219075178
+      },
+      {
+        "x": 21.630872833576507,
+        "y": 34.4086942647437
+      },
+      {
+        "x": 14.692480852076848,
+        "y": 34.4086942647437
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 4",
+    "code": "F4",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-ulxmvyv7j-1784600580941",
+    "id": "bld-new-156",
+    "type": "rect",
+    "points": [
+      {
+        "x": 14.696259358864541,
+        "y": 22.093746488039653
+      },
+      {
+        "x": 21.62090038241498,
+        "y": 22.093746488039653
+      },
+      {
+        "x": 21.62090038241498,
+        "y": 25.25756265289843
+      },
+      {
+        "x": 14.696259358864541,
+        "y": 25.25756265289843
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 1",
+    "code": "F1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-xihzpe1c9-1784600594961",
+    "id": "bld-new-157",
+    "type": "rect",
+    "points": [
+      {
+        "x": 14.671898467588838,
+        "y": 18.83001406215951
+      },
+      {
+        "x": 21.629413465695507,
+        "y": 18.83001406215951
+      },
+      {
+        "x": 21.629413465695507,
+        "y": 21.597989805018333
+      },
+      {
+        "x": 14.671898467588838,
+        "y": 21.597989805018333
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 5",
+    "code": "F5",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-tbypenut8-1784600611945",
+    "id": "bld-new-158",
+    "type": "rect",
+    "points": [
+      {
+        "x": 14.665919772221974,
+        "y": 14.273412442822323
+      },
+      {
+        "x": 21.609421109778744,
+        "y": 14.273412442822323
+      },
+      {
+        "x": 21.609421109778744,
+        "y": 18.36145778319686
+      },
+      {
+        "x": 14.665919772221974,
+        "y": 18.36145778319686
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 9",
+    "code": "F9",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-qiiuryxa5-1784600722211",
+    "id": "bld-new-159",
+    "type": "rect",
+    "points": [
+      {
+        "x": 13.789949690944352,
+        "y": 34.786866358188284
+      },
+      {
+        "x": 15.977808256565218,
+        "y": 34.786866358188284
+      },
+      {
+        "x": 15.977808256565218,
+        "y": 36.1308159640477
+      },
+      {
+        "x": 13.789949690944352,
+        "y": 36.1308159640477
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KAMAR MANDI",
+    "code": "KAMAR MANDI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-jwgesxzjj-1784600737805",
+    "id": "bld-new-160",
+    "type": "rect",
+    "points": [
+      {
+        "x": 15.988774966167327,
+        "y": 34.79840240630725
+      },
+      {
+        "x": 18.593368496668354,
+        "y": 34.79840240630725
+      },
+      {
+        "x": 18.593368496668354,
+        "y": 36.14235201216666
+      },
+      {
+        "x": 15.988774966167327,
+        "y": 36.14235201216666
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FOREMAN ROOM",
+    "code": "FOREMAN ROOM",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784517725139
+  },
+  {
+    "uuid": "uuid-xhioap9ep-1784600940369",
+    "id": "bld-new-161",
+    "type": "rect",
+    "points": [
+      {
+        "x": 77.09227304694785,
+        "y": 47.890999916400226
+      },
+      {
+        "x": 81.7860390815564,
+        "y": 47.890999916400226
+      },
+      {
+        "x": 81.7860390815564,
+        "y": 52.00122788758813
+      },
+      {
+        "x": 77.09227304694785,
+        "y": 52.00122788758813
+      }
+    ],
+    "color": "#ef4444",
+    "name": "UNDER BRACKET 5",
+    "code": "UB-5",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-0sl8n065r-1784614254931",
+    "id": "bld-new-162",
+    "type": "rect",
+    "points": [
+      {
+        "x": 29.387850473709815,
+        "y": 52.54684143184009
+      },
+      {
+        "x": 34.60089918974399,
+        "y": 52.54684143184009
+      },
+      {
+        "x": 34.60089918974399,
+        "y": 55.517424944434254
+      },
+      {
+        "x": 29.387850473709815,
+        "y": 55.517424944434254
+      }
+    ],
+    "color": "#ef4444",
+    "name": "CLEANING DIES PRESS FG",
+    "code": "CLEANING DIES PRESS FG",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-ew1v7dqpy-1784614292573",
+    "id": "bld-new-163",
+    "type": "rect",
+    "points": [
+      {
+        "x": 29.600217098270843,
+        "y": 55.786634217622144
+      },
+      {
+        "x": 31.796740262737195,
+        "y": 55.786634217622144
+      },
+      {
+        "x": 31.796740262737195,
+        "y": 57.815701181666945
+      },
+      {
+        "x": 29.600217098270843,
+        "y": 57.815701181666945
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ASSY DIES",
+    "code": "ASSY DIES ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-ya6dpeog9-1784614319477",
+    "id": "bld-new-165",
+    "type": "rect",
+    "points": [
+      {
+        "x": 29.61805797610631,
+        "y": 60.854947419401206
+      },
+      {
+        "x": 31.78637991277361,
+        "y": 60.854947419401206
+      },
+      {
+        "x": 31.78637991277361,
+        "y": 70.86143575476844
+      },
+      {
+        "x": 29.61805797610631,
+        "y": 70.86143575476844
+      }
+    ],
+    "color": "#ef4444",
+    "name": "RAK DIES",
+    "code": "RAK DIES",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-n6zlzx0zr-1784614337869",
+    "id": "bld-new-166",
+    "type": "rect",
+    "points": [
+      {
+        "x": 32.63000644682673,
+        "y": 60.97071765060872
+      },
+      {
+        "x": 34.59905906493983,
+        "y": 60.97071765060872
+      },
+      {
+        "x": 34.59905906493983,
+        "y": 63.5870666684484
+      },
+      {
+        "x": 32.63000644682673,
+        "y": 63.5870666684484
+      }
+    ],
+    "color": "#ef4444",
+    "name": "POLISH",
+    "code": "POLISH",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-1hrvslb1a-1784614359086",
+    "id": "bld-new-167",
+    "type": "rect",
+    "points": [
+      {
+        "x": 32.643373161885556,
+        "y": 69.43248028624546
+      },
+      {
+        "x": 33.52719554216636,
+        "y": 69.43248028624546
+      },
+      {
+        "x": 33.52719554216636,
+        "y": 71.31795914066544
+      },
+      {
+        "x": 32.643373161885556,
+        "y": 71.31795914066544
+      }
+    ],
+    "color": "#ef4444",
+    "name": "WELDING",
+    "code": "WELDING",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-6pk40wo93-1784614382030",
+    "id": "bld-new-168",
+    "type": "rect",
+    "points": [
+      {
+        "x": 32.44798498533347,
+        "y": 74.4311534415029
+      },
+      {
+        "x": 34.61105855846277,
+        "y": 74.4311534415029
+      },
+      {
+        "x": 34.61105855846277,
+        "y": 77.11702820893794
+      },
+      {
+        "x": 32.44798498533347,
+        "y": 77.11702820893794
+      }
+    ],
+    "color": "#edf042",
+    "name": "INCOMING AREA",
+    "code": "INCOMING AREA",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-2d1zz9jk5-1784614427344",
+    "id": "bld-new-169",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.191160580716666,
+        "y": 66.12982145416322
+      },
+      {
+        "x": 26.376533881404008,
+        "y": 66.12982145416322
+      },
+      {
+        "x": 26.376533881404008,
+        "y": 70.85649189641788
+      },
+      {
+        "x": 24.191160580716666,
+        "y": 70.85649189641788
+      }
+    ],
+    "color": "#ef4444",
+    "name": "MESIN BUBUT",
+    "code": "MESIN BUBUT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-cmy4buqnp-1784614456904",
+    "id": "bld-new-170",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.196737844145282,
+        "y": 57.931559102437966
+      },
+      {
+        "x": 26.373059158901874,
+        "y": 57.931559102437966
+      },
+      {
+        "x": 26.373059158901874,
+        "y": 63.2051375915211
+      },
+      {
+        "x": 24.196737844145282,
+        "y": 63.2051375915211
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ASSY JACK & TOOLS",
+    "code": "ASSY JACK & TOOLS",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-jm063mtl6-1784614485696",
+    "id": "bld-new-171",
+    "type": "rect",
+    "points": [
+      {
+        "x": 27.240996826096463,
+        "y": 55.465105080412016
+      },
+      {
+        "x": 29.404363847312837,
+        "y": 55.465105080412016
+      },
+      {
+        "x": 29.404363847312837,
+        "y": 59.52962095020141
+      },
+      {
+        "x": 27.240996826096463,
+        "y": 59.52962095020141
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SPOTTING",
+    "code": "SPOTTING",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-nwzlsx3zb-1784614524504",
+    "id": "bld-new-172",
+    "type": "rect",
+    "points": [
+      {
+        "x": 27.23177478737917,
+        "y": 59.527469047125045
+      },
+      {
+        "x": 29.38369849672946,
+        "y": 59.527469047125045
+      },
+      {
+        "x": 29.38369849672946,
+        "y": 62.5886625593545
+      },
+      {
+        "x": 27.23177478737917,
+        "y": 62.5886625593545
+      }
+    ],
+    "color": "#ef4444",
+    "name": "TRIMMING AREA",
+    "code": "TRIMMING AREA",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-2kpr88yte-1784616008927",
+    "id": "bld-new-177",
+    "type": "rect",
+    "points": [
+      {
+        "x": 30.269387388574962,
+        "y": 77.12630204226237
+      },
+      {
+        "x": 34.61672722944069,
+        "y": 77.12630204226237
+      },
+      {
+        "x": 34.61672722944069,
+        "y": 79.85195066987258
+      },
+      {
+        "x": 30.269387388574962,
+        "y": 79.85195066987258
+      }
+    ],
+    "color": "#ef4444",
+    "name": "MATERIAL DIES",
+    "code": "MATERIAL DIES",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-i7ddthwpe-1784616088512",
+    "id": "bld-new-178",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.203735242854034,
+        "y": 79.85850592274903
+      },
+      {
+        "x": 34.625126245287554,
+        "y": 79.85850592274903
+      },
+      {
+        "x": 34.625126245287554,
+        "y": 82.5657956282446
+      },
+      {
+        "x": 24.203735242854034,
+        "y": 82.5657956282446
+      }
+    ],
+    "color": "#00ccff",
+    "name": "OFFICE",
+    "code": "OFFICE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784526121296,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-xai091ten-1784616210106",
+    "id": "bld-new-179",
+    "type": "rect",
+    "points": [
+      {
+        "x": 29.385063733693467,
+        "y": 82.07857471997535
+      },
+      {
+        "x": 34.61530703009926,
+        "y": 82.07857471997535
+      },
+      {
+        "x": 34.61530703009926,
+        "y": 85.33925807819053
+      },
+      {
+        "x": 29.385063733693467,
+        "y": 85.33925807819053
+      }
+    ],
+    "color": "#42d3f0",
+    "name": "QC LAB",
+    "code": "QC LAB",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "hatched": true,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-mz7xm8xyb-1784616640178",
+    "id": "bld-new-180",
+    "type": "rect",
+    "points": [
+      {
+        "x": 60.297592083206034,
+        "y": 64.98242880462173
+      },
+      {
+        "x": 60.96803250485286,
+        "y": 64.98242880462173
+      },
+      {
+        "x": 60.96803250485286,
+        "y": 76.20225861837667
+      },
+      {
+        "x": 60.297592083206034,
+        "y": 76.20225861837667
+      }
+    ],
+    "color": "#f08842",
+    "name": "KAYABA",
+    "code": "KAYABA",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-53rgdjvl5-1784616661803",
+    "id": "bld-new-181",
+    "type": "rect",
+    "points": [
+      {
+        "x": 57.98152517206244,
+        "y": 65.00379990902886
+      },
+      {
+        "x": 59.03797674556653,
+        "y": 65.00379990902886
+      },
+      {
+        "x": 59.03797674556653,
+        "y": 75.8816920522694
+      },
+      {
+        "x": 57.98152517206244,
+        "y": 75.8816920522694
+      }
+    ],
+    "color": "#f09642",
+    "name": "ROTOR",
+    "code": "ROTOR",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-aqw539srf-1784616709915",
+    "id": "bld-new-182",
+    "type": "rect",
+    "points": [
+      {
+        "x": 62.236248043098726,
+        "y": 64.99958965940773
+      },
+      {
+        "x": 64.22725293162567,
+        "y": 64.99958965940773
+      },
+      {
+        "x": 64.22725293162567,
+        "y": 75.87748180264828
+      },
+      {
+        "x": 62.236248043098726,
+        "y": 75.87748180264828
+      }
+    ],
+    "color": "#ef4444",
+    "name": "END HOUSING ?? PJ",
+    "code": "END HOUSING ?? PJ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-cuezdkgt9-1784616757037",
+    "id": "bld-new-183",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.82271482135136,
+        "y": 61.651547405372185
+      },
+      {
+        "x": 55.613284033828734,
+        "y": 61.651547405372185
+      },
+      {
+        "x": 55.613284033828734,
+        "y": 65.78047319915048
+      },
+      {
+        "x": 49.82271482135136,
+        "y": 65.78047319915048
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SHIPPING HPI",
+    "code": "SHIPPING HPI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-uxk36pb3o-1784616782198",
+    "id": "bld-new-184",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.81795494313407,
+        "y": 67.37540502834263
+      },
+      {
+        "x": 51.902979469810276,
+        "y": 67.37540502834263
+      },
+      {
+        "x": 51.902979469810276,
+        "y": 70.19029561430075
+      },
+      {
+        "x": 49.81795494313407,
+        "y": 70.19029561430075
+      }
+    ],
+    "color": "#ef4444",
+    "name": "EXPORT",
+    "code": "EXPORT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-r32tx39io-1784616795622",
+    "id": "bld-new-185",
+    "type": "rect",
+    "points": [
+      {
+        "x": 51.91412933358929,
+        "y": 67.38713373911744
+      },
+      {
+        "x": 53.508559853988736,
+        "y": 67.38713373911744
+      },
+      {
+        "x": 53.508559853988736,
+        "y": 70.20202432507557
+      },
+      {
+        "x": 51.91412933358929,
+        "y": 70.20202432507557
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SPARE PART",
+    "code": "SPARE PART",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-jzwdc40oz-1784616827886",
+    "id": "bld-new-186",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.83302029233929,
+        "y": 74.41245988134462
+      },
+      {
+        "x": 51.89574509145746,
+        "y": 74.41245988134462
+      },
+      {
+        "x": 51.89574509145746,
+        "y": 76.27732489454186
+      },
+      {
+        "x": 49.83302029233929,
+        "y": 76.27732489454186
+      }
+    ],
+    "color": "#edf042",
+    "name": "AREA TRUCK",
+    "code": "AREA TRUCK",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629,
+    "hatched": true
+  },
+  {
+    "uuid": "uuid-h0ilojktq-1784616880911",
+    "id": "bld-new-187",
+    "type": "rect",
+    "points": [
+      {
+        "x": 44.56537326964809,
+        "y": 66.95831913035576
+      },
+      {
+        "x": 48.869885431706464,
+        "y": 66.95831913035576
+      },
+      {
+        "x": 48.869885431706464,
+        "y": 74.4152398981243
+      },
+      {
+        "x": 44.56537326964809,
+        "y": 74.4152398981243
+      }
+    ],
+    "color": "#ef4444",
+    "name": "OFFICE MAINTENANCE & PROD",
+    "code": "OFFICE MAINTENANCE & PROD",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-l48duwoxl-1784616909792",
+    "id": "bld-new-188",
+    "type": "rect",
+    "points": [
+      {
+        "x": 44.56622151675317,
+        "y": 63.47846664140572
+      },
+      {
+        "x": 48.86557747416567,
+        "y": 63.47846664140572
+      },
+      {
+        "x": 48.86557747416567,
+        "y": 66.94104989796239
+      },
+      {
+        "x": 44.56622151675317,
+        "y": 66.94104989796239
+      }
+    ],
+    "color": "#ef4444",
+    "name": "GA ROOM",
+    "code": "GA ROOM",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-v5zcca429-1784616942688",
+    "id": "bld-new-189",
+    "type": "rect",
+    "points": [
+      {
+        "x": 47.21718871592381,
+        "y": 60.7273927096319
+      },
+      {
+        "x": 48.81025364657219,
+        "y": 60.7273927096319
+      },
+      {
+        "x": 48.81025364657219,
+        "y": 63.29115065850672
+      },
+      {
+        "x": 47.21718871592381,
+        "y": 63.29115065850672
+      }
+    ],
+    "color": "#ef4444",
+    "name": "OFFICE WHFG",
+    "code": "OFFICE WHFG",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-8mxt5h5in-1784616961554",
+    "id": "bld-new-190",
+    "type": "rect",
+    "points": [
+      {
+        "x": 46.382269143837014,
+        "y": 60.72477627088707
+      },
+      {
+        "x": 47.16920483247055,
+        "y": 60.72477627088707
+      },
+      {
+        "x": 47.16920483247055,
+        "y": 63.29115065850672
+      },
+      {
+        "x": 46.382269143837014,
+        "y": 63.29115065850672
+      }
+    ],
+    "color": "#ef4444",
+    "name": "PANTRY",
+    "code": "PANTRY",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-tct6d9yg1-1784616989145",
+    "id": "bld-new-191",
+    "type": "rect",
+    "points": [
+      {
+        "x": 43.76699501445845,
+        "y": 60.65528634243347
+      },
+      {
+        "x": 45.089355882456815,
+        "y": 60.65528634243347
+      },
+      {
+        "x": 45.089355882456815,
+        "y": 62.02386212195676
+      },
+      {
+        "x": 43.76699501445845,
+        "y": 62.02386212195676
+      }
+    ],
+    "color": "#ef4444",
+    "name": "LIFT",
+    "code": "LIFT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-skawv5vyw-1784617013489",
+    "id": "bld-new-192",
+    "type": "rect",
+    "points": [
+      {
+        "x": 45.64003975036192,
+        "y": 77.17199999947806
+      },
+      {
+        "x": 48.79753404148049,
+        "y": 77.17199999947806
+      },
+      {
+        "x": 48.79753404148049,
+        "y": 80.58996891571866
+      },
+      {
+        "x": 45.64003975036192,
+        "y": 80.58996891571866
+      }
+    ],
+    "color": "#e486fe",
+    "name": "KOPERASI",
+    "code": "KOPERASI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-z33sx0fc5-1784617027699",
+    "id": "bld-new-193",
+    "type": "rect",
+    "points": [
+      {
+        "x": 45.64175209295039,
+        "y": 80.78606323730945
+      },
+      {
+        "x": 48.810456322579924,
+        "y": 80.78606323730945
+      },
+      {
+        "x": 48.810456322579924,
+        "y": 82.49319982302164
+      },
+      {
+        "x": 45.64175209295039,
+        "y": 82.49319982302164
+      }
+    ],
+    "color": "#f686fe",
+    "name": "SERIKAT",
+    "code": "SERIKAT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-dy8txq20p-1784617078508",
+    "id": "bld-new-194",
+    "type": "rect",
+    "points": [
+      {
+        "x": 40.223393349881675,
+        "y": 90.38106520494583
+      },
+      {
+        "x": 41.13003261443948,
+        "y": 90.38106520494583
+      },
+      {
+        "x": 41.13003261443948,
+        "y": 91.04389197984526
+      },
+      {
+        "x": 40.223393349881675,
+        "y": 91.04389197984526
+      }
+    ],
+    "color": "#ef4444",
+    "name": "TOILET POS",
+    "code": "TOILET POS",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-exn5cix8b-1784617100740",
+    "id": "bld-new-195",
+    "type": "rect",
+    "points": [
+      {
+        "x": 37.62900400746763,
+        "y": 89.47929687730148
+      },
+      {
+        "x": 39.57081673168469,
+        "y": 89.47929687730148
+      },
+      {
+        "x": 39.57081673168469,
+        "y": 91.07587683157506
+      },
+      {
+        "x": 37.62900400746763,
+        "y": 91.07587683157506
+      }
+    ],
+    "color": "#ff80fb",
+    "name": "CLINIC",
+    "code": "CLINIC",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594720629
+  },
+  {
+    "uuid": "uuid-gvtadumjt-1784775600560",
+    "id": "bld-new-196",
+    "type": "rect",
+    "points": [
+      {
+        "x": 48.974565537909314,
+        "y": 31.20143238638631
+      },
+      {
+        "x": 66.8064265598769,
+        "y": 31.20143238638631
+      },
+      {
+        "x": 66.8064265598769,
+        "y": 55.95737125184131
+      },
+      {
+        "x": 48.974565537909314,
+        "y": 55.95737125184131
+      }
+    ],
+    "color": "#ef4444",
+    "name": "GEDUNG ADMIN DELIVERY",
+    "code": "GEDUNG ADMIN DELIVERY ",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784775538112,
+    "hatched": true,
+    "locked": true
+  },
+  {
+    "uuid": "uuid-cvug511jv-1784776087569",
+    "id": "bld-new-197",
+    "type": "rect",
+    "points": [
+      {
+        "x": 51.069862283590496,
+        "y": 33.05261277102724
+      },
+      {
+        "x": 52.06792705941838,
+        "y": 33.05261277102724
+      },
+      {
+        "x": 52.06792705941838,
+        "y": 35.2735116527837
+      },
+      {
+        "x": 51.069862283590496,
+        "y": 35.2735116527837
+      }
+    ],
+    "color": "#ef4444",
+    "name": "MPI 1",
+    "code": "MPI 1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-p761mxzwu-1784776120218",
+    "id": "bld-new-198",
+    "type": "rect",
+    "points": [
+      {
+        "x": 52.77808853452669,
+        "y": 33.08289775577847
+      },
+      {
+        "x": 53.69937909682937,
+        "y": 33.08289775577847
+      },
+      {
+        "x": 53.69937909682937,
+        "y": 35.33408162228614
+      },
+      {
+        "x": 52.77808853452669,
+        "y": 35.33408162228614
+      }
+    ],
+    "color": "#ef4444",
+    "name": "MPI 2",
+    "code": "MPI 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-vwx9elrcv-1784776133131",
+    "id": "bld-new-199",
+    "type": "rect",
+    "points": [
+      {
+        "x": 54.428734125318975,
+        "y": 33.08289775577847
+      },
+      {
+        "x": 55.42679890114688,
+        "y": 33.08289775577847
+      },
+      {
+        "x": 55.42679890114688,
+        "y": 35.374461601954444
+      },
+      {
+        "x": 54.428734125318975,
+        "y": 35.374461601954444
+      }
+    ],
+    "color": "#ef4444",
+    "name": "MPI 3",
+    "code": "MPI 3",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-7cegwbn4x-1784776151850",
+    "id": "bld-new-200",
+    "type": "rect",
+    "points": [
+      {
+        "x": 56.22699384851618,
+        "y": 33.83116240238637
+      },
+      {
+        "x": 57.26775665146368,
+        "y": 33.83116240238637
+      },
+      {
+        "x": 57.26775665146368,
+        "y": 34.82169046415538
+      },
+      {
+        "x": 56.22699384851618,
+        "y": 34.82169046415538
+      }
+    ],
+    "color": "#ef4444",
+    "name": "VISUAL 1",
+    "code": "VISUAL 1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-9nyo18y3x-1784776166676",
+    "id": "bld-new-201",
+    "type": "rect",
+    "points": [
+      {
+        "x": 57.34078913695128,
+        "y": 33.830841540830846
+      },
+      {
+        "x": 58.36472686933053,
+        "y": 33.830841540830846
+      },
+      {
+        "x": 58.36472686933053,
+        "y": 34.81914576440317
+      },
+      {
+        "x": 57.34078913695128,
+        "y": 34.81914576440317
+      }
+    ],
+    "color": "#ef4444",
+    "name": "VISUAL 2",
+    "code": "VISUAL 2",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-0wxicn96y-1784776199198",
+    "id": "bld-new-202",
+    "type": "rect",
+    "points": [
+      {
+        "x": 58.40554673365166,
+        "y": 33.829971114888316
+      },
+      {
+        "x": 59.43911549524754,
+        "y": 33.829971114888316
+      },
+      {
+        "x": 59.43911549524754,
+        "y": 34.8265955462119
+      },
+      {
+        "x": 58.40554673365166,
+        "y": 34.8265955462119
+      }
+    ],
+    "color": "#ef4444",
+    "name": "VISUAL 3",
+    "code": "VISUAL 3",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-qcut64q9i-1784776219940",
+    "id": "bld-new-203",
+    "type": "rect",
+    "points": [
+      {
+        "x": 56.779407218368775,
+        "y": 31.55889879761835
+      },
+      {
+        "x": 59.95594030297485,
+        "y": 31.55889879761835
+      },
+      {
+        "x": 59.95594030297485,
+        "y": 32.437163355403854
+      },
+      {
+        "x": 56.779407218368775,
+        "y": 32.437163355403854
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ADMIN MPI",
+    "code": "ADMIN MPI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-s7q64leip-1784776654013",
+    "id": "bld-new-204",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.41357197971594,
+        "y": 51.78200023528016
+      },
+      {
+        "x": 62.85388442977925,
+        "y": 51.78200023528016
+      },
+      {
+        "x": 62.85388442977925,
+        "y": 54.125151559334796
+      },
+      {
+        "x": 49.41357197971594,
+        "y": 54.125151559334796
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SHIPPING 1",
+    "code": "SHIPPING 1",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-1zzzciukj-1784776677710",
+    "id": "bld-new-205",
+    "type": "rect",
+    "points": [
+      {
+        "x": 57.75168295097583,
+        "y": 49.23303156519369
+      },
+      {
+        "x": 62.071245854859555,
+        "y": 49.23303156519369
+      },
+      {
+        "x": 62.071245854859555,
+        "y": 50.32544670951646
+      },
+      {
+        "x": 57.75168295097583,
+        "y": 50.32544670951646
+      }
+    ],
+    "color": "#ef4444",
+    "name": "CEK MPI",
+    "code": "CEK MPI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-bqqlnfcjw-1784776704959",
+    "id": "bld-new-206",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.29210787885277,
+        "y": 44.74388906955044
+      },
+      {
+        "x": 51.12509222676746,
+        "y": 44.74388906955044
+      },
+      {
+        "x": 51.12509222676746,
+        "y": 46.520608174955605
+      },
+      {
+        "x": 49.29210787885277,
+        "y": 46.520608174955605
+      }
+    ],
+    "color": "#ef4444",
+    "name": "CRANK SHAFT",
+    "code": "CRANK SHAFT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-sji0a05gk-1784776719194",
+    "id": "bld-new-207",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.075923868110905,
+        "y": 46.70639644414706
+      },
+      {
+        "x": 50.54758354378649,
+        "y": 46.70639644414706
+      },
+      {
+        "x": 50.54758354378649,
+        "y": 48.57603548721164
+      },
+      {
+        "x": 49.075923868110905,
+        "y": 48.57603548721164
+      }
+    ],
+    "color": "#ef4444",
+    "name": "PPIC",
+    "code": "PPIC",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-bl2twhzmo-1784776741936",
+    "id": "bld-new-208",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.075923868110905,
+        "y": 48.635863936589715
+      },
+      {
+        "x": 50.540474076754236,
+        "y": 48.635863936589715
+      },
+      {
+        "x": 50.540474076754236,
+        "y": 50.36341041238139
+      },
+      {
+        "x": 49.075923868110905,
+        "y": 50.36341041238139
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ADMIN DELIVERY",
+    "code": "ADMIN DELIVERY",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-acgpk0ogq-1784776778712",
+    "id": "bld-new-209",
+    "type": "rect",
+    "points": [
+      {
+        "x": 58.61487177382164,
+        "y": 47.7220214492872
+      },
+      {
+        "x": 59.35431127059383,
+        "y": 47.7220214492872
+      },
+      {
+        "x": 59.35431127059383,
+        "y": 48.27184975721686
+      },
+      {
+        "x": 58.61487177382164,
+        "y": 48.27184975721686
+      }
+    ],
+    "color": "#ef4444",
+    "name": "AREA 3 POINT CHECK",
+    "code": "AREA 3 POINT CHECK",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-7kwmkotic-1784776998942",
+    "id": "bld-new-210",
+    "type": "rect",
+    "points": [
+      {
+        "x": 56.83597866284148,
+        "y": 40.85684594726652
+      },
+      {
+        "x": 58.388689457906416,
+        "y": 40.85684594726652
+      },
+      {
+        "x": 58.388689457906416,
+        "y": 47.41134530966703
+      },
+      {
+        "x": 56.83597866284148,
+        "y": 47.41134530966703
+      }
+    ],
+    "color": "#ef4444",
+    "name": "SPINDLE (26 TROLLEY)",
+    "code": "SPINDLE (26 TROLLEY)",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-uj2ovzlva-1784777004812",
+    "id": "bld-new-211",
+    "type": "rect",
+    "points": [
+      {
+        "x": 59.73774041585027,
+        "y": 40.84321912946527
+      },
+      {
+        "x": 62.83381657196233,
+        "y": 40.84321912946527
+      },
+      {
+        "x": 62.83381657196233,
+        "y": 47.41134530966703
+      },
+      {
+        "x": 59.73774041585027,
+        "y": 47.41134530966703
+      }
+    ],
+    "color": "#ef4444",
+    "name": "HUB FRONT (65 TROLLEY ORANGE)",
+    "code": "HUB FRONT (65 TROLLEY ORANGE)",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-0ysqihyn7-1784777057694",
+    "id": "bld-new-212",
+    "type": "rect",
+    "points": [
+      {
+        "x": 49.28616364176105,
+        "y": 38.22957984717238
+      },
+      {
+        "x": 51.1481908928569,
+        "y": 38.22957984717238
+      },
+      {
+        "x": 51.1481908928569,
+        "y": 44.53962624402851
+      },
+      {
+        "x": 49.28616364176105,
+        "y": 44.53962624402851
+      }
+    ],
+    "color": "#ef4444",
+    "name": "AREA STORE CS DOLLY",
+    "code": "AREA STORE CS",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-dm73fuf0s-1784777147127",
+    "id": "bld-new-213",
+    "type": "rect",
+    "points": [
+      {
+        "x": 64.62643026198411,
+        "y": 47.6141674177635
+      },
+      {
+        "x": 65.94803382128251,
+        "y": 47.6141674177635
+      },
+      {
+        "x": 65.94803382128251,
+        "y": 50.385908222187346
+      },
+      {
+        "x": 64.62643026198411,
+        "y": 50.385908222187346
+      }
+    ],
+    "color": "#ef4444",
+    "name": "TOILET",
+    "code": "TOILET",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784776055872,
+    "parentShapeUuid": "uuid-gvtadumjt-1784775600560",
+    "parentShapeId": "bld-new-196"
+  },
+  {
+    "uuid": "uuid-3xujl0ygn-1784777298330",
+    "id": "bld-new-214",
+    "type": "rect",
+    "points": [
+      {
+        "x": 69.35286395628258,
+        "y": 36.13943905480476
+      },
+      {
+        "x": 70.65739801842757,
+        "y": 36.13943905480476
+      },
+      {
+        "x": 70.65739801842757,
+        "y": 38.89568608688877
+      },
+      {
+        "x": 69.35286395628258,
+        "y": 38.89568608688877
+      }
+    ],
+    "color": "#e4f042",
+    "name": "DOCK TRUCK SPL",
+    "code": "DOCK TRUCK SPL",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "hatched": true,
+    "icon": ""
+  },
+  {
+    "uuid": "uuid-9nfz8hf7w-1784777325451",
+    "id": "bld-new-215",
+    "type": "rect",
+    "points": [
+      {
+        "x": 69.3516232290696,
+        "y": 40.81981277599282
+      },
+      {
+        "x": 70.6526556959712,
+        "y": 40.81981277599282
+      },
+      {
+        "x": 70.6526556959712,
+        "y": 43.54200722269487
+      },
+      {
+        "x": 69.3516232290696,
+        "y": 43.54200722269487
+      }
+    ],
+    "color": "#edf042",
+    "name": "DOCK TRUCK SPL",
+    "code": "DOCK TRUCK SPL",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "hatched": true,
+    "icon": ""
+  },
+  {
+    "uuid": "uuid-zgpwz0msx-1784777407532",
+    "id": "bld-new-216",
+    "type": "rect",
+    "points": [
+      {
+        "x": 46.991965301969216,
+        "y": 52.7143936667558
+      },
+      {
+        "x": 48.30659223557803,
+        "y": 52.7143936667558
+      },
+      {
+        "x": 48.30659223557803,
+        "y": 53.434442897042224
+      },
+      {
+        "x": 46.991965301969216,
+        "y": 53.434442897042224
+      }
+    ],
+    "color": "#e4f042",
+    "name": "DOCK FORKLIFT",
+    "code": "DOCK FORKLIFT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "hatched": true,
+    "icon": ""
+  },
+  {
+    "uuid": "uuid-xyrcomvbw-1784777432798",
+    "id": "bld-new-217",
+    "type": "rect",
+    "points": [
+      {
+        "x": 46.991965301969216,
+        "y": 53.54888780781623
+      },
+      {
+        "x": 48.30205903925525,
+        "y": 53.54888780781623
+      },
+      {
+        "x": 48.30205903925525,
+        "y": 54.27370557605157
+      },
+      {
+        "x": 46.991965301969216,
+        "y": 54.27370557605157
+      }
+    ],
+    "color": "#dbf042",
+    "name": "DOCK FORKLIFT",
+    "code": "DOCK FORKLIFT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "hatched": true,
+    "icon": ""
+  },
+  {
+    "uuid": "uuid-665animqz-1784777917127",
+    "id": "bld-new-218",
+    "type": "rect",
+    "points": [
+      {
+        "x": 16.20966118017641,
+        "y": 41.07323183794298
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 41.07323183794298
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 42.086486464561204
+      },
+      {
+        "x": 16.20966118017641,
+        "y": 42.086486464561204
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KOMPONEN",
+    "code": "KOMPONEN",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784777866311,
+    "parentShapeUuid": "uuid-m4onrs4eh-1784594275511",
+    "parentShapeId": "bld-new-144"
+  },
+  {
+    "uuid": "uuid-xc7lu7j8b-1784777927855",
+    "id": "bld-new-219",
+    "type": "rect",
+    "points": [
+      {
+        "x": 16.224711922001795,
+        "y": 42.97308426285216
+      },
+      {
+        "x": 21.59782675366209,
+        "y": 42.97308426285216
+      },
+      {
+        "x": 21.59782675366209,
+        "y": 43.986338889470396
+      },
+      {
+        "x": 16.224711922001795,
+        "y": 43.986338889470396
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KOMPONEN",
+    "code": "KOMPONEN",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784777866311,
+    "parentShapeUuid": "uuid-m4onrs4eh-1784594275511",
+    "parentShapeId": "bld-new-144"
+  },
+  {
+    "uuid": "uuid-ymo2hc18p-1784777935487",
+    "id": "bld-new-220",
+    "type": "rect",
+    "points": [
+      {
+        "x": 16.20966118017641,
+        "y": 44.90460089484318
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 44.90460089484318
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 45.902023417920496
+      },
+      {
+        "x": 16.20966118017641,
+        "y": 45.902023417920496
+      }
+    ],
+    "color": "#ef4444",
+    "name": "KOMPONEN",
+    "code": "KOMPONEN",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784777866311,
+    "parentShapeUuid": "uuid-m4onrs4eh-1784594275511",
+    "parentShapeId": "bld-new-144"
+  },
+  {
+    "uuid": "uuid-keqj7p6t9-1784777941216",
+    "id": "bld-new-221",
+    "type": "rect",
+    "points": [
+      {
+        "x": 16.20966118017641,
+        "y": 46.80445331975236
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 46.80445331975236
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 47.80187584282969
+      },
+      {
+        "x": 16.20966118017641,
+        "y": 47.80187584282969
+      }
+    ],
+    "color": "#ef4444",
+    "name": "RAK KOMPONEN",
+    "code": "RAK KOMPONEN",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784777866311,
+    "parentShapeUuid": "uuid-m4onrs4eh-1784594275511",
+    "parentShapeId": "bld-new-144"
+  },
+  {
+    "uuid": "uuid-nfo68xvqk-1784777956233",
+    "id": "bld-new-222",
+    "type": "rect",
+    "points": [
+      {
+        "x": 16.194610438351035,
+        "y": 48.70430574466155
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 48.70430574466155
+      },
+      {
+        "x": 21.612877495487474,
+        "y": 49.82838509606616
+      },
+      {
+        "x": 16.194610438351035,
+        "y": 49.82838509606616
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FG TOOL SET",
+    "code": "FG TOOL SET",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784777866311,
+    "parentShapeUuid": "uuid-m4onrs4eh-1784594275511",
+    "parentShapeId": "bld-new-144"
+  },
+  {
+    "uuid": "uuid-5skh45ziv-1784777980953",
+    "id": "bld-new-223",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.281909511678393,
+        "y": 51.2439590948858
+      },
+      {
+        "x": 25.86399502833177,
+        "y": 51.2439590948858
+      },
+      {
+        "x": 25.86399502833177,
+        "y": 52.469473347757415
+      },
+      {
+        "x": 24.281909511678393,
+        "y": 52.469473347757415
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ADMIN PRODUKSI",
+    "code": "ADMIN PRODUKSI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784777866311,
+    "parentShapeUuid": "uuid-m4onrs4eh-1784594275511",
+    "parentShapeId": "bld-new-144"
+  },
+  {
+    "uuid": "uuid-kdfbcj5dn-1784778024937",
+    "id": "bld-new-224",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.28583354607191,
+        "y": 52.47108851288622
+      },
+      {
+        "x": 25.86061353840296,
+        "y": 52.47108851288622
+      },
+      {
+        "x": 25.86061353840296,
+        "y": 54.25504923081606
+      },
+      {
+        "x": 24.28583354607191,
+        "y": 54.25504923081606
+      }
+    ],
+    "color": "#ef4444",
+    "name": "AREA WAKOM & SIGAP PRODUKSI",
+    "code": "AREA WAKOM & SIGAP PRODUKSI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-or3jbv89w-1784778053867",
+    "id": "bld-new-225",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.292517221894283,
+        "y": 55.39009286567116
+      },
+      {
+        "x": 26.304443499721906,
+        "y": 55.39009286567116
+      },
+      {
+        "x": 26.304443499721906,
+        "y": 57.822262912786705
+      },
+      {
+        "x": 24.292517221894283,
+        "y": 57.822262912786705
+      }
+    ],
+    "color": "#ef4444",
+    "name": "AREA SIGAP PRODUKSI",
+    "code": "AREA SIGAP PRODUKSI",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-82v0gcaiu-1784778259999",
+    "id": "bld-new-226",
+    "type": "rect",
+    "points": [
+      {
+        "x": 5.263479340995617,
+        "y": 68.93282084024102
+      },
+      {
+        "x": 11.559266001541554,
+        "y": 68.93282084024102
+      },
+      {
+        "x": 11.559266001541554,
+        "y": 74.19277251152299
+      },
+      {
+        "x": 5.263479340995617,
+        "y": 74.19277251152299
+      }
+    ],
+    "color": "#ef4444",
+    "name": "B3",
+    "code": "B3",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784614215582
+  },
+  {
+    "uuid": "uuid-oxtk2ep3f-1784779268140",
+    "id": "bld-new-227",
+    "type": "rect",
+    "points": [
+      {
+        "x": 9.017228404075055,
+        "y": 62.14685453698564
+      },
+      {
+        "x": 10.230675214763602,
+        "y": 62.14685453698564
+      },
+      {
+        "x": 10.230675214763602,
+        "y": 64.52325503447767
+      },
+      {
+        "x": 9.017228404075055,
+        "y": 64.52325503447767
+      }
+    ],
+    "color": "#ef4444",
+    "name": "RAK JIG",
+    "code": "RAK JIG",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594008636
+  },
+  {
+    "uuid": "uuid-2gf9f6trb-1784779302075",
+    "id": "bld-new-228",
+    "type": "rect",
+    "points": [
+      {
+        "x": 9.544995743559388,
+        "y": 59.66537771057422
+      },
+      {
+        "x": 10.142419647270389,
+        "y": 59.66537771057422
+      },
+      {
+        "x": 10.142419647270389,
+        "y": 60.460217165252395
+      },
+      {
+        "x": 9.544995743559388,
+        "y": 60.460217165252395
+      }
+    ],
+    "color": "#ef4444",
+    "name": "CNC MACHINE",
+    "code": "CNC MACHINE",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594008636
+  },
+  {
+    "uuid": "uuid-x4fs67kqx-1784779407830",
+    "id": "bld-new-229",
+    "type": "rect",
+    "points": [
+      {
+        "x": 24.199396028983088,
+        "y": 85.3237560644473
+      },
+      {
+        "x": 26.797411954400154,
+        "y": 85.3237560644473
+      },
+      {
+        "x": 26.797411954400154,
+        "y": 88.06443442825625
+      },
+      {
+        "x": 24.199396028983088,
+        "y": 88.06443442825625
+      }
+    ],
+    "color": "#57e3ff",
+    "name": "KICK STARTER MEETING ROOM",
+    "code": "KICK STARTER MEETING ROOM",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "hatched": false,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-os9o8asfg-1784779469719",
+    "id": "bld-new-230",
+    "type": "rect",
+    "points": [
+      {
+        "x": 26.8165720189104,
+        "y": 85.31884282574084
+      },
+      {
+        "x": 28.54858263585511,
+        "y": 85.31884282574084
+      },
+      {
+        "x": 28.54858263585511,
+        "y": 87.15566480917612
+      },
+      {
+        "x": 26.8165720189104,
+        "y": 87.15566480917612
+      }
+    ],
+    "color": "#57e3ff",
+    "name": "OHBEYA",
+    "code": "OHBEYA",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784525705150,
+    "hatched": false,
+    "parentShapeUuid": "uuid-xbyzb5ywh-1784507442279",
+    "parentShapeId": "bld-new-62"
+  },
+  {
+    "uuid": "uuid-ybdktkx2w-1784779836687",
+    "id": "bld-new-232",
+    "type": "rect",
+    "points": [
+      {
+        "x": 59.08654157209783,
+        "y": 94.50649334982675
+      },
+      {
+        "x": 67.48510842055207,
+        "y": 94.50649334982675
+      },
+      {
+        "x": 67.48510842055207,
+        "y": 95.32934224529876
+      },
+      {
+        "x": 59.08654157209783,
+        "y": 95.32934224529876
+      }
+    ],
+    "color": "#63fd58",
+    "name": "KEBUN MASJID",
+    "code": "KEBUN MASJID",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594760758
+  },
+  {
+    "uuid": "uuid-cwgg2e0ts-1784779932992",
+    "id": "bld-new-233",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.33736196282152,
+        "y": 96.87906098181593
+      },
+      {
+        "x": 93.75046046279583,
+        "y": 96.87906098181593
+      },
+      {
+        "x": 93.75046046279583,
+        "y": 98.17218221847025
+      },
+      {
+        "x": 71.33736196282152,
+        "y": 98.17218221847025
+      }
+    ],
+    "color": "#58fe5a",
+    "name": "KEBUN PARKIRAN",
+    "code": "KEBUN PARKIRAN",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784594760758
+  },
+  {
+    "uuid": "uuid-yo0gp8bgd-1784780977300",
+    "id": "bld-new-234",
+    "type": "rect",
+    "points": [
+      {
+        "x": 21.588716049312602,
+        "y": 91.0650906006666
+      },
+      {
+        "x": 26.80685229789258,
+        "y": 91.0650906006666
+      },
+      {
+        "x": 26.80685229789258,
+        "y": 93.45774759873099
+      },
+      {
+        "x": 21.588716049312602,
+        "y": 93.45774759873099
+      }
+    ],
+    "color": "#ef4444",
+    "name": "Area Baru",
+    "code": "New Area",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784526121296
+  },
+  {
+    "uuid": "uuid-l1wwagcog-1784781349772",
+    "id": "bld-new-237",
+    "type": "rect",
+    "points": [
+      {
+        "x": 71.5734558210288,
+        "y": 17.028453047235363
+      },
+      {
+        "x": 82.8693611069572,
+        "y": 17.028453047235363
+      },
+      {
+        "x": 82.8693611069572,
+        "y": 21.110333989001457
+      },
+      {
+        "x": 71.5734558210288,
+        "y": 21.110333989001457
+      }
+    ],
+    "color": "#ef4444",
+    "name": "FORGING 11",
+    "code": "F11",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784526121296,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-l6z36px3b-1784781542703",
+    "id": "bld-new-238",
+    "type": "rect",
+    "points": [
+      {
+        "x": 76.55454044268292,
+        "y": 52.103116105914516
+      },
+      {
+        "x": 81.78299414480813,
+        "y": 52.103116105914516
+      },
+      {
+        "x": 81.78299414480813,
+        "y": 55.119778030547295
+      },
+      {
+        "x": 76.55454044268292,
+        "y": 55.119778030547295
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ASSY B",
+    "code": "ASSY B",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-vc8thwq3f-1784781556874",
+    "id": "bld-new-239",
+    "type": "rect",
+    "points": [
+      {
+        "x": 72.43778002815785,
+        "y": 52.09074964449204
+      },
+      {
+        "x": 76.49247390624603,
+        "y": 52.09074964449204
+      },
+      {
+        "x": 76.49247390624603,
+        "y": 55.11590319636919
+      },
+      {
+        "x": 72.43778002815785,
+        "y": 55.11590319636919
+      }
+    ],
+    "color": "#ef4444",
+    "name": "ASSY A",
+    "code": "ASSY A",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  },
+  {
+    "uuid": "uuid-wmib01esy-1784781605248",
+    "id": "bld-new-240",
+    "type": "rect",
+    "points": [
+      {
+        "x": 78.12638838907932,
+        "y": 44.896495840885976
+      },
+      {
+        "x": 81.75361716899565,
+        "y": 44.896495840885976
+      },
+      {
+        "x": 81.75361716899565,
+        "y": 47.857099203036114
+      },
+      {
+        "x": 78.12638838907932,
+        "y": 47.857099203036114
+      }
+    ],
+    "color": "#ef4444",
+    "name": "MACHINE SHAFT",
+    "code": "SHAFT",
+    "details": "",
+    "operationalStatus": "Aktif",
+    "layer": 1784514325323,
+    "locked": true,
+    "icon": "mesin"
+  }
+]
