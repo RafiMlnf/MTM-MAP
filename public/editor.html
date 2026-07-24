@@ -2340,7 +2340,7 @@
         if (!layer.visible) continue;
 
         const layerShapes = shapes.filter(s => (s.layer || 1) === layer.id);
-        layerShapes.forEach(shape => {
+        function renderShape(shape) {
           const isSelected = selectedIds.has(shape.uuid);
           const color = shape.color || '#ef4444';
           const isFocusedParent = focusParentUuid === shape.uuid;
@@ -2523,8 +2523,9 @@
                 gHandles.appendChild(c);
               });
             }
-          }
-        });
+        }
+        layerShapes.forEach(s => { if (s.type !== 'gate') renderShape(s); });
+        layerShapes.forEach(s => { if (s.type === 'gate') renderShape(s); });
       }
       // Gambarkan garis bantu putus-putus untuk shape bertautan
       if (selectedId) {

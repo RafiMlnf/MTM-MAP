@@ -624,7 +624,7 @@ export default function Map({
             </g>
           )}
 
-          {activeView === 'satellite' && buildings.map((bld, idx) => {
+          {activeView === 'satellite' && buildings.filter(bld => !bld.isGate).map((bld, idx) => {
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
             const baseColor = bld.color || '#3b82f6';
@@ -657,48 +657,6 @@ export default function Map({
                   strokeDasharray="0.8,0.8"
                   style={{ pointerEvents: 'none' }}
                 />
-              );
-            }
-
-            if (bld.isGate) {
-              return (
-                <g 
-                  key={`${bld.id}-${idx}`}
-                  onClick={(e) => handleElementClick(e, bld.id)}
-                  onDoubleClick={(e) => {
-                    e.stopPropagation();
-                    const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
-                    if (hasChildren) setFocusBuildingId(bld.id);
-                  }}
-                  onMouseEnter={() => setHoveredId(bld.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {/* Underlay: thicker orange line */}
-                  <polyline
-                    points={bld.points}
-                    fill="none"
-                    stroke="#ff7800"
-                    strokeWidth={isSelected ? 1.0 : 0.7}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{
-                      strokeOpacity: isSelected ? 0.95 : 0.85
-                    }}
-                  />
-                  {/* Overlay: thinner yellow line */}
-                  <polyline
-                    points={bld.points}
-                    fill="none"
-                    stroke="#ffea00"
-                    strokeWidth={isSelected ? 0.6 : 0.35}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{
-                      strokeOpacity: 1
-                    }}
-                  />
-                </g>
               );
             }
 
@@ -792,6 +750,52 @@ export default function Map({
                  />
                )}
             </React.Fragment>
+            );
+          })}
+
+          {/* Render gates SPECIFICALLY at the very front layer (in front of all shapes) */}
+          {activeView === 'satellite' && buildings.filter(bld => bld.isGate).map((bld, idx) => {
+            const isSelected = selectedBuildingId === bld.id;
+            const isHovered = hoveredId === bld.id;
+
+            return (
+              <g 
+                key={`${bld.id}-${idx}`}
+                onClick={(e) => handleElementClick(e, bld.id)}
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
+                  if (hasChildren) setFocusBuildingId(bld.id);
+                }}
+                onMouseEnter={() => setHoveredId(bld.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Underlay: thicker orange line */}
+                <polyline
+                  points={bld.points}
+                  fill="none"
+                  stroke="#ff7800"
+                  strokeWidth={isSelected ? 1.8 : 1.3}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    strokeOpacity: isSelected ? 0.95 : 0.85
+                  }}
+                />
+                {/* Overlay: thinner yellow line */}
+                <polyline
+                  points={bld.points}
+                  fill="none"
+                  stroke="#ffea00"
+                  strokeWidth={isSelected ? 1.1 : 0.7}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    strokeOpacity: 1
+                  }}
+                />
+              </g>
             );
           })}
 
