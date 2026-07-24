@@ -417,6 +417,7 @@ export default function Home() {
           buildings={activeBuildings}
           zones={zones}
           selectedBuildingId={selectedBuildingId}
+          mainGate={gate}
           onSelectBuilding={handleSelectBuilding}
           selectedZoneId={selectedZoneId}
           onSelectZone={handleSelectZone}

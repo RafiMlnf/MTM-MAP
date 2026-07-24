@@ -18,6 +18,7 @@ interface MapSidebarProps {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   hoveredBuildingId: string | null;
+  mainGate?: { x: number; y: number; rotation: number; imageUrl?: string } | null;
 }
 
 export default function MapSidebar({
@@ -35,6 +36,7 @@ export default function MapSidebar({
   theme,
   onToggleTheme,
   hoveredBuildingId,
+  mainGate,
 }: MapSidebarProps) {
   // Safe suppression for unused props to avoid TS compile errors
   React.useEffect(() => {
@@ -249,8 +251,26 @@ export default function MapSidebar({
               ✕
             </button>
           </div>
+          
+          {/* Image Display */}
+          {(() => {
+            let imageUrl = undefined;
+            if (selectedBuildingId === 'main-gate') {
+              imageUrl = mainGate?.imageUrl;
+            } else if (selectedBuildingId) {
+              imageUrl = buildings.find(b => b.id === selectedBuildingId)?.imageUrl;
+            }
+            if (!imageUrl) return null;
+            return (
+              <div style={{ width: '100%', maxHeight: '120px', overflow: 'hidden', border: '1px solid var(--border-color)', borderRadius: '4px', margin: '4px 0 8px 0', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.1)' }}>
+                <img src={imageUrl} style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain' }} alt="Attachment" />
+              </div>
+            );
+          })()}
+
           <div style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 'bold' }}>
-            {selectedBuildingId && `${buildings.find(b => b.id === selectedBuildingId)?.name || selectedBuildingId}`}
+            {selectedBuildingId === 'main-gate' && 'Pintu Masuk Utama (Gate)'}
+            {selectedBuildingId && selectedBuildingId !== 'main-gate' && `${buildings.find(b => b.id === selectedBuildingId)?.name || selectedBuildingId}`}
             {selectedZoneId && `Zona: ${selectedZoneId}`}
             {selectedMachineId && `Mesin: ${selectedMachineId}`}
           </div>

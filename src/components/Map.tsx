@@ -800,7 +800,14 @@ export default function Map({
 
           {/* Entrance-overlay (Main Gate) */}
           {mainGate && (
-            <g transform={`translate(${mainGate.x}, ${mainGate.y})`}>
+            <g 
+              transform={`translate(${mainGate.x}, ${mainGate.y})`}
+              style={{ cursor: 'pointer' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectBuilding('main-gate');
+              }}
+            >
               <defs>
                 <pattern id="map-gate-grid" width="8" height="8" patternUnits="userSpaceOnUse">
                   <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#f59e0b" strokeOpacity="0.3" strokeWidth="1"/>
