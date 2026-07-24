@@ -48,6 +48,9 @@ export default function Home() {
   const [showChildBuildings, setShowChildBuildings] = useState(() => {
     try { const v = sessionStorage.getItem('mtm_show_child'); return v !== null ? v === 'true' : false; } catch { return false; }
   });
+  const [showGateLines, setShowGateLines] = useState(() => {
+    try { const v = sessionStorage.getItem('mtm_show_gates'); return v !== null ? v === 'true' : true; } catch { return true; }
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
@@ -86,6 +89,7 @@ export default function Home() {
         parentShapeId: s.parentShapeId || (s.parentShapeUuid ? shapesArray.find((t: any) => t.uuid === s.parentShapeUuid)?.id : undefined),
         hatched: s.hatched,
         isRoad: s.isRoad,
+        isGate: s.type === 'gate' || !!s.isGate,
         imageUrl: s.imageUrl
       };
     });
@@ -212,6 +216,10 @@ export default function Home() {
   useEffect(() => {
     try { sessionStorage.setItem('mtm_show_child', String(showChildBuildings)); } catch (_) {}
   }, [showChildBuildings]);
+
+  useEffect(() => {
+    try { sessionStorage.setItem('mtm_show_gates', String(showGateLines)); } catch (_) {}
+  }, [showGateLines]);
 
   useEffect(() => {
     try { sessionStorage.setItem('mtm_satellite_opacity', String(satelliteOpacity)); } catch (_) {}
@@ -507,6 +515,8 @@ export default function Home() {
             showChildBuildings={showChildBuildings}
             onToggleParentBuildings={setShowParentBuildings}
             onToggleChildBuildings={setShowChildBuildings}
+            showGateLines={showGateLines}
+            onToggleGateLines={setShowGateLines}
             mainGate={gate}
           />
         </main>

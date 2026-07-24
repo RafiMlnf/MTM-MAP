@@ -31,6 +31,8 @@ interface MapProps {
   showChildBuildings: boolean;
   onToggleParentBuildings: (val: boolean) => void;
   onToggleChildBuildings: (val: boolean) => void;
+  showGateLines: boolean;
+  onToggleGateLines: (val: boolean) => void;
   mainGate?: { x: number; y: number; rotation: number } | null;
 }
 
@@ -52,6 +54,8 @@ export default function Map({
   showChildBuildings,
   onToggleParentBuildings,
   onToggleChildBuildings,
+  showGateLines,
+  onToggleGateLines,
   mainGate,
 }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -100,22 +104,6 @@ export default function Map({
   const rotationRef = useRef(rotation);
   // Flag: when true, ResizeObserver won't override position with handleReset
   const restoredFromSessionRef = useRef(false);
-
-  const [showGates, setShowGates] = useState(() => {
-    try {
-      const v = sessionStorage.getItem('mtm_show_gates');
-      return v !== null ? v === 'true' : true;
-    } catch {
-      return true;
-    }
-  });
-
-  const handleToggleGates = (val: boolean) => {
-    setShowGates(val);
-    try {
-      sessionStorage.setItem('mtm_show_gates', String(val));
-    } catch (_) {}
-  };
 
   useEffect(() => {
     rotationRef.current = rotation;
@@ -471,11 +459,11 @@ export default function Map({
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
           <input
             type="checkbox"
-            checked={showGates}
-            onChange={(e) => handleToggleGates(e.target.checked)}
+            checked={showGateLines}
+            onChange={(e) => onToggleGateLines(e.target.checked)}
             style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
           />
-          <span>Pintu Gate</span>
+          <span>Gerbang / Gate</span>
         </label>
       </div>
       {/* Zoom controls floating on map */}
@@ -825,7 +813,7 @@ export default function Map({
             />
           )}
           {/* Gate shapes rendered on top of everything else */}
-          {showGates && activeView === 'satellite' && buildings.filter(b => b.isGate).map((bld, idx) => {
+          {showGateLines && activeView === 'satellite' && buildings.filter(b => b.isGate).map((bld, idx) => {
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
             return (
@@ -860,7 +848,8 @@ export default function Map({
             );
           })}
 
-          {showGates && mainGate && (
+
+          {mainGate && (
             <g 
               transform={`translate(${mainGate.x}, ${mainGate.y})`}
               style={{ cursor: 'pointer' }}
