@@ -1991,8 +1991,15 @@
           isDrawing = true;
           rectStart = { x: pct.x, y: pct.y };
         } else if (currentTool === 'poly' || currentTool === 'road' || currentTool === 'gate') {
-          drawPoints.push({ x: pct.x, y: pct.y });
-          renderPreview();
+          if (currentTool === 'gate' && drawPoints.length === 1) {
+            const p1 = drawPoints[0];
+            const snappedPoint = snapPointToAngle(p1, pct, 8);
+            drawPoints.push(snappedPoint);
+            finishGate();
+          } else {
+            drawPoints.push({ x: pct.x, y: pct.y });
+            renderPreview();
+          }
         } else if (currentTool === 'label') {
           createLabel(pct.x, pct.y);
         }
@@ -2248,6 +2255,20 @@
       shapes.push(s);
       drawPoints = []; isDrawing = false; gPreview.innerHTML = '';
       selectShape(s.uuid); renderAll(); saveSession();
+    }
+
+    function snapPointToAngle(p1, p2, segments = 8) {
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const distance = Math.hypot(dx, dy);
+      if (distance === 0) return p2;
+      let angle = Math.atan2(dy, dx);
+      const step = (2 * Math.PI) / segments;
+      angle = Math.round(angle / step) * step;
+      return {
+        x: p1.x + distance * Math.cos(angle),
+        y: p1.y + distance * Math.sin(angle)
+      };
     }
 
     function finishGate() {
@@ -2650,7 +2671,9 @@
       }
 
       if (currentTool === 'gate' && drawPoints.length > 0) {
-        const allPts = [...drawPoints, mousePos];
+        const p1 = drawPoints[0];
+        const snappedMouse = snapPointToAngle(p1, mousePos, 8);
+        const allPts = [p1, snappedMouse];
         const ptsStr = allPts.map(p => { const px = pctToPx(p.x, p.y); return `${px.x},${px.y}`; }).join(' ');
 
         // Underlay: orange line preview
@@ -2678,8 +2701,8 @@
           const px = pctToPx(p.x, p.y);
           const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
-          c.setAttribute('r', (i === 0 && drawPoints.length >= 2) ? 8 : 4);
-          c.setAttribute('fill', (i === 0 && drawPoints.length >= 2) ? '#10b981' : 'white');
+          c.setAttribute('r', i === 0 ? 8 : 4);
+          c.setAttribute('fill', i === 0 ? '#10b981' : 'white');
           c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 1.5);
           gPreview.appendChild(c);
         });
