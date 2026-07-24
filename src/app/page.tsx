@@ -13,6 +13,7 @@ const BROADCAST_CHANNEL = 'mtm-map-sync';
 export default function Home() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activeView, setActiveView] = useState<'satellite' | 'layout'>('satellite');
+  const [gate, setGate] = useState<{ x: number; y: number; rotation: number } | null>(null);
 
   // Selection states
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
@@ -59,8 +60,11 @@ export default function Home() {
   // The active buildings: live data overrides static data when present
   const activeBuildings: BuildingData[] = liveBuildings ?? staticBuildings;
 
-  const applyLivePayload = useCallback((payload: { buildings: BuildingData[]; pushedAt: string; buildingCount: number }) => {
+  const applyLivePayload = useCallback((payload: { buildings: BuildingData[]; mainGate?: { x: number; y: number; rotation: number } | null; pushedAt: string; buildingCount: number }) => {
     setLiveBuildings(payload.buildings as BuildingData[]);
+    if (payload.mainGate !== undefined) {
+      setGate(payload.mainGate);
+    }
     setLiveInfo({ count: payload.buildingCount, pushedAt: payload.pushedAt });
     setLiveFlash(true);
     setTimeout(() => setLiveFlash(false), 600);
@@ -78,14 +82,21 @@ export default function Home() {
 
       const bld = sessionStorage.getItem('mtm_selected_bld');
       const view = sessionStorage.getItem('mtm_active_view');
+      const savedGate = localStorage.getItem('mtm_map_maingate');
 
       if (bld) setSelectedBuildingId(bld);
       if (view === 'satellite' || view === 'layout') setActiveView(view as 'satellite' | 'layout');
+      if (savedGate) setGate(JSON.parse(savedGate));
       // showParent, showChild, and opacity values are now restored via lazy useState initializers
     } catch (_) {}
 
     // Listen to storage events from other tabs
     const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'mtm_map_maingate') {
+        try {
+          setGate(e.newValue ? JSON.parse(e.newValue) : null);
+        } catch (_) {}
+      }
       if (e.key !== LIVE_STORAGE_KEY || !e.newValue) return;
       try {
         const payload = JSON.parse(e.newValue);
@@ -441,6 +452,7 @@ export default function Home() {
             showChildBuildings={showChildBuildings}
             onToggleParentBuildings={setShowParentBuildings}
             onToggleChildBuildings={setShowChildBuildings}
+            mainGate={gate}
           />
         </main>
       </div>

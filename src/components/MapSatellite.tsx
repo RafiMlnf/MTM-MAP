@@ -31,6 +31,7 @@ interface MapSatelliteProps {
   showChildBuildings: boolean;
   onToggleParentBuildings: (val: boolean) => void;
   onToggleChildBuildings: (val: boolean) => void;
+  mainGate?: { x: number; y: number; rotation: number } | null;
 }
 
 export default function MapSatellite({
@@ -51,6 +52,7 @@ export default function MapSatellite({
   showChildBuildings,
   onToggleParentBuildings,
   onToggleChildBuildings,
+  mainGate,
 }: MapSatelliteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -796,7 +798,27 @@ export default function MapSatellite({
             />
           )}
 
-          {/* Entrance-overlay removed */}
+          {/* Entrance-overlay (Main Gate) */}
+          {mainGate && (
+            <g transform={`translate(${mainGate.x}, ${mainGate.y})`}>
+              <defs>
+                <pattern id="map-gate-grid" width="0.8" height="0.8" patternUnits="userSpaceOnUse">
+                  <path d="M 0.8 0 L 0 0 0 0.8" fill="none" stroke="#f59e0b" strokeOpacity="0.3" strokeWidth="0.1"/>
+                </pattern>
+              </defs>
+              <g transform={`rotate(${mainGate.rotation || 0}) scale(0.1)`}>
+                {/* Grid Underlay */}
+                <rect x="-38" y="-38" width="76" height="76" fill="url(#map-gate-grid)" stroke="#f59e0b" strokeOpacity="0.4" strokeWidth="1.5" strokeDasharray="3,3" rx="4" />
+                {/* Yellow Entrance Line */}
+                <line x1="-38" y1="-38" x2="-38" y2="38" stroke="#f59e0b" strokeWidth="4.5" strokeLinecap="round" />
+                {/* Entrance Arrow */}
+                <path d="M -34 -14 L 6 -14 L 6 -24 L 38 0 L 6 24 L 6 14 L -34 14 Z" 
+                      fill="#10b981" 
+                      stroke="#ffffff" 
+                      strokeWidth="2" />
+              </g>
+            </g>
+          )}
         </svg>
       </div>
     </div>
