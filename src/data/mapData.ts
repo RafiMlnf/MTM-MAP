@@ -44,6 +44,7 @@ export interface BuildingData {
   parentShapeId?: string;
   hatched?: boolean;
   isRoad?: boolean;
+  imageUrl?: string;
 }
 
 import rawShapes from '../../public/assets/img/mtm-shapes (3).json';
@@ -68,6 +69,7 @@ export const buildings: BuildingData[] = (rawShapes as any[]).map((shape: any) =
   parentShapeId: shape.parentShapeId,
   hatched: shape.hatched,
   isRoad: shape.isRoad,
+  imageUrl: shape.imageUrl,
 }));
 
 export const zones: ZoneData[] = [

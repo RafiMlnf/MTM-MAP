@@ -2813,6 +2813,21 @@
       <label class="field-label">Deskripsi</label>
       <textarea class="field-input" oninput="updateProp(this.value, 'details')">${escHtml(shape.details)}</textarea>
     </div>
+    <div class="field-group">
+      <label class="field-label">Lampirkan Gambar (Attach Image)</label>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <input type="file" id="prop-image-file" accept="image/*" style="display: none;" onchange="handleShapeImageUpload(this)">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-ghost" style="flex: 1; padding: 5px; font-size: 12px; font-weight: 700;" onclick="document.getElementById('prop-image-file').click()">📂 Pilih Gambar</button>
+          ${shape.imageUrl ? `<button class="btn-danger" style="padding: 5px 10px; font-size: 12px; font-weight: 700;" onclick="removeShapeImage()">🗑️ Hapus</button>` : ''}
+        </div>
+        ${shape.imageUrl ? `
+          <div style="position: relative; border: 1px solid var(--border); border-radius: 4px; padding: 4px; background: rgba(0,0,0,0.2); max-height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <img src="${shape.imageUrl}" style="max-width: 100%; max-height: 110px; border-radius: 2px; object-fit: contain;">
+          </div>
+        ` : `<div style="font-size: 11px; color: var(--muted); text-align: center; border: 1px dashed var(--border); padding: 8px; border-radius: 4px;">Belum ada gambar</div>`}
+      </div>
+    </div>
     <div class="sep"></div>
     <div class="field-group">
       <label class="field-label">Koordinat (%) — ${shape.points.length} titik</label>
@@ -2958,6 +2973,43 @@
     function updatePropsCoords(shape) {
       const el = document.getElementById('prop-coords');
       if (el) el.textContent = shape.points.map(p => `${fmt(p.x)},${fmt(p.y)}`).join(' ');
+    }
+
+    function handleShapeImageUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      // Limit file size to 1.5MB to avoid localStorage quota issues
+      if (file.size > 1.5 * 1024 * 1024) {
+        alert("Ukuran gambar terlalu besar! Harap gunakan gambar di bawah 1.5 MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Data = e.target.result;
+        saveUndo();
+        // Update shape property
+        const activeShape = shapes.find(s => s.uuid === selectedId);
+        if (activeShape) {
+          activeShape.imageUrl = base64Data;
+          saveSession();
+          showShapeProps(activeShape);
+          showToast("🖼️ Gambar berhasil dilampirkan!");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeShapeImage() {
+      const activeShape = shapes.find(s => s.uuid === selectedId);
+      if (activeShape && activeShape.imageUrl) {
+        saveUndo();
+        delete activeShape.imageUrl;
+        saveSession();
+        showShapeProps(activeShape);
+        showToast("🗑️ Gambar lampiran berhasil dihapus!");
+      }
     }
 
     // Helper untuk relasi link shape
@@ -4219,7 +4271,8 @@
             linkedShapeId: resolvedLinkedShapeId,
             parentShapeId: resolvedParentShapeId,
             hatched: s.hatched || undefined,
-            isRoad: s.isRoad || undefined
+            isRoad: s.isRoad || undefined,
+            imageUrl: s.imageUrl || undefined
           };
         });
     }
