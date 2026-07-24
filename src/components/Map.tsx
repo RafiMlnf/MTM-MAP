@@ -847,19 +847,20 @@ export default function Map({
             >
               <defs>
                 <pattern id="map-gate-grid" width="8" height="8" patternUnits="userSpaceOnUse">
-                  <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#f59e0b" strokeOpacity="0.3" strokeWidth="1"/>
+                  <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#f59e0b" strokeOpacity="0.3" strokeWidth={1} vectorEffect="non-scaling-stroke"/>
                 </pattern>
               </defs>
               <g transform={`rotate(${mainGate.rotation || 0}) scale(0.045)`}>
                 {/* Grid Underlay */}
-                <rect x="-38" y="-38" width="76" height="76" fill="url(#map-gate-grid)" stroke="#f59e0b" strokeOpacity="0.4" strokeWidth="1.5" strokeDasharray="3,3" rx="4" />
+                <rect x="-38" y="-38" width="76" height="76" fill="url(#map-gate-grid)" stroke="#f59e0b" strokeOpacity="0.4" strokeWidth={1.5} strokeDasharray="3,3" rx="4" vectorEffect="non-scaling-stroke" />
                 {/* Yellow Entrance Line */}
-                <line x1="-38" y1="-38" x2="-38" y2="38" stroke="#f59e0b" strokeWidth="4.5" strokeLinecap="round" />
+                <line x1="-38" y1="-38" x2="-38" y2="38" stroke="#f59e0b" strokeWidth={4.5} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
                 {/* Entrance Arrow */}
                 <path d="M -34 -14 L 6 -14 L 6 -24 L 38 0 L 6 24 L 6 14 L -34 14 Z" 
                       fill="#10b981" 
                       stroke="#ffffff" 
-                      strokeWidth="2" />
+                      strokeWidth={2}
+                      vectorEffect="non-scaling-stroke" />
               </g>
             </g>
           )}
