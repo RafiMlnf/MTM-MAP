@@ -57,6 +57,40 @@ export default function Home() {
   const [liveFlash, setLiveFlash] = useState(false);
 
   // The active buildings: live data overrides static data when present
+  const convertEditorShapes = useCallback((shapesArray: any[]) => {
+    return shapesArray.map((s: any) => {
+      const ptsStr = Array.isArray(s.points)
+        ? s.points.map((p: any) => `${p.x},${p.y}`).join(' ')
+        : (s.points || '');
+      const xs = Array.isArray(s.points) ? s.points.map((p: any) => p.x) : [];
+      const ys = Array.isArray(s.points) ? s.points.map((p: any) => p.y) : [];
+      const wPct = xs.length ? (Math.max(...xs) - Math.min(...xs)) : 0;
+      const hPct = ys.length ? (Math.max(...ys) - Math.min(...ys)) : 0;
+      const wM = Math.round(wPct * 200 / 100) || 10;
+      const hM = Math.round(hPct * 130 / 100) || 10;
+      return {
+        id: s.id || s.uuid,
+        name: s.name || s.code || s.id,
+        code: s.code || s.name || '',
+        points: ptsStr,
+        width: wM,
+        length: hM,
+        area: wM * hM,
+        details: s.details || '',
+        zones: s.zones || [],
+        operationalStatus: s.operationalStatus || 'Aktif',
+        icon: s.icon,
+        color: s.color,
+        layer: s.layer || 1,
+        linkedShapeId: s.linkedShapeId || (s.linkedShapeUuid ? shapesArray.find((t: any) => t.uuid === s.linkedShapeUuid)?.id : undefined),
+        parentShapeId: s.parentShapeId || (s.parentShapeUuid ? shapesArray.find((t: any) => t.uuid === s.parentShapeUuid)?.id : undefined),
+        hatched: s.hatched,
+        isRoad: s.isRoad,
+        imageUrl: s.imageUrl
+      };
+    });
+  }, []);
+
   const activeBuildings: BuildingData[] = liveBuildings ?? staticBuildings;
 
   const applyLivePayload = useCallback((payload: { buildings: BuildingData[]; mainGate?: { x: number; y: number; rotation: number } | null; pushedAt: string; buildingCount: number }) => {
@@ -82,10 +116,19 @@ export default function Home() {
       const bld = sessionStorage.getItem('mtm_selected_bld');
       const view = sessionStorage.getItem('mtm_active_view');
       const savedGate = localStorage.getItem('mtm_map_maingate');
+      const savedShapesStr = localStorage.getItem('mtm_map_shapes');
 
       if (bld) setSelectedBuildingId(bld);
       if (view === 'satellite' || view === 'layout') setActiveView(view as 'satellite' | 'layout');
       if (savedGate) setGate(JSON.parse(savedGate));
+      if (savedShapesStr) {
+        try {
+          const parsed = JSON.parse(savedShapesStr);
+          if (Array.isArray(parsed)) {
+            setLiveBuildings(convertEditorShapes(parsed));
+          }
+        } catch (_) {}
+      }
       // showParent, showChild, and opacity values are now restored via lazy useState initializers
     } catch (_) {}
 
@@ -94,6 +137,18 @@ export default function Home() {
       if (e.key === 'mtm_map_maingate') {
         try {
           setGate(e.newValue ? JSON.parse(e.newValue) : null);
+        } catch (_) {}
+      }
+      if (e.key === 'mtm_map_shapes') {
+        try {
+          if (e.newValue) {
+            const parsed = JSON.parse(e.newValue);
+            if (Array.isArray(parsed)) {
+              setLiveBuildings(convertEditorShapes(parsed));
+            }
+          } else {
+            setLiveBuildings(null);
+          }
         } catch (_) {}
       }
       if (e.key !== LIVE_STORAGE_KEY || !e.newValue) return;
@@ -119,7 +174,7 @@ export default function Home() {
       window.removeEventListener('storage', handleStorage);
       channel?.close();
     };
-  }, [applyLivePayload]);
+  }, [applyLivePayload, convertEditorShapes]);
 
   // Load theme preference on mount
   useEffect(() => {
