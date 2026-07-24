@@ -2986,30 +2986,55 @@
       if (el) el.textContent = shape.points.map(p => `${fmt(p.x)},${fmt(p.y)}`).join(' ');
     }
 
+    function compressAndAttachImage(file, callback) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          const maxDim = 800; // maximum dimension size
+          let width = img.width;
+          let height = img.height;
+
+          // Scale dimensions if larger than maxDim
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Compress to JPEG with 70% quality (great compression & quality)
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          callback(compressedDataUrl);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function handleShapeImageUpload(input) {
       const file = input.files[0];
       if (!file) return;
 
-      // Limit file size to 1.5MB to avoid localStorage quota issues
-      if (file.size > 1.5 * 1024 * 1024) {
-        alert("Ukuran gambar terlalu besar! Harap gunakan gambar di bawah 1.5 MB.");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64Data = e.target.result;
+      compressAndAttachImage(file, (compressedData) => {
         saveUndo();
-        // Update shape property
         const activeShape = shapes.find(s => s.uuid === selectedId);
         if (activeShape) {
-          activeShape.imageUrl = base64Data;
+          activeShape.imageUrl = compressedData;
           saveSession();
           showShapeProps(activeShape);
-          showToast("🖼️ Gambar berhasil dilampirkan!");
+          showToast("🖼️ Gambar berhasil dikompresi & dilampirkan!");
         }
-      };
-      reader.readAsDataURL(file);
+      });
     }
 
     function removeShapeImage() {
@@ -3392,25 +3417,16 @@
     function handleGateImageUpload(input) {
       const file = input.files[0];
       if (!file) return;
-      
-      // Limit file size to 1.5MB to avoid localStorage quota issues
-      if (file.size > 1.5 * 1024 * 1024) {
-        alert("Ukuran gambar terlalu besar! Harap gunakan gambar di bawah 1.5 MB.");
-        return;
-      }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64Data = e.target.result;
+      compressAndAttachImage(file, (compressedData) => {
         saveUndo();
         if (mainGate) {
-          mainGate.imageUrl = base64Data;
+          mainGate.imageUrl = compressedData;
           saveSession();
           showGateProps();
-          showToast("🖼️ Gambar gate berhasil dilampirkan!");
+          showToast("🖼️ Gambar gate berhasil dikompresi & dilampirkan!");
         }
-      };
-      reader.readAsDataURL(file);
+      });
     }
 
     function removeGateImage() {
