@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BuildingData, roads } from '../data/mapData';
-import SettingsSidebar from './SettingsSidebar';
+import OpcBar from './OpcBar';
 
 const SVG_ICONS: Record<string, string> = {
   mesin: `<path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L1.97 8.24a.5.5 0 0 0 .12.64l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.12.22.37.29.6.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.42.5.42h3.84c.24 0 .44-.17.49-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>`,
@@ -13,7 +13,7 @@ const SVG_ICONS: Record<string, string> = {
   areal: `<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>`
 };
 
-interface MapSatelliteProps {
+interface MapProps {
   buildings: BuildingData[];
   selectedBuildingId: string | null;
   onSelectBuilding: (id: string) => void;
@@ -34,7 +34,7 @@ interface MapSatelliteProps {
   mainGate?: { x: number; y: number; rotation: number } | null;
 }
 
-export default function MapSatellite({
+export default function Map({
   buildings,
   selectedBuildingId,
   onSelectBuilding,
@@ -53,7 +53,7 @@ export default function MapSatellite({
   onToggleParentBuildings,
   onToggleChildBuildings,
   mainGate,
-}: MapSatelliteProps) {
+}: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragStartMouseRef = useRef({ x: 0, y: 0 });
@@ -515,7 +515,7 @@ export default function MapSatellite({
       </div>
 
       {/* Floating Settings popup attached next to map-controls */}
-      <SettingsSidebar
+      <OpcBar
         isOpen={showSettings}
         onClose={onToggleSettings}
         blueprintOpacity={0}

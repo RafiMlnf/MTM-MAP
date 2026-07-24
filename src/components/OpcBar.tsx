@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-interface SettingsSidebarProps {
+interface OpcBarProps {
   isOpen: boolean;
   onClose: () => void;
   blueprintOpacity: number;
@@ -17,14 +17,14 @@ interface SettingsSidebarProps {
   onShowRoadsChange: (val: boolean) => void;
 }
 
-export default function SettingsSidebar({
+export default function OpcBar({
   isOpen,
   onClose,
   satelliteOpacity,
   onSatelliteOpacityChange,
   shapeOpacity,
   onShapeOpacityChange,
-}: SettingsSidebarProps) {
+}: OpcBarProps) {
   if (!isOpen) return null;
 
   return (

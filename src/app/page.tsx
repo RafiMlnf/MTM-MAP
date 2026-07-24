@@ -3,9 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { buildings as staticBuildings, zones } from '../data/mapData';
 import { BuildingData } from '../data/mapData';
-import Sidebar from '../components/Sidebar';
-import MapSatellite from '../components/MapSatellite';
-import SettingsSidebar from '../components/SettingsSidebar';
+import MapSidebar from '../components/MapSidebar';
+import Map from '../components/Map';
 
 const LIVE_STORAGE_KEY = 'mtm_live_buildings';
 const BROADCAST_CHANNEL = 'mtm-map-sync';
@@ -414,14 +413,14 @@ export default function Home() {
 
       <div className="app-content-wrapper" style={{ display: 'flex', flex: 1, width: '100%', overflow: 'hidden' }}>
         {/* Sleek Interactive Sidebar */}
-        <Sidebar
+        <MapSidebar
           buildings={activeBuildings}
           zones={zones}
           selectedBuildingId={selectedBuildingId}
-          selectedZoneId={selectedZoneId}
-          selectedMachineId={selectedMachineId}
           onSelectBuilding={handleSelectBuilding}
+          selectedZoneId={selectedZoneId}
           onSelectZone={handleSelectZone}
+          selectedMachineId={selectedMachineId}
           onSelectMachine={handleSelectMachine}
           onTriggerSearchPan={handleTriggerSearchPan}
           activeView={activeView}
@@ -434,7 +433,7 @@ export default function Home() {
         {/* Main Workspace */}
         <main className="map-workspace">
           {/* Dynamic Map Layers */}
-          <MapSatellite
+          <Map
             buildings={activeBuildings}
             selectedBuildingId={selectedBuildingId}
             onSelectBuilding={handleSelectBuilding}

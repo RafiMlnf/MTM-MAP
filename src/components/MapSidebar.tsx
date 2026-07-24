@@ -3,7 +3,7 @@
 import React from 'react';
 import { BuildingData, ZoneData } from '../data/mapData';
 
-interface SidebarProps {
+interface MapSidebarProps {
   buildings: BuildingData[];
   zones: ZoneData[];
   selectedBuildingId: string | null;
@@ -20,7 +20,7 @@ interface SidebarProps {
   hoveredBuildingId: string | null;
 }
 
-export default function Sidebar({
+export default function MapSidebar({
   buildings,
   zones,
   selectedBuildingId,
@@ -35,7 +35,7 @@ export default function Sidebar({
   theme,
   onToggleTheme,
   hoveredBuildingId,
-}: SidebarProps) {
+}: MapSidebarProps) {
   // Safe suppression for unused props to avoid TS compile errors
   React.useEffect(() => {
     const dummy = () => {
