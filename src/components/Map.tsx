@@ -101,6 +101,22 @@ export default function Map({
   // Flag: when true, ResizeObserver won't override position with handleReset
   const restoredFromSessionRef = useRef(false);
 
+  const [showGates, setShowGates] = useState(() => {
+    try {
+      const v = sessionStorage.getItem('mtm_show_gates');
+      return v !== null ? v === 'true' : true;
+    } catch {
+      return true;
+    }
+  });
+
+  const handleToggleGates = (val: boolean) => {
+    setShowGates(val);
+    try {
+      sessionStorage.setItem('mtm_show_gates', String(val));
+    } catch (_) {}
+  };
+
   useEffect(() => {
     rotationRef.current = rotation;
   }, [rotation]);
@@ -452,6 +468,15 @@ export default function Map({
           />
           <span>Ruangan Dalam</span>
         </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+          <input
+            type="checkbox"
+            checked={showGates}
+            onChange={(e) => handleToggleGates(e.target.checked)}
+            style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+          />
+          <span>Pintu Gate</span>
+        </label>
       </div>
       {/* Zoom controls floating on map */}
       {focusBuildingId && (
@@ -800,7 +825,7 @@ export default function Map({
             />
           )}
           {/* Gate shapes rendered on top of everything else */}
-          {activeView === 'satellite' && buildings.filter(b => b.isGate).map((bld, idx) => {
+          {showGates && activeView === 'satellite' && buildings.filter(b => b.isGate).map((bld, idx) => {
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
             return (
@@ -816,7 +841,7 @@ export default function Map({
                   points={bld.points}
                   fill="none"
                   stroke="#ff7800"
-                  strokeWidth={isSelected ? 2.0 : 1.4}
+                  strokeWidth={isSelected ? 1.0 : 0.65}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ strokeOpacity: isSelected || isHovered ? 1 : 0.9 }}
@@ -826,7 +851,7 @@ export default function Map({
                   points={bld.points}
                   fill="none"
                   stroke="#ffea00"
-                  strokeWidth={isSelected ? 1.0 : 0.7}
+                  strokeWidth={isSelected ? 0.55 : 0.35}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ strokeOpacity: 1 }}
@@ -835,8 +860,7 @@ export default function Map({
             );
           })}
 
-
-          {mainGate && (
+          {showGates && mainGate && (
             <g 
               transform={`translate(${mainGate.x}, ${mainGate.y})`}
               style={{ cursor: 'pointer' }}
