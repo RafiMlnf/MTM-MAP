@@ -2727,7 +2727,7 @@
     </div>
     
     <div class="field-group">
-      <label class="field-label">🔗 Hubungkan ke Data Gedung</label>
+      <label class="field-label">🔗 Hubungkan Gedung</label>
       <select class="field-input" style="border: 1px solid var(--accent2);" onchange="linkToPredefinedBuilding('${shape.uuid}', this.value)">
         <option value="">-- Auto-Fill dari mapData.ts --</option>
         ${PREDEFINED_BUILDINGS.map(b => `<option value="${b.id}" ${shape.id === b.id ? 'selected' : ''}>${b.code} (${b.name})</option>`).join('')}
@@ -2735,7 +2735,7 @@
     </div>
 
     <div class="field-group">
-      <label class="field-label">🏢 Gedung Induk (Parent – Drill-Down)</label>
+      <label class="field-label">🏢 Gedung Induk (Parent)</label>
       <select class="field-input" style="border: 1px solid var(--purple);" onchange="updateParentShape('${shape.uuid}', this.value)">
         <option value="">-- Tanpa Parent (Gedung Utama) --</option>
         ${shapes.filter(s => {
@@ -2783,23 +2783,25 @@
       </div>
       ` : ''}
     </div>
-    <div class="field-group">
-      <label class="field-label">Simbol Ikon</label>
-      <select class="field-input" onchange="updatePropAndRender(this.value, 'icon')">
-        <option value="" ${!shape.icon ? 'selected' : ''}>Tidak ada (None)</option>
-        <option value="mesin" ${shape.icon === 'mesin' ? 'selected' : ''}>Mesin (Gear)</option>
-        <option value="listrik" ${shape.icon === 'listrik' ? 'selected' : ''}>Listrik (Power)</option>
-        <option value="taman" ${shape.icon === 'taman' ? 'selected' : ''}>Taman (Rumput)</option>
-        <option value="masjid" ${shape.icon === 'masjid' ? 'selected' : ''}>Masjid (Dome)</option>
-        <option value="parkir" ${shape.icon === 'parkir' ? 'selected' : ''}>Parkir (Parking P)</option>
-        <option value="areal" ${shape.icon === 'areal' ? 'selected' : ''}>Areal / Kawasan (Map Pin)</option>
-      </select>
-    </div>
-    <div class="field-group">
-      <label class="field-label">Layer</label>
-      <select class="field-input" onchange="updatePropAndRender(+this.value, 'layer')">
-        ${layers.map(l => `<option value="${l.id}" ${(shape.layer || 1) === l.id ? 'selected' : ''}>${escHtml(l.name)}</option>`).join('')}
-      </select>
+    <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+      <div class="field-group" style="flex: 1; margin-bottom: 0;">
+        <label class="field-label">Simbol Ikon</label>
+        <select class="field-input" onchange="updatePropAndRender(this.value, 'icon')">
+          <option value="" ${!shape.icon ? 'selected' : ''}>Tidak ada (None)</option>
+          <option value="mesin" ${shape.icon === 'mesin' ? 'selected' : ''}>Mesin (Gear)</option>
+          <option value="listrik" ${shape.icon === 'listrik' ? 'selected' : ''}>Listrik (Power)</option>
+          <option value="taman" ${shape.icon === 'taman' ? 'selected' : ''}>Taman (Rumput)</option>
+          <option value="masjid" ${shape.icon === 'masjid' ? 'selected' : ''}>Masjid (Dome)</option>
+          <option value="parkir" ${shape.icon === 'parkir' ? 'selected' : ''}>Parkir (Parking P)</option>
+          <option value="areal" ${shape.icon === 'areal' ? 'selected' : ''}>Areal / Kawasan (Map Pin)</option>
+        </select>
+      </div>
+      <div class="field-group" style="flex: 1; margin-bottom: 0;">
+        <label class="field-label">Layer</label>
+        <select class="field-input" onchange="updatePropAndRender(+this.value, 'layer')">
+          ${layers.map(l => `<option value="${l.id}" ${(shape.layer || 1) === l.id ? 'selected' : ''}>${escHtml(l.name)}</option>`).join('')}
+        </select>
+      </div>
     </div>
     ${isLabel ? `<div class="field-group">
       <label class="field-label">Ukuran Font</label>
