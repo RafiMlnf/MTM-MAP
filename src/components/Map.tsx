@@ -624,7 +624,7 @@ export default function Map({
             </g>
           )}
 
-          {activeView === 'satellite' && buildings.filter(bld => !bld.isGate).map((bld, idx) => {
+          {activeView === 'satellite' && buildings.map((bld, idx) => {
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
             const baseColor = bld.color || '#3b82f6';
@@ -659,6 +659,8 @@ export default function Map({
                 />
               );
             }
+
+            if (bld.isGate) return null; // rendered separately at end, on top
 
             if (bld.isRoad) {
               return (
@@ -753,52 +755,6 @@ export default function Map({
             );
           })}
 
-          {/* Render gates SPECIFICALLY at the very front layer (in front of all shapes) */}
-          {activeView === 'satellite' && buildings.filter(bld => bld.isGate).map((bld, idx) => {
-            const isSelected = selectedBuildingId === bld.id;
-            const isHovered = hoveredId === bld.id;
-
-            return (
-              <g 
-                key={`${bld.id}-${idx}`}
-                onClick={(e) => handleElementClick(e, bld.id)}
-                onDoubleClick={(e) => {
-                  e.stopPropagation();
-                  const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
-                  if (hasChildren) setFocusBuildingId(bld.id);
-                }}
-                onMouseEnter={() => setHoveredId(bld.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                style={{ cursor: 'pointer' }}
-              >
-                {/* Underlay: thicker orange line */}
-                <polyline
-                  points={bld.points}
-                  fill="none"
-                  stroke="#ff7800"
-                  strokeWidth={isSelected ? 1.8 : 1.3}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{
-                    strokeOpacity: isSelected ? 0.95 : 0.85
-                  }}
-                />
-                {/* Overlay: thinner yellow line */}
-                <polyline
-                  points={bld.points}
-                  fill="none"
-                  stroke="#ffea00"
-                  strokeWidth={isSelected ? 1.1 : 0.7}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{
-                    strokeOpacity: 1
-                  }}
-                />
-              </g>
-            );
-          })}
-
           {/* Render Icons on Buildings */}
           {activeView === 'satellite' && buildings.map((bld, idx) => {
             if (!bld.icon || !SVG_ICONS[bld.icon]) return null;
@@ -843,8 +799,43 @@ export default function Map({
               style={{ pointerEvents: 'none' }}
             />
           )}
+          {/* Gate shapes rendered on top of everything else */}
+          {activeView === 'satellite' && buildings.filter(b => b.isGate).map((bld, idx) => {
+            const isSelected = selectedBuildingId === bld.id;
+            const isHovered = hoveredId === bld.id;
+            return (
+              <g
+                key={`gate-${bld.id}-${idx}`}
+                onClick={(e) => handleElementClick(e, bld.id)}
+                onMouseEnter={() => setHoveredId(bld.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Underlay: orange stroke */}
+                <polyline
+                  points={bld.points}
+                  fill="none"
+                  stroke="#ff7800"
+                  strokeWidth={isSelected ? 1.0 : 0.65}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ strokeOpacity: isSelected || isHovered ? 1 : 0.9 }}
+                />
+                {/* Overlay: yellow solid line */}
+                <polyline
+                  points={bld.points}
+                  fill="none"
+                  stroke="#ffea00"
+                  strokeWidth={isSelected ? 0.55 : 0.35}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ strokeOpacity: 1 }}
+                />
+              </g>
+            );
+          })}
 
-          {/* Entrance-overlay (Main Gate) */}
+
           {mainGate && (
             <g 
               transform={`translate(${mainGate.x}, ${mainGate.y})`}

@@ -1196,6 +1196,7 @@
           <img id="map-img" src="/map-img/mtmmap.jpg" alt="PT MTM Map" draggable="false">
           <svg id="svg-overlay" xmlns="http://www.w3.org/2000/svg">
             <g id="g-shapes"></g>
+            <g id="g-gates"></g>
             <g id="g-preview"></g>
             <g id="g-handles"></g>
           </svg>
@@ -1706,6 +1707,7 @@
     const canvasTransform = document.getElementById('canvas-transform');
     const mapImg = document.getElementById('map-img');
     const gShapes = document.getElementById('g-shapes');
+    const gGates = document.getElementById('g-gates');
     const gPreview = document.getElementById('g-preview');
     const gHandles = document.getElementById('g-handles');
     const svgOverlay = document.getElementById('svg-overlay');
@@ -2332,6 +2334,7 @@
 
     function renderAll() {
       gShapes.innerHTML = '';
+      gGates.innerHTML = '';
       gHandles.innerHTML = '';
       document.getElementById('shape-count').textContent = shapes.length;
 
@@ -2340,7 +2343,7 @@
         if (!layer.visible) continue;
 
         const layerShapes = shapes.filter(s => (s.layer || 1) === layer.id);
-        function renderShape(shape) {
+        layerShapes.forEach(shape => {
           const isSelected = selectedIds.has(shape.uuid);
           const color = shape.color || '#ef4444';
           const isFocusedParent = focusParentUuid === shape.uuid;
@@ -2435,29 +2438,28 @@
             g.style.cursor = 'pointer';
             g.onclick = ev => { ev.stopPropagation(); selectShape(shape.uuid, ev.ctrlKey); };
 
-            // Underlay: thicker orange line
+            // Underlay: orange stroke
             const borderLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
             borderLine.setAttribute('points', ptsStr);
             borderLine.setAttribute('fill', 'none');
-            borderLine.setAttribute('stroke', '#ff7800'); // Orange
-            borderLine.setAttribute('stroke-width', isSelected ? '18' : '14');
+            borderLine.setAttribute('stroke', '#ff7800');
+            borderLine.setAttribute('stroke-width', isSelected ? '12' : '8');
             borderLine.setAttribute('stroke-linecap', 'round');
             borderLine.setAttribute('stroke-linejoin', 'round');
-            borderLine.setAttribute('stroke-opacity', isSelected ? '0.95' : '0.85');
+            borderLine.setAttribute('stroke-opacity', isSelected ? '1' : '0.9');
             g.appendChild(borderLine);
 
-            // Overlay: thinner yellow line
+            // Overlay: yellow solid line
             const mainLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
             mainLine.setAttribute('points', ptsStr);
             mainLine.setAttribute('fill', 'none');
-            mainLine.setAttribute('stroke', '#ffea00'); // Yellow
-            mainLine.setAttribute('stroke-width', isSelected ? '11' : '7');
+            mainLine.setAttribute('stroke', '#ffea00');
+            mainLine.setAttribute('stroke-width', isSelected ? '6' : '4');
             mainLine.setAttribute('stroke-linecap', 'round');
             mainLine.setAttribute('stroke-linejoin', 'round');
-            mainLine.setAttribute('stroke-opacity', '1');
             g.appendChild(mainLine);
 
-            gShapes.appendChild(g);
+            gGates.appendChild(g);
           } else {
             const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             poly.setAttribute('points', ptsStr);
@@ -2552,9 +2554,8 @@
                 gHandles.appendChild(c);
               });
             }
-        }
-        layerShapes.forEach(s => { if (s.type !== 'gate') renderShape(s); });
-        layerShapes.forEach(s => { if (s.type === 'gate') renderShape(s); });
+          }
+        });
       }
       // Gambarkan garis bantu putus-putus untuk shape bertautan
       if (selectedId) {
