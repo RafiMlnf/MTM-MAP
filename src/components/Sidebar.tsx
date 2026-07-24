@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { BuildingData, ZoneData } from '../data/mapData';
 
 interface SidebarProps {
@@ -36,469 +36,227 @@ export default function Sidebar({
   onToggleTheme,
   hoveredBuildingId,
 }: SidebarProps) {
-  const [expandedGroups, setExpandedGroups] = useState({
-    gedung: false,
-    taman: false,
-    zone: false,
-  });
-
-  const toggleGroup = (group: 'gedung' | 'taman' | 'zone') => {
-    setExpandedGroups((prev) => ({
-      ...prev,
-      [group]: !prev[group],
-    }));
-  };
-
-  // Find the currently selected objects
-  const selectedBuilding = useMemo(() => {
-    return buildings.find((b) => b.id === selectedBuildingId) || null;
-  }, [buildings, selectedBuildingId]);
-
-  const selectedZone = useMemo(() => {
-    return zones.find((z) => z.id === selectedZoneId) || null;
-  }, [zones, selectedZoneId]);
-
-  const selectedMachine = useMemo(() => {
-    if (!selectedZone || !selectedMachineId) return null;
-    return selectedZone.machines.find((m) => m.id === selectedMachineId) || null;
-  }, [selectedZone, selectedMachineId]);
-
-  const mainBuildings = useMemo(() => {
-    return buildings
-      .filter(b => !b.id.toLowerCase().includes('taman') && !b.name.toLowerCase().includes('taman'))
-      .sort((a, b) => a.name.localeCompare(b.name, 'id-ID'));
-  }, [buildings]);
-
-  const gardenBuildings = useMemo(() => {
-    return buildings
-      .filter(b => b.id.toLowerCase().includes('taman') || b.name.toLowerCase().includes('taman'))
-      .sort((a, b) => a.name.localeCompare(b.name, 'id-ID'));
-  }, [buildings]);
-
-  const sortedZones = useMemo(() => {
-    return [...zones].sort((a, b) => a.name.localeCompare(b.name, 'id-ID'));
-  }, [zones]);
-
-  // Calculations for selected zone
-  const zoneStats = useMemo(() => {
-    if (!selectedZone) return null;
-    const machinesCount = selectedZone.machines.length;
-    if (machinesCount === 0) return { avgEfficiency: 0, running: 0, idle: 0, maintenance: 0 };
-
-    const running = selectedZone.machines.filter((m) => m.status === 'running').length;
-    const idle = selectedZone.machines.filter((m) => m.status === 'idle').length;
-    const maintenance = selectedZone.machines.filter((m) => m.status === 'maintenance').length;
-    const avgEfficiency = Math.round(
-      selectedZone.machines.reduce((acc, m) => acc + m.efficiency, 0) / machinesCount
-    );
-
-    return { avgEfficiency, running, idle, maintenance };
-  }, [selectedZone]);
-
-  // Reference all unused props/callbacks to avoid any potential strict TS compilation errors
+  // Safe suppression for unused props to avoid TS compile errors
   React.useEffect(() => {
-    if (false) {
+    const dummy = () => {
       onSelectBuilding('');
       onSelectZone('');
       onSelectMachine('', '');
       onTriggerSearchPan('zone', '');
       setActiveView(activeView);
-    }
-  }, [onSelectBuilding, onSelectZone, onSelectMachine, onTriggerSearchPan, activeView, setActiveView]);
+      onToggleTheme();
+      void theme;
+      void hoveredBuildingId;
+    };
+    if (false) dummy();
+  }, [onSelectBuilding, onSelectZone, onSelectMachine, onTriggerSearchPan, activeView, setActiveView, onToggleTheme, theme, hoveredBuildingId]);
 
   return (
-    <aside className="sidebar-container">
-      {/* Brand logo & header */}
-      <div className="sidebar-header">
-        <div className="brand-wrapper" style={{ display: 'flex', alignItems: 'center', width: '100%', maxWidth: '170px', boxSizing: 'border-box' }}>
-          <img 
-            src="/assets/img/mtmwide.png" 
-            alt="PT MTM Logo" 
-            style={{ width: '100%', height: 'auto', maxHeight: '32px', objectFit: 'contain' }} 
-          />
+    <aside 
+      className="sidebar-container" 
+      style={{ 
+        position: 'relative',
+        width: '250px',
+        height: '100%',
+        backgroundColor: 'var(--bg-main)',
+        backdropFilter: 'none',
+        WebkitBackdropFilter: 'none',
+        borderRadius: '0px',
+        borderRight: '1px solid var(--border-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        boxShadow: 'none',
+        flexShrink: 0,
+      }}
+    >
+      {/* Compact Content Area */}
+      <div className="sidebar-content" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
+        
+        {/* Dashboard Quick Stats Widget */}
+        <div style={{
+          backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
+          borderRadius: '0px',
+          padding: '10px 12px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+        }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ fontSize: '17px', fontWeight: 'bold', color: 'var(--text-main)' }}>{buildings.length}</span>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Gedung</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ fontSize: '17px', fontWeight: 'bold', color: 'var(--text-main)' }}>{zones.length}</span>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Zona Aktif</span>
+            </div>
+          </div>
         </div>
-        <button className="theme-toggle-btn" onClick={onToggleTheme} title={theme === 'dark' ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap'}>
-          {theme === 'dark' ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-            </svg>
-          ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          )}
-        </button>
+
+        {/* Quick Access Area Grid (3xX) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+            Akses Cepat Area
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+            {[
+              { 
+                label: 'OFFICE', 
+                id: 'bld-office', 
+                code: 'OFC',
+                icon: (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginBottom: '3px' }}>
+                    <path d="M3 21h18M3 7v14M21 7v14M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2zM9 11h2v2H9zm0 4h2v2H9zm4-4h2v2h-2zm0 4h2v2h-2z"/>
+                  </svg>
+                )
+              },
+              { 
+                label: 'PRODUKSI 1', 
+                id: 'bld-dies', 
+                code: 'PRD 1',
+                icon: (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginBottom: '3px' }}>
+                    <path d="M2 20V9l7 5 7-5 6 4v7H2zM14 20v-4M10 20v-4"/>
+                  </svg>
+                )
+              },
+              { 
+                label: 'PRODUKSI 2', 
+                id: 'bld-production-2', 
+                code: 'PRD 2',
+                icon: (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginBottom: '3px' }}>
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                )
+              },
+              { 
+                label: 'FORGING', 
+                id: 'bld-forging', 
+                code: 'FRG',
+                icon: (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginBottom: '3px' }}>
+                    <path d="M22 6.5L17.5 2 9 10.5l-3-3L2 11.5l5.5 5.5L11 13.5l-3-3 8.5-8.5zM2 22l6-6"/>
+                  </svg>
+                )
+              },
+              { 
+                label: 'ADM DELIVERY', 
+                id: 'bld-admin-delivery', 
+                code: 'DEL',
+                icon: (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginBottom: '3px' }}>
+                    <rect x="1" y="3" width="15" height="13" rx="2" ry="2"/>
+                    <path d="M16 8h4l3 3v5h-7V8z"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+                )
+              },
+              { 
+                label: 'MAINTENANCE', 
+                id: 'bld-maintenance', 
+                code: 'MNT',
+                icon: (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginBottom: '3px' }}>
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                  </svg>
+                )
+              },
+              { 
+                label: 'PACKAGING', 
+                id: 'bld-packaging', 
+                code: 'PKG',
+                icon: (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginBottom: '3px' }}>
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/>
+                  </svg>
+                )
+              },
+            ].map((item, idx) => {
+              const isSelected = selectedBuildingId === item.id;
+              return (
+                <button
+                  key={`${item.id}-${idx}`}
+                  onClick={() => onSelectBuilding(isSelected ? '' : item.id)}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '8px 4px',
+                    borderRadius: '0px',
+                    backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
+                    border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                    boxShadow: isSelected ? '0 0 0 1px var(--primary)' : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    outline: 'none',
+                    minHeight: '58px',
+                  }}
+                  title={item.label}
+                >
+                  <span style={{ color: isSelected ? 'var(--primary)' : 'var(--text-muted)', display: 'flex' }}>
+                    {item.icon}
+                  </span>
+                  <span style={{ 
+                    fontSize: '11px', 
+                    fontWeight: 'bold', 
+                    color: isSelected ? 'var(--primary)' : 'var(--text-main)',
+                    marginBottom: '1px'
+                  }}>
+                    {item.code}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
 
-      {/* Layer selector */}
-      <div className="view-mode-toggle">
-        <button
-          className={`toggle-btn ${activeView === 'satellite' ? 'active' : ''}`}
-          onClick={() => setActiveView('satellite')}
-        >
-          Gedung Utama
-        </button>
-        <button
-          className={`toggle-btn ${activeView === 'layout' ? 'active' : ''}`}
-          onClick={() => setActiveView('layout')}
-        >
-          Dalam Gedung
-        </button>
-      </div>
-
-      {/* Info Details & Lists */}
-      <div className="sidebar-content">
-        {!selectedBuildingId && !selectedZoneId ? (
-          /* Default Directory View */
-          <div className="directory-view">
-            <h3 style={{ margin: '15px 0 10px 0', fontSize: '14px', color: '#a1a1aa' }}>Daftar Gedung & Area</h3>
-            
-            <div className="tab-content">
-              <div className="list-group">
-                {/* Gedung Utama Header */}
-                <div
-                  onClick={() => toggleGroup('gedung')}
-                  className="list-group-header"
-                  style={{
-                    padding: '8px 4px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: '#71717a',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    userSelect: 'none',
-                    borderBottom: '1px solid var(--border-color)',
-                    marginBottom: '4px'
-                  }}
-                >
-                  <span style={{
-                    fontSize: '8px',
-                    display: 'inline-block',
-                    transform: expandedGroups.gedung ? 'rotate(90deg)' : 'none',
-                    transition: 'transform 0.15s ease'
-                  }}>▶</span>
-                  Gedung Utama ({mainBuildings.length})
-                </div>
-                {expandedGroups.gedung && mainBuildings.map((bld, idx) => {
-                  const isSelected = selectedBuildingId === bld.id;
-                  return (
-                    <div
-                      key={`main-bld-${bld.id}-${idx}`}
-                      className={`list-item clickable ${isSelected ? 'selected-item' : ''}`}
-                      onClick={() => onSelectBuilding(bld.id)}
-                      style={{ paddingLeft: '20px' }}
-                    >
-                      <div className="item-header" style={{ width: '100%' }}>
-                        <span className="item-title">{bld.name}</span>
-                        <span className="item-badge">{bld.code.split(' ')[0]}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Taman Header */}
-                <div
-                  onClick={() => toggleGroup('taman')}
-                  className="list-group-header"
-                  style={{
-                    padding: '8px 4px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: '#71717a',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    userSelect: 'none',
-                    borderBottom: '1px solid var(--border-color)',
-                    marginTop: '12px',
-                    marginBottom: '4px'
-                  }}
-                >
-                  <span style={{
-                    fontSize: '8px',
-                    display: 'inline-block',
-                    transform: expandedGroups.taman ? 'rotate(90deg)' : 'none',
-                    transition: 'transform 0.15s ease'
-                  }}>▶</span>
-                  Taman ({gardenBuildings.length})
-                </div>
-                {expandedGroups.taman && gardenBuildings.map((bld, idx) => {
-                  const isSelected = selectedBuildingId === bld.id;
-                  return (
-                    <div
-                      key={`garden-bld-${bld.id}-${idx}`}
-                      className={`list-item clickable ${isSelected ? 'selected-item' : ''}`}
-                      onClick={() => onSelectBuilding(bld.id)}
-                      style={{ paddingLeft: '20px' }}
-                    >
-                      <div className="item-header" style={{ width: '100%' }}>
-                        <span className="item-title">{bld.name}</span>
-                        <span className="item-badge outline">{bld.code.split(' ')[0]}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Area / Zone Header */}
-                <div
-                  onClick={() => toggleGroup('zone')}
-                  className="list-group-header"
-                  style={{
-                    padding: '8px 4px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: '#71717a',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    userSelect: 'none',
-                    borderBottom: '1px solid var(--border-color)',
-                    marginTop: '12px',
-                    marginBottom: '4px'
-                  }}
-                >
-                  <span style={{
-                    fontSize: '8px',
-                    display: 'inline-block',
-                    transform: expandedGroups.zone ? 'rotate(90deg)' : 'none',
-                    transition: 'transform 0.15s ease'
-                  }}>▶</span>
-                  Area / Zone ({zones.length})
-                </div>
-                {expandedGroups.zone && sortedZones.map((zone, idx) => {
-                  const isSelected = selectedZoneId === zone.id;
-                  return (
-                    <div
-                      key={`zone-${zone.id}-${idx}`}
-                      className={`list-item clickable ${isSelected ? 'selected-item' : ''}`}
-                      onClick={() => onSelectZone(zone.id)}
-                      style={{ paddingLeft: '20px' }}
-                    >
-                      <div className="item-header" style={{ width: '100%' }}>
-                        <span className="item-title">{zone.name.split(' (')[0]}</span>
-                        <span className="item-badge outline">{zone.id}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        ) : selectedMachine ? (
-          /* Machine Detail Panel */
-          <div className="detail-panel machine-details">
-            <button className="back-btn" onClick={() => onSelectMachine(selectedZone!.id, '')}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-              Kembali ke {selectedZone!.name.split(' (')[0]}
+      {/* Dynamic Context Floating Banner (If anything is selected) */}
+      {(selectedBuildingId || selectedZoneId || selectedMachineId) && (
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: 'var(--bg-main)',
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
+          borderTop: '1.5px solid var(--primary)',
+          borderRadius: '0px',
+          padding: '10px 12px',
+          animation: 'fadeIn 0.2s ease-out',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          zIndex: 19,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+              Objek Terpilih
+            </span>
+            <button 
+              onClick={() => { onSelectBuilding(''); onSelectZone(''); onSelectMachine('', ''); }}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '11px', padding: '0 4px' }}
+              title="Batal Seleksi"
+            >
+              ✕
             </button>
-            <div className="detail-header">
-              <div className="header-title-row">
-                <h2>Mesin {selectedMachine.name}</h2>
-                <span className={`status-badge-pill ${selectedMachine.status}`}>
-                  {selectedMachine.status.toUpperCase()}
-                </span>
-              </div>
-              <p className="detail-subtitle">ID Stasiun: {selectedMachine.id} | Area: {selectedZone!.name.split(' (')[0]}</p>
-            </div>
-
-            {/* Efficiency Circular Meter */}
-            <div className="gauge-section">
-              <div className="gauge-container">
-                <svg viewBox="0 0 100 100" className="gauge-svg">
-                  <circle cx="50" cy="50" r="40" className="gauge-bg-circle" />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    className="gauge-val-circle"
-                    style={{
-                      strokeDasharray: `${2 * Math.PI * 40}`,
-                      strokeDashoffset: `${2 * Math.PI * 40 * (1 - selectedMachine.efficiency / 100)}`,
-                    }}
-                  />
-                  <text x="50" y="55" className="gauge-text">
-                    {selectedMachine.efficiency}%
-                  </text>
-                </svg>
-              </div>
-              <div className="gauge-meta">
-                <span className="gauge-label">Efisiensi OEE</span>
-                <span className="gauge-val-desc">
-                  {selectedMachine.efficiency > 90
-                    ? 'Sangat Optimal'
-                    : selectedMachine.efficiency > 80
-                    ? 'Normal'
-                    : selectedMachine.efficiency > 0
-                    ? 'Perlu Perhatian'
-                    : 'Tidak Beroperasi'}
-                </span>
-              </div>
-            </div>
-
-            <div className="detail-card">
-              <h3>Informasi Operasional</h3>
-              <div className="info-grid">
-                <div className="info-cell">
-                  <span className="info-label">Operator</span>
-                  <span className="info-value">{selectedMachine.operator}</span>
-                </div>
-                <div className="info-cell">
-                  <span className="info-label">Tipe Stasiun</span>
-                  <span className="info-value text-capitalize">{selectedMachine.type}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="detail-card">
-              <h3>Fungsi & Detail Teknis</h3>
-              <p className="detail-paragraph">{selectedMachine.details}</p>
-            </div>
           </div>
-        ) : selectedZone ? (
-          /* Zone Detail Panel */
-          <div className="detail-panel zone-details">
-            <button className="back-btn" onClick={() => onSelectZone('')}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-              Kembali ke Daftar
-            </button>
-            <div className="detail-header">
-              <h2>{selectedZone.name}</h2>
-              <p className="detail-subtitle">Kode: {selectedZone.id}</p>
-            </div>
-
-            {zoneStats && (
-              <div className="zone-dashboard-grid">
-                <div className="stat-card inline text-center">
-                  <span className="stat-val text-primary">{zoneStats.avgEfficiency}%</span>
-                  <span className="stat-label">Rata-rata OEE</span>
-                </div>
-                <div className="stat-sub-grid">
-                  <div className="stat-mini-badge running">
-                    <span>{zoneStats.running} Active</span>
-                  </div>
-                  <div className="stat-mini-badge idle">
-                    <span>{zoneStats.idle} Idle</span>
-                  </div>
-                  <div className="stat-mini-badge maintenance">
-                    <span>{zoneStats.maintenance} Repair</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="detail-card">
-              <h3>Deskripsi Area</h3>
-              <p className="detail-paragraph">{selectedZone.details}</p>
-            </div>
-
-            {selectedZone.machines.length > 0 && (
-              <div className="detail-card list-section">
-                <h3>Mesin & Stasiun Kerja ({selectedZone.machines.length})</h3>
-                <div className="mini-list-group">
-                  {selectedZone.machines.map((mach, idx) => {
-                    const isSelected = selectedMachineId === mach.id;
-                    return (
-                      <div
-                        key={`${mach.id}-${idx}`}
-                        className={`mini-list-item clickable ${isSelected ? 'selected-item' : ''}`}
-                        onClick={() => onSelectMachine(selectedZone.id, mach.id)}
-                      >
-                        <div className="mini-item-left">
-                          <span className={`status-dot ${mach.status}`} />
-                          <span className="mini-item-name">{mach.name}</span>
-                        </div>
-                        <div className="mini-item-right">
-                          <span className="mini-item-eff">{mach.efficiency}% OEE</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+          <div style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 'bold' }}>
+            {selectedBuildingId && `${buildings.find(b => b.id === selectedBuildingId)?.name || selectedBuildingId}`}
+            {selectedZoneId && `Zona: ${selectedZoneId}`}
+            {selectedMachineId && `Mesin: ${selectedMachineId}`}
           </div>
-        ) : selectedBuilding ? (
-          /* Building Detail Panel */
-          <div className="detail-panel building-details">
-            <button className="back-btn" onClick={() => onSelectBuilding('')}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-              Kembali ke Daftar
-            </button>
-            <div className="detail-header">
-              <h2>{selectedBuilding.name}</h2>
-              <p className="detail-subtitle">{selectedBuilding.code} • <span className="text-emerald-400">{selectedBuilding.operationalStatus}</span></p>
-            </div>
+        </div>
+      )}
 
-            <div className="detail-card">
-              <h3>Fungsi Utama</h3>
-              <p className="detail-paragraph">{selectedBuilding.details}</p>
-            </div>
-
-            {selectedBuilding.zones.length > 0 && (
-              <div className="detail-card list-section">
-                <h3>Area Internal di Dalam Gedung</h3>
-                <div className="mini-list-group">
-                  {selectedBuilding.zones.map((zoneId, idx) => {
-                    const matchedZone = zones.find((z) => z.id === zoneId);
-                    if (!matchedZone) return null;
-                    return (
-                      <div
-                        key={`${zoneId}-${idx}`}
-                        className="mini-list-item clickable"
-                        onClick={() => onSelectZone(zoneId)}
-                      >
-                        <div className="mini-item-left">
-                          <span className="mini-item-name">{matchedZone.name.split(' (')[0]}</span>
-                        </div>
-                        <div className="mini-item-right">
-                          <span className="text-zinc-500 text-xs">{(matchedZone.width * matchedZone.height) / 100} m²</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : null}
-      </div>
-
-      {/* Floating Hover Info Banner at the bottom of the sidebar */}
-      {hoveredBuildingId && (() => {
-        const hoveredBld = buildings.find(b => b.id === hoveredBuildingId);
-        if (!hoveredBld) return null;
-        return (
-          <div 
-            style={{
-              padding: '10px 14px',
-              background: 'rgba(59, 130, 246, 0.08)',
-              borderTop: '1.5px solid var(--primary)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '2px',
-              animation: 'fadeIn 0.2s ease-out'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '9px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>Menyorot Area</span>
-              <span style={{ fontSize: '9.5px', background: 'rgba(255,255,255,0.06)', padding: '1px 5px', borderRadius: '3px', color: 'var(--text-main)', border: '1px solid var(--border-color)', fontWeight: 'bold' }}>{hoveredBld.code}</span>
-            </div>
-            <div style={{ fontSize: '12.5px', fontWeight: 'bold', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {hoveredBld.name}
-            </div>
-          </div>
-        );
-      })()}
     </aside>
   );
 }

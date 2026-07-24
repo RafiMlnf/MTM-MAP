@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BuildingData, roads } from '../data/mapData';
+import SettingsSidebar from './SettingsSidebar';
 
 const SVG_ICONS: Record<string, string> = {
   mesin: `<path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L1.97 8.24a.5.5 0 0 0 .12.64l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.12.22.37.29.6.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.42.5.42h3.84c.24 0 .44-.17.49-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>`,
@@ -22,7 +23,14 @@ interface MapSatelliteProps {
   shapeOpacity: number;
   showRoads: boolean;
   activeView: 'satellite' | 'layout';
-  onShowSettings: () => void;
+  showSettings: boolean;
+  onToggleSettings: () => void;
+  onSatelliteOpacityChange: (val: number) => void;
+  onShapeOpacityChange: (val: number) => void;
+  showParentBuildings: boolean;
+  showChildBuildings: boolean;
+  onToggleParentBuildings: (val: boolean) => void;
+  onToggleChildBuildings: (val: boolean) => void;
 }
 
 export default function MapSatellite({
@@ -35,22 +43,65 @@ export default function MapSatellite({
   shapeOpacity,
   showRoads,
   activeView,
-  onShowSettings,
+  showSettings,
+  onToggleSettings,
+  onSatelliteOpacityChange,
+  onShapeOpacityChange,
+  showParentBuildings,
+  showChildBuildings,
+  onToggleParentBuildings,
+  onToggleChildBuildings,
 }: MapSatelliteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragStartMouseRef = useRef({ x: 0, y: 0 });
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
 
-  // Zoom & Pan states
-  const [scale, setScale] = useState(0.65);
-  const [offset, setOffset] = useState({ x: 200, y: 50 });
+  // Zoom & Pan states — lazy initializers read sessionStorage synchronously on first render
+  const [scale, setScale] = useState(() => {
+    try {
+      const v = sessionStorage.getItem('mtm_map_scale');
+      const p = v !== null ? parseFloat(v) : NaN;
+      return !isNaN(p) && p > 0 ? p : 0.65;
+    } catch { return 0.65; }
+  });
+  const [offset, setOffset] = useState(() => {
+    try {
+      const x = sessionStorage.getItem('mtm_map_offset_x');
+      const y = sessionStorage.getItem('mtm_map_offset_y');
+      const px = x !== null ? parseFloat(x) : NaN;
+      const py = y !== null ? parseFloat(y) : NaN;
+      return !isNaN(px) && !isNaN(py) ? { x: px, y: py } : { x: 200, y: 50 };
+    } catch { return { x: 200, y: 50 }; }
+  });
+  const [animateTransform, setAnimateTransform] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [animateTransform, setAnimateTransform] = useState(true);
+  const [isInteracting, setIsInteracting] = useState(false);
   const [focusBuildingId, setFocusBuildingId] = useState<string | null>(null);
+  const zoomTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const scaleRef = useRef(scale);
   const offsetRef = useRef(offset);
+  const [rotation, setRotation] = useState(() => {
+    try {
+      const v = sessionStorage.getItem('mtm_map_rotation');
+      return v !== null ? parseInt(v, 10) : 0;
+    } catch { return 0; }
+  });
+  const [isFocusMode, setIsFocusMode] = useState(() => {
+    try {
+      const v = sessionStorage.getItem('mtm_map_focus_mode');
+      return v !== null ? v === 'true' : true;
+    } catch { return true; }
+  });
+  const rotationRef = useRef(rotation);
+  // Flag: when true, ResizeObserver won't override position with handleReset
+  const restoredFromSessionRef = useRef(false);
+
+  useEffect(() => {
+    rotationRef.current = rotation;
+  }, [rotation]);
 
   useEffect(() => {
     scaleRef.current = scale;
@@ -80,13 +131,17 @@ export default function MapSatellite({
     // Translate percentages (0-100) to actual canvas pixels
     const targetX = (centerX / 100) * canvasWidth;
     const targetY = (centerY / 100) * canvasHeight;
-    const targetZoom = scale;
+    
+    const isChild = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
+    const targetZoom = isChild ? 1.1 : 0.65;
 
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       const containerHeight = containerRef.current.clientHeight;
 
       setAnimateTransform(true);
+      setScale(targetZoom);
+      scaleRef.current = targetZoom;
       setOffset({
         x: containerWidth / 2 - targetX * targetZoom,
         y: containerHeight / 2 - targetY * targetZoom,
@@ -94,25 +149,57 @@ export default function MapSatellite({
     }
   }, [selectedBuildingId, buildings]);
 
-  // Drag handlers
+  // Ultra-responsive high-performance 0-delay drag handler
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
+
+    isDraggingRef.current = true;
     setIsDragging(true);
-    setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+    setIsInteracting(true);
+    dragStartRef.current = { x: e.clientX - offsetRef.current.x, y: e.clientY - offsetRef.current.y };
     dragStartMouseRef.current = { x: e.clientX, y: e.clientY };
-    setAnimateTransform(false);
-  };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setOffset({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
-  };
+    // Synchronously remove CSS transition delay immediately to eliminate 0.4s lag
+    if (canvasRef.current) {
+      canvasRef.current.style.transition = 'none';
+      canvasRef.current.style.willChange = 'transform';
+    }
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
+    const onPointerMove = (moveEvent: MouseEvent | PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      const newX = moveEvent.clientX - dragStartRef.current.x;
+      const newY = moveEvent.clientY - dragStartRef.current.y;
+      
+      offsetRef.current = { x: newX, y: newY };
+      
+      if (canvasRef.current) {
+        canvasRef.current.style.transform = `translate(${newX}px, ${newY}px) scale(${scaleRef.current}) translate(${canvasWidth / 2}px, ${canvasHeight / 2}px) rotate(${rotationRef.current}deg) translate(${-canvasWidth / 2}px, ${-canvasHeight / 2}px)`;
+      }
+    };
+
+    const onPointerUp = () => {
+      if (!isDraggingRef.current) return;
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      setIsInteracting(false);
+
+      if (canvasRef.current) {
+        canvasRef.current.style.transition = '';
+        canvasRef.current.style.willChange = 'auto';
+      }
+
+      window.removeEventListener('mousemove', onPointerMove);
+      window.removeEventListener('mouseup', onPointerUp);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+
+      setOffset(offsetRef.current);
+    };
+
+    window.addEventListener('mousemove', onPointerMove, { passive: true });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerup', onPointerUp);
   };
 
   const handleElementClick = (e: React.MouseEvent, id: string) => {
@@ -151,7 +238,7 @@ export default function MapSatellite({
   const handleZoomOut = () => {
     if (!containerRef.current) return;
     setAnimateTransform(true);
-    setScale((prev) => Math.max(0.2, prev - 0.25));
+    setScale((prev) => Math.max(0.05, prev - 0.25));
     const w = containerRef.current.clientWidth;
     const h = containerRef.current.clientHeight;
     setOffset((prev) => ({
@@ -160,7 +247,7 @@ export default function MapSatellite({
     }));
   };
 
-  const handleReset = useCallback(() => {
+  const handleReset = useCallback((animate = false) => {
     if (!containerRef.current) return;
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
@@ -169,20 +256,36 @@ export default function MapSatellite({
       return;
     }
 
-    setAnimateTransform(true);
+    setAnimateTransform(animate);
     const baseScale = Math.min(
       (containerWidth - 60) / canvasWidth,
       (containerHeight - 60) / canvasHeight
     );
-    setScale(baseScale);
-    setOffset({
+    const newOffset = {
       x: (containerWidth - canvasWidth * baseScale) / 2,
       y: (containerHeight - canvasHeight * baseScale) / 2,
-    });
+    };
+    setScale(baseScale);
+    scaleRef.current = baseScale;
+    setOffset(newOffset);
+    offsetRef.current = newOffset;
+    setRotation(0);
+    rotationRef.current = 0;
   }, [canvasWidth, canvasHeight]);
 
+  const handleRotate = () => {
+    setAnimateTransform(true);
+    setRotation((prev) => (prev + 90) % 360);
+  };
+
   useEffect(() => {
-    const handleGlobalMouseUp = () => setIsDragging(false);
+    const handleGlobalMouseUp = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+        setOffset(offsetRef.current);
+      }
+    };
     window.addEventListener('mouseup', handleGlobalMouseUp);
 
     const container = containerRef.current;
@@ -205,7 +308,7 @@ export default function MapSatellite({
       const currentScale = scaleRef.current;
       const currentOffset = offsetRef.current;
 
-      const newScale = Math.max(0.2, Math.min(3.5, currentScale * factor));
+      const newScale = Math.max(0.05, Math.min(3.5, currentScale * factor));
       const canvasMouseX = (mouseX - currentOffset.x) / currentScale;
       const canvasMouseY = (mouseY - currentOffset.y) / currentScale;
 
@@ -218,6 +321,12 @@ export default function MapSatellite({
       scaleRef.current = newScale;
       offsetRef.current = newOffset;
 
+      setIsInteracting(true);
+      if (zoomTimeoutRef.current) clearTimeout(zoomTimeoutRef.current);
+      zoomTimeoutRef.current = setTimeout(() => {
+        setIsInteracting(false);
+      }, 180);
+
       setScale(newScale);
       setOffset(newOffset);
     };
@@ -227,18 +336,39 @@ export default function MapSatellite({
     }
 
     const observer = new ResizeObserver(() => {
-      handleReset();
+      // Only reset on resize when we haven't restored from session
+      if (!restoredFromSessionRef.current) {
+        handleReset(false);
+      }
     });
     if (container) {
       observer.observe(container);
     }
 
-    // Run immediately on mount
-    handleReset();
+    // Mark as restored from session if valid session data exists (lazy useState already loaded the values)
+    try {
+      const savedScale = sessionStorage.getItem('mtm_map_scale');
+      const savedOffsetX = sessionStorage.getItem('mtm_map_offset_x');
+      const savedOffsetY = sessionStorage.getItem('mtm_map_offset_y');
+      if (savedScale && savedOffsetX && savedOffsetY) {
+        const ps = parseFloat(savedScale);
+        const px = parseFloat(savedOffsetX);
+        const py = parseFloat(savedOffsetY);
+        if (!isNaN(ps) && !isNaN(px) && !isNaN(py) && ps > 0) {
+          // Values already in state from lazy init — just block handleReset
+          restoredFromSessionRef.current = true;
+        }
+      }
+    } catch (_) {}
 
-    // Run after a short delay to ensure layout has settled
+    if (!restoredFromSessionRef.current) {
+      handleReset(false);
+    }
+
     const timer = setTimeout(() => {
-      handleReset();
+      if (!restoredFromSessionRef.current) {
+        handleReset(false);
+      }
     }, 100);
 
     return () => {
@@ -251,16 +381,76 @@ export default function MapSatellite({
     };
   }, [handleReset]);
 
+  // Save positioning state to sessionStorage on change
+  useEffect(() => {
+    // Don't overwrite session data on the very first render after restore
+    if (!restoredFromSessionRef.current) return;
+    try {
+      sessionStorage.setItem('mtm_map_scale', String(scale));
+      sessionStorage.setItem('mtm_map_offset_x', String(offset.x));
+      sessionStorage.setItem('mtm_map_offset_y', String(offset.y));
+      sessionStorage.setItem('mtm_map_rotation', String(rotation));
+      sessionStorage.setItem('mtm_map_focus_mode', String(isFocusMode));
+    } catch (_) {}
+  }, [scale, offset, rotation, isFocusMode]);
+
+  // Once component is interactive, let normal saves happen
+  useEffect(() => {
+    const t = setTimeout(() => {
+      restoredFromSessionRef.current = true;
+    }, 500);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div
       className="map-layout-container"
       ref={containerRef}
       onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
       style={{ cursor: isDragging ? 'grabbing' : 'default' }}
       onClick={handleBackgroundClick}
     >
+      {/* Floating Layer Visibility Checklist Panel at Bottom Left */}
+      <div 
+        onMouseDown={(e) => e.stopPropagation()}
+        style={{
+          position: 'absolute',
+          bottom: '12px',
+          left: '12px',
+          background: 'var(--bg-main)',
+          border: '1px solid var(--border-color)',
+          borderRadius: '0px',
+          padding: '10px 12px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          zIndex: 80,
+          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+          fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px', marginBottom: '2px' }}>
+          VISIBILITAS LAYER
+        </span>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+          <input
+            type="checkbox"
+            checked={showParentBuildings}
+            onChange={(e) => onToggleParentBuildings(e.target.checked)}
+            style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+          />
+          <span>Ged. Utama</span>
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+          <input
+            type="checkbox"
+            checked={showChildBuildings}
+            onChange={(e) => onToggleChildBuildings(e.target.checked)}
+            style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+          />
+          <span>Ruangan Dalam</span>
+        </label>
+      </div>
       {/* Zoom controls floating on map */}
       {focusBuildingId && (
         <button
@@ -290,46 +480,77 @@ export default function MapSatellite({
       )}
 
       <div className="map-controls">
-        <button onClick={handleZoomIn} title="Zoom In" className="control-btn">
-          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        <button onClick={handleRotate} title="Rotate Map (Putar)" className="control-btn">
+          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25H12m3.75 3.75L12 5.25m3.75 3.75a9 9 0 11-10.428-2.436" />
           </svg>
         </button>
-        <button onClick={handleZoomOut} title="Zoom Out" className="control-btn">
-          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
-          </svg>
-        </button>
-        <button onClick={handleReset} title="Reset View" className="control-btn">
+        <button onClick={() => handleReset(true)} title="Reset View" className="control-btn">
           <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
           </svg>
         </button>
-        <button onClick={onShowSettings} title="Buka Pengaturan" className="control-btn">
+        <button onClick={onToggleSettings} title="Buka Pengaturan" className="control-btn">
           <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
           </svg>
         </button>
+        <button 
+          onClick={() => setIsFocusMode(!isFocusMode)} 
+          title={isFocusMode ? "Matikan Mode Fokus" : "Aktifkan Mode Fokus"} 
+          className="control-btn"
+          style={{
+            color: isFocusMode ? 'var(--primary)' : 'inherit',
+            backgroundColor: isFocusMode ? 'rgba(59, 130, 246, 0.15)' : 'inherit',
+          }}
+        >
+          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
       </div>
+
+      {/* Floating Settings popup attached next to map-controls */}
+      <SettingsSidebar
+        isOpen={showSettings}
+        onClose={onToggleSettings}
+        blueprintOpacity={0}
+        onBlueprintOpacityChange={() => {}}
+        satelliteOpacity={bgOpacity}
+        onSatelliteOpacityChange={onSatelliteOpacityChange}
+        shapeOpacity={shapeOpacity}
+        onShapeOpacityChange={onShapeOpacityChange}
+        showGrid={false}
+        onShowGridChange={() => {}}
+        showRoads={showRoads}
+        onShowRoadsChange={() => {}}
+      />
 
       {/* Zoomable Canvas for Satellite View */}
       <div
         ref={canvasRef}
         className={`layout-canvas ${animateTransform ? 'animate-canvas' : ''}`}
         style={{
-          transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+          transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale}) translate(${canvasWidth / 2}px, ${canvasHeight / 2}px) rotate(${rotation}deg) translate(${-canvasWidth / 2}px, ${-canvasHeight / 2}px)`,
           width: `${canvasWidth}px`,
           height: `${canvasHeight}px`,
           cursor: isDragging ? 'grabbing' : 'grab',
         }}
       >
-        {/* Base Satellite Image / Floor Plan */}
+        {/* Base Satellite Image / Floor Plan with Dynamic Interaction Low-Res Optimization */}
         <img
           src={activeView === 'satellite' ? "/map-img/mtmmap.jpg" : "/map-img/L2.png"}
           alt={activeView === 'satellite' ? "Citra Satelit PT Menara Terus Makmur" : "Layout Dalam Gedung"}
           className="blueprint-underlay"
-          style={{ opacity: bgOpacity }}
+          style={{ 
+            opacity: 1,
+            filter: `brightness(${bgOpacity}) ${isInteracting ? 'blur(4px)' : ''}`,
+            imageRendering: isInteracting ? 'pixelated' : 'auto',
+            transition: isInteracting ? 'none' : 'filter 0.15s ease-out',
+            willChange: isInteracting ? 'filter, transform' : 'auto',
+          }}
           draggable="false"
         />
 
@@ -355,49 +576,44 @@ export default function MapSatellite({
                 strokeWidth="0.8"
               />
             </pattern>
-            {/* Generic hatching pattern for hatched shapes */}
-            <pattern
-              id="hatch-pattern"
-              width="3"
-              height="3"
-              patternTransform="rotate(45 0 0)"
-              patternUnits="userSpaceOnUse"
-            >
-              <line x1="0" y1="0" x2="0" y2="3" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" />
-            </pattern>
+            {/* Dynamic hatching patterns for each hatched building */}
+            {buildings.filter(b => b.hatched).map((bld) => {
+               const baseColor = bld.color || '#3b82f6';
+               return (
+                 <pattern
+                   key={`hatch-pattern-${bld.id}`}
+                   id={`hatch-pattern-${bld.id}`}
+                   width="3"
+                   height="3"
+                   patternTransform="rotate(45 0 0)"
+                   patternUnits="userSpaceOnUse"
+                 >
+                   <line x1="0" y1="0" x2="0" y2="3" stroke={baseColor} strokeWidth="0.15" />
+                 </pattern>
+               );
+             })}
 
-            {/* Drill-down clipPath: even-odd rule punches a hole at the parent polygon.
-                The outer rect (0 0 → 100 100) MINUS the parent polygon = only outside is clipped/visible */}
-            {focusBuildingId && (() => {
-              const parentBld = buildings.find(b => b.id === focusBuildingId);
-              if (!parentBld) return null;
+            {/* Selection clipPath: even-odd rule punches a hole at the selected polygon.
+                The outer rect (0 0 → 100 100) MINUS the selected polygon = only outside is clipped/visible */}
+            {selectedBuildingId && (() => {
+              const activeBld = buildings.find(b => b.id === selectedBuildingId);
+              if (!activeBld) return null;
               // Convert "x,y x,y ..." to SVG path "M x y L x y ... Z"
-              const pts = parentBld.points.trim().split(/\s+/).map(p => {
+              const pts = activeBld.points.trim().split(/\s+/).map(p => {
                 const [x, y] = p.split(',').map(Number);
                 return `${x} ${y}`;
               });
               const innerPath = `M ${pts.join(' L ')} Z`;
               const outerRect  = `M 0 0 L 100 0 L 100 100 L 0 100 Z`;
               return (
-                <clipPath id="outside-parent-clip">
+                <clipPath id="outside-selected-clip">
                   <path d={`${outerRect} ${innerPath}`} clipRule="evenodd" />
                 </clipPath>
               );
             })()}
           </defs>
 
-          {/* Dark overlay OUTSIDE parent shape — rendered before child shapes so children appear on top */}
-          {focusBuildingId && (
-            <rect
-              x="0"
-              y="0"
-              width="100"
-              height="100"
-              fill="rgba(4, 6, 11, 0.68)"
-              clipPath="url(#outside-parent-clip)"
-              style={{ pointerEvents: 'none' }}
-            />
-          )}
+
 
           {/* Render roads under the buildings with rounded turns */}
           {showRoads && activeView === 'satellite' && (
@@ -412,14 +628,20 @@ export default function MapSatellite({
             const baseColor = bld.color || '#3b82f6';
             const isFocusedParent = focusBuildingId === bld.id;
 
-            if (focusBuildingId) {
-              const isChild = bld.parentShapeId === focusBuildingId;
-              if (!isFocusedParent && !isChild) return null;
-            } else {
-              // Hide child shapes by default — only if parent exists AND this shape is not itself a parent
-              const isChildShape = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
-              const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
-              if (isChildShape && !isAlsoParent) return null;
+            const isChild = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
+            const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
+            const isParent = !isChild || isAlsoParent;
+
+            // 1. Filter parent building visibility
+            if (isParent && !showParentBuildings) return null;
+
+            // 2. Filter child room visibility
+            if (isChild && !isAlsoParent) {
+              if (focusBuildingId) {
+                if (bld.parentShapeId !== focusBuildingId && !isFocusedParent) return null;
+              } else {
+                if (!showChildBuildings) return null;
+              }
             }
 
             if (isFocusedParent) {
@@ -487,6 +709,7 @@ export default function MapSatellite({
                 key={`${bld.id}-${idx}`}
                 id={bld.id}
                 points={bld.points}
+                strokeWidth={isSelected ? 0.35 : 0.16}
                 className={`building-polygon ${isSelected ? 'selected' : ''} ${
                   isHovered ? 'hovered' : ''
                 } ${bld.icon === 'listrik' ? 'shape-pulse-slow' : ''}`}
@@ -515,15 +738,15 @@ export default function MapSatellite({
                 onMouseEnter={() => setHoveredId(bld.id)}
                 onMouseLeave={() => setHoveredId(null)}
               />
-              {bld.hatched && (
-                <polygon
-                  key={`hatch-${bld.id}-${idx}`}
-                  points={bld.points}
-                  fill="url(#hatch-pattern)"
-                  stroke="none"
-                  style={{ pointerEvents: 'none', opacity: 0.85 }}
-                />
-              )}
+               {bld.hatched && (
+                 <polygon
+                   key={`hatch-${bld.id}-${idx}`}
+                   points={bld.points}
+                   fill={`url(#hatch-pattern-${bld.id})`}
+                   stroke="none"
+                   style={{ pointerEvents: 'none', opacity: 0.2 }}
+                 />
+               )}
             </React.Fragment>
             );
           })}
@@ -559,6 +782,19 @@ export default function MapSatellite({
               />
             );
           })}
+
+          {/* Dark overlay OUTSIDE selected shape rendered at the end to cover all unselected shapes/roads */}
+          {selectedBuildingId && isFocusMode && (
+            <rect
+              x="0"
+              y="0"
+              width="100"
+              height="100"
+              fill="rgba(4, 6, 11, 0.65)"
+              clipPath="url(#outside-selected-clip)"
+              style={{ pointerEvents: 'none' }}
+            />
+          )}
 
           {/* Entrance-overlay removed */}
         </svg>

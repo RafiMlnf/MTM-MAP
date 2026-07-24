@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
 :root {
   /* Dark Mode Variables (Default) */
   --bg-main: #090b11;
@@ -22,8 +24,8 @@
   --pink-machine: #db2777;
   --pink-glow: rgba(219, 39, 119, 0.12);
 
-  --font-sans: var(--font-geist-sans), Inter, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: "Google Sans", sans-serif;
+  --font-mono: "Google Sans", sans-serif;
   
   /* Additional dark mode specific styles */
   --bg-canvas-container: #07090d;
@@ -74,10 +76,12 @@
   --item-hover-bg: rgba(0, 0, 0, 0.03);
 }
 
-* {
+*, *::before, *::after, body, button, input, select, textarea, span, div, p, h1, h2, h3, h4, h5, h6 {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: "Google Sans", sans-serif !important;
+  font-optical-sizing: auto;
 }
 
 html, body {
@@ -85,7 +89,7 @@ html, body {
   width: 100%;
   background-color: var(--bg-main);
   color: var(--text-main);
-  font-family: var(--font-sans);
+  font-family: 'Google Sans', sans-serif !important;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
@@ -109,6 +113,7 @@ html, body {
 /* Page Layout */
 .app-container {
   display: flex;
+  flex-direction: column;
   width: 100vw;
   height: 100vh;
   position: relative;
@@ -116,18 +121,33 @@ html, body {
   background: var(--bg-main);
 }
 
-/* Sidebar Styling */
+/* Thin Topbar Styling */
+.app-topbar {
+  height: 48px;
+  width: 100%;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 25;
+  flex-shrink: 0;
+}
+
+/* Compact Solid Sidebar Styling */
 .sidebar-container {
-  width: 310px;
+  width: 250px;
   height: 100%;
-  background: var(--bg-sidebar);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background: var(--bg-main);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-right: 1px solid var(--border-color);
+  border-radius: 0px !important;
   display: flex;
   flex-direction: column;
   z-index: 10;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
   flex-shrink: 0;
 }
 
@@ -1090,8 +1110,8 @@ html, body {
 /* Map Controls Floating widget */
 .map-controls {
   position: absolute;
-  bottom: 24px;
-  right: 24px;
+  bottom: 12px;
+  right: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1802,7 +1822,7 @@ input:checked + .switch-slider:before {
   border: 1px solid rgba(244, 63, 94, 0.5);
   border-radius: 100px;
   box-shadow: 0 4px 20px rgba(244, 63, 94, 0.25), 0 2px 8px rgba(0,0,0,0.3);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-sans);
   transition: box-shadow 0.15s;
   pointer-events: auto;
 }
@@ -1941,4 +1961,22 @@ input:checked + .switch-slider:before {
   display: inline-flex;
   align-items: center;
   color: var(--accent-color);
+}
+
+.search-dropdown-item {
+  transition: background-color 0.1s ease;
+}
+
+.search-dropdown-item:hover {
+  background-color: var(--tab-bg-inactive) !important;
+}
+
+.skeleton-pulse {
+  animation: skeletonPulseKey 1.2s infinite ease-in-out;
+}
+
+@keyframes skeletonPulseKey {
+  0% { opacity: 0.15; }
+  50% { opacity: 0.45; }
+  100% { opacity: 0.15; }
 }
