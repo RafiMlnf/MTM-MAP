@@ -829,7 +829,7 @@ export default function Map({
                   points={bld.points}
                   fill="none"
                   stroke="#ff7800"
-                  strokeWidth={isSelected ? 1.0 : 0.65}
+                  strokeWidth={isSelected ? 0.6 : 0.35}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ strokeOpacity: isSelected || isHovered ? 1 : 0.9 }}
@@ -839,7 +839,7 @@ export default function Map({
                   points={bld.points}
                   fill="none"
                   stroke="#ffea00"
-                  strokeWidth={isSelected ? 0.55 : 0.35}
+                  strokeWidth={isSelected ? 0.35 : 0.18}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ strokeOpacity: 1 }}
@@ -860,12 +860,12 @@ export default function Map({
             >
               <defs>
                 <pattern id="map-gate-grid" width="8" height="8" patternUnits="userSpaceOnUse">
-                  <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#f59e0b" strokeOpacity="0.3" strokeWidth="1"/>
+                  <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#f59e0b" strokeOpacity="0.15" strokeWidth="0.5"/>
                 </pattern>
               </defs>
               <g transform={`rotate(${mainGate.rotation || 0}) scale(0.045)`}>
                 {/* Grid Underlay */}
-                <rect x="-38" y="-38" width="76" height="76" fill="url(#map-gate-grid)" stroke="#f59e0b" strokeOpacity="0.4" strokeWidth="1.5" strokeDasharray="3,3" rx="4" />
+                <rect x="-38" y="-38" width="76" height="76" fill="url(#map-gate-grid)" stroke="#f59e0b" strokeOpacity="0.25" strokeWidth="0.8" strokeDasharray="3,3" rx="4" />
                 {/* Yellow Entrance Line */}
                 <line x1="-38" y1="-38" x2="-38" y2="38" stroke="#f59e0b" strokeWidth="4.5" strokeLinecap="round" />
                 {/* Entrance Arrow */}
