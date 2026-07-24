@@ -47,7 +47,7 @@ export interface BuildingData {
   imageUrl?: string;
 }
 
-import rawShapes from '../../public/assets/img/mtm-shapes (3).json';
+import rawShapes from '../../public/shapes.json';
 
 export const buildings: BuildingData[] = (rawShapes as any[]).map((shape: any) => ({
   id: shape.id || shape.uuid,
