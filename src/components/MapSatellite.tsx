@@ -806,7 +806,7 @@ export default function MapSatellite({
                   <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#f59e0b" strokeOpacity="0.3" strokeWidth="1"/>
                 </pattern>
               </defs>
-              <g transform={`rotate(${mainGate.rotation || 0}) scale(0.023)`}>
+              <g transform={`rotate(${mainGate.rotation || 0}) scale(0.045)`}>
                 {/* Grid Underlay */}
                 <rect x="-38" y="-38" width="76" height="76" fill="url(#map-gate-grid)" stroke="#f59e0b" strokeOpacity="0.4" strokeWidth="1.5" strokeDasharray="3,3" rx="4" />
                 {/* Yellow Entrance Line */}
