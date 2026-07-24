@@ -5,15 +5,19 @@
   <meta charset="UTF-8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap"
+    rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: "Google Sans", sans-serif !important;
     }
+
     :root {
       --bg: #0f1117;
       --panel: #161b27;
@@ -824,6 +828,7 @@
       border-color: var(--accent2);
       color: var(--accent2);
     }
+
     .map-action-btn.placed:hover {
       background: var(--panel2);
       border-color: var(--accent2);
@@ -834,6 +839,7 @@
       border-color: var(--red);
       color: var(--red);
     }
+
     .map-action-btn.locked:hover {
       background: var(--panel2);
       border-color: var(--red);
@@ -2740,11 +2746,11 @@
         <select class="field-input" style="border: 1px solid var(--purple);" onchange="updateParentShape('${shape.uuid}', this.value)">
           <option value="">-- Tanpa Parent --</option>
           ${shapes.filter(s => {
-            if (s.type === 'label' || s.uuid === shape.uuid) return false;
-            const parentLayer = layers.find(l => l.id === (s.layer || 1));
-            const isAssignedParent = shape.parentShapeUuid === s.uuid || shape.parentShapeId === s.id;
-            return (parentLayer && parentLayer.isParentFolder) || isAssignedParent;
-          }).map(p => `
+        if (s.type === 'label' || s.uuid === shape.uuid) return false;
+        const parentLayer = layers.find(l => l.id === (s.layer || 1));
+        const isAssignedParent = shape.parentShapeUuid === s.uuid || shape.parentShapeId === s.id;
+        return (parentLayer && parentLayer.isParentFolder) || isAssignedParent;
+      }).map(p => `
             <option value="${p.uuid}" ${shape.parentShapeUuid === p.uuid || shape.parentShapeId === p.id ? 'selected' : ''}>${p.code || p.name}</option>
           `).join('')}
         </select>
@@ -2983,7 +2989,7 @@
     function handleShapeImageUpload(input) {
       const file = input.files[0];
       if (!file) return;
-      
+
       // Limit file size to 1.5MB to avoid localStorage quota issues
       if (file.size > 1.5 * 1024 * 1024) {
         alert("Ukuran gambar terlalu besar! Harap gunakan gambar di bawah 1.5 MB.");
@@ -3347,11 +3353,27 @@
       </select>
     </div>
 
+    <div class="field-group" style="margin-top: 10px;">
+      <label class="field-label">Lampirkan Gambar (Attach Image)</label>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <input type="file" id="gate-image-file" accept="image/*" style="display: none;" onchange="handleGateImageUpload(this)">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-ghost" style="flex: 1; padding: 5px; font-size: 12px; font-weight: 700;" onclick="document.getElementById('gate-image-file').click()">📂 Pilih Gambar</button>
+          ${mainGate.imageUrl ? `<button class="btn-danger" style="padding: 5px 10px; font-size: 12px; font-weight: 700;" onclick="removeGateImage()">🗑️ Hapus</button>` : ''}
+        </div>
+        ${mainGate.imageUrl ? `
+          <div style="position: relative; border: 1px solid var(--border); border-radius: 4px; padding: 4px; background: rgba(0,0,0,0.2); max-height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <img src="${mainGate.imageUrl}" style="max-width: 100%; max-height: 110px; border-radius: 2px; object-fit: contain;">
+          </div>
+        ` : `<div style="font-size: 11px; color: var(--muted); text-align: center; border: 1px dashed var(--border); padding: 8px; border-radius: 4px;">Belum ada gambar</div>`}
+      </div>
+    </div>
+
     <div class="sep" style="margin: 15px 0;"></div>
 
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      <button class="btn-ghost" style="border: 1px solid var(--accent); color: var(--accent);" onclick="repositionGate()">📌 Pindahkan Lokasi Gate</button>
-      <button class="btn-danger" onclick="deleteGate()">🗑️ Hapus Gate Masuk</button>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-ghost" style="flex: 1; border: 1px solid var(--accent); color: var(--accent); padding: 6px;" onclick="repositionGate()">Pindahkan Gate</button>
+      <button class="btn-danger" style="flex: 1; padding: 6px;" onclick="deleteGate()">Hapus</button>
     </div>
   `;
     }
@@ -3365,6 +3387,40 @@
       renderAll();
       showGateProps();
       showToast(`↻ Rotasi Gate: ${mainGate.rotation}°`);
+    }
+
+    function handleGateImageUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      // Limit file size to 1.5MB to avoid localStorage quota issues
+      if (file.size > 1.5 * 1024 * 1024) {
+        alert("Ukuran gambar terlalu besar! Harap gunakan gambar di bawah 1.5 MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Data = e.target.result;
+        saveUndo();
+        if (mainGate) {
+          mainGate.imageUrl = base64Data;
+          saveSession();
+          showGateProps();
+          showToast("🖼️ Gambar gate berhasil dilampirkan!");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeGateImage() {
+      if (mainGate && mainGate.imageUrl) {
+        saveUndo();
+        delete mainGate.imageUrl;
+        saveSession();
+        showGateProps();
+        showToast("🗑️ Gambar lampiran gate berhasil dihapus!");
+      }
     }
 
     function setGateRotation(deg) {
@@ -4011,7 +4067,7 @@
 
     function loadShapesData(rawText) {
       let content = rawText.trim();
-      
+
       // Extract mainGate if present in the raw text
       if (rawText.includes('mainGate')) {
         const startIdx = rawText.indexOf('{', rawText.indexOf('mainGate'));
