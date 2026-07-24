@@ -45,7 +45,7 @@
   --bg-main: #f4f4f0;
   --bg-sidebar: rgba(255, 255, 255, 0.95);
   --bg-card: rgba(255, 255, 255, 0.85);
-  --border-color: rgba(0, 0, 0, 0.08);
+  --border-color: rgba(0, 0, 0, 0.35);
   --text-main: #1f2937;
   --text-muted: #6b7280;
   
@@ -65,11 +65,11 @@
   --pink-glow: rgba(219, 39, 119, 0.08);
   
   --bg-canvas-container: #d6d6d6;
-  --grid-color: rgba(0, 0, 0, 0.03);
+  --grid-color: rgba(0, 0, 0, 0.2);
   --dot-color: rgba(0, 0, 0, 0.18);
   --badge-bg: rgba(0, 0, 0, 0.05);
   --badge-text: #4b5563;
-  --badge-outline-border: rgba(0, 0, 0, 0.12);
+  --badge-outline-border: rgba(0, 0, 0, 0.3);
   --header-bg: #fdfdfb;
   --tab-bg-active: #ffffff;
   --tab-bg-inactive: rgba(0, 0, 0, 0.03);
@@ -1201,8 +1201,8 @@ html, body {
   z-index: 2;
   pointer-events: none;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: 25px 25px;
 }
 

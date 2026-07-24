@@ -1647,6 +1647,10 @@
           }
         });
       }
+      const savedGate = localStorage.getItem('mtm_map_maingate');
+      if (savedGate) {
+        mainGate = JSON.parse(savedGate);
+      }
     } catch (e) {
       console.error('Gagal memuat sesi shapes dari localStorage', e);
     }
@@ -1654,6 +1658,11 @@
     function saveSession() {
       try {
         localStorage.setItem('mtm_map_shapes', JSON.stringify(shapes));
+        if (mainGate) {
+          localStorage.setItem('mtm_map_maingate', JSON.stringify(mainGate));
+        } else {
+          localStorage.removeItem('mtm_map_maingate');
+        }
       } catch (e) {
         console.error('Gagal menyimpan sesi shapes ke localStorage', e);
       }
@@ -3879,6 +3888,32 @@
 
     function loadShapesData(rawText) {
       let content = rawText.trim();
+      
+      // Extract mainGate if present in the raw text
+      if (rawText.includes('mainGate')) {
+        const startIdx = rawText.indexOf('{', rawText.indexOf('mainGate'));
+        if (startIdx !== -1) {
+          let depth = 1;
+          let i = startIdx + 1;
+          while (i < rawText.length && depth > 0) {
+            if (rawText[i] === '{') depth++;
+            else if (rawText[i] === '}') depth--;
+            i++;
+          }
+          if (depth === 0) {
+            try {
+              const gateStr = rawText.slice(startIdx, i);
+              const parsedGate = new Function('return ' + gateStr)();
+              if (parsedGate && typeof parsedGate.x === 'number' && typeof parsedGate.y === 'number') {
+                mainGate = parsedGate;
+              }
+            } catch (e) {
+              console.error('Gagal memuat config mainGate dari file TS/JS', e);
+            }
+          }
+        }
+      }
+
       // Extract layers if present in the raw text
       if (rawText.includes('layers')) {
         const startIdx = rawText.indexOf('[', rawText.indexOf('layers'));
@@ -4127,6 +4162,7 @@
       const buildings = convertShapesToBuildings(shapes);
       const payload = {
         buildings,
+        mainGate: mainGate || null,
         pushedAt: new Date().toISOString(),
         editorShapeCount: shapes.length,
         buildingCount: buildings.length
