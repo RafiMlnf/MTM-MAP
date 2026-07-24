@@ -2429,6 +2429,35 @@
             g.appendChild(dashLine);
 
             gShapes.appendChild(g);
+          } else if (shape.type === 'gate') {
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('class', 'shape-poly' + (isSelected ? ' selected' : ''));
+            g.style.cursor = 'pointer';
+            g.onclick = ev => { ev.stopPropagation(); selectShape(shape.uuid, ev.ctrlKey); };
+
+            // Underlay: thicker orange line
+            const borderLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+            borderLine.setAttribute('points', ptsStr);
+            borderLine.setAttribute('fill', 'none');
+            borderLine.setAttribute('stroke', '#ff7800'); // Orange
+            borderLine.setAttribute('stroke-width', isSelected ? '18' : '14');
+            borderLine.setAttribute('stroke-linecap', 'round');
+            borderLine.setAttribute('stroke-linejoin', 'round');
+            borderLine.setAttribute('stroke-opacity', isSelected ? '0.95' : '0.85');
+            g.appendChild(borderLine);
+
+            // Overlay: thinner yellow line
+            const mainLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+            mainLine.setAttribute('points', ptsStr);
+            mainLine.setAttribute('fill', 'none');
+            mainLine.setAttribute('stroke', '#ffea00'); // Yellow
+            mainLine.setAttribute('stroke-width', isSelected ? '11' : '7');
+            mainLine.setAttribute('stroke-linecap', 'round');
+            mainLine.setAttribute('stroke-linejoin', 'round');
+            mainLine.setAttribute('stroke-opacity', '1');
+            g.appendChild(mainLine);
+
+            gShapes.appendChild(g);
           } else {
             const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             poly.setAttribute('points', ptsStr);
