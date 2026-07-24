@@ -1083,6 +1083,14 @@
       </svg>
       Road <span class="kbd">W</span>
     </button>
+    <button class="tool-btn" id="tool-gate" title="Gate [Y]" onclick="setTool('gate')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="6" x2="3" y2="18" />
+        <line x1="21" y1="6" x2="21" y2="18" />
+      </svg>
+      Gate <span class="kbd">Y</span>
+    </button>
 
     <div class="header-sep"></div>
     <div class="color-row">
@@ -1870,7 +1878,8 @@
         rect: 'Klik+drag untuk menggambar persegi panjang',
         poly: 'Klik untuk titik polygon. Enter/dbl-click/klik titik pertama untuk tutup',
         label: 'Klik di peta untuk taruh label teks',
-        road: 'Klik untuk titik jalan. Enter/dbl-click/klik titik pertama untuk selesai'
+        road: 'Klik untuk titik jalan. Enter/dbl-click/klik titik pertama untuk selesai',
+        gate: 'Klik untuk titik gerbang. Enter/dbl-click/klik titik pertama untuk selesai'
       };
       document.getElementById('status-hint').textContent = hints[tool] || '';
       viewport.style.cursor = tool === 'select' ? 'default' : 'crosshair';
@@ -1981,7 +1990,7 @@
         if (currentTool === 'rect') {
           isDrawing = true;
           rectStart = { x: pct.x, y: pct.y };
-        } else if (currentTool === 'poly' || currentTool === 'road') {
+        } else if (currentTool === 'poly' || currentTool === 'road' || currentTool === 'gate') {
           drawPoints.push({ x: pct.x, y: pct.y });
           renderPreview();
         } else if (currentTool === 'label') {
@@ -2063,7 +2072,7 @@
         if (sh) updatePropsCoords(sh);
         return;
       }
-      if (isDrawing) renderPreview();
+      if (isDrawing || drawPoints.length > 0) renderPreview();
     }
 
     function onMouseUp(e) {
@@ -2121,6 +2130,7 @@
     function onDblClick(e) {
       if (currentTool === 'poly' && drawPoints.length >= 3) { finishPolygon(); return; }
       if (currentTool === 'road' && drawPoints.length >= 2) { finishRoad(); return; }
+      if (currentTool === 'gate' && drawPoints.length >= 2) { finishGate(); return; }
 
       if (currentTool === 'select') {
         const mp = clientToMapPx(e.clientX, e.clientY);
@@ -2180,10 +2190,12 @@
       if (e.key === 'p' || e.key === 'P') setTool('poly');
       if (e.key === 't' || e.key === 'T') setTool('label');
       if (e.key === 'w' || e.key === 'W') setTool('road');
+      if (e.key === 'y' || e.key === 'Y') setTool('gate');
       if (e.key === 'Escape') cancelDrawing();
       if (e.key === 'm' || e.key === 'M') { e.preventDefault(); toggleMagnet(); }
       if (e.key === 'Enter' && currentTool === 'poly' && drawPoints.length >= 3) finishPolygon();
       if (e.key === 'Enter' && currentTool === 'road' && drawPoints.length >= 2) finishRoad();
+      if (e.key === 'Enter' && currentTool === 'gate' && drawPoints.length >= 2) finishGate();
       if ((e.key === 'Delete' || e.key === 'Backspace') && !isDragging) deleteSelected();
       if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
       if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
@@ -2232,6 +2244,20 @@
         color: document.getElementById('tool-color').value,
         name: 'Jalan Baru', code: 'Jalan', details: '', operationalStatus: 'Aktif',
         layer: activeLayer, isRoad: true
+      };
+      shapes.push(s);
+      drawPoints = []; isDrawing = false; gPreview.innerHTML = '';
+      selectShape(s.uuid); renderAll(); saveSession();
+    }
+
+    function finishGate() {
+      if (drawPoints.length < 2) return;
+      saveUndo();
+      const s = {
+        uuid: generateUuid(), id: newId(), type: 'gate', points: [...drawPoints],
+        color: '#ffea00',
+        name: 'Gate Baru', code: 'Gate', details: '', operationalStatus: 'Aktif',
+        layer: activeLayer
       };
       shapes.push(s);
       drawPoints = []; isDrawing = false; gPreview.innerHTML = '';
@@ -2622,6 +2648,42 @@
           gPreview.appendChild(c);
         });
       }
+
+      if (currentTool === 'gate' && drawPoints.length > 0) {
+        const allPts = [...drawPoints, mousePos];
+        const ptsStr = allPts.map(p => { const px = pctToPx(p.x, p.y); return `${px.x},${px.y}`; }).join(' ');
+
+        // Underlay: orange line preview
+        const borderLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        borderLine.setAttribute('points', ptsStr);
+        borderLine.setAttribute('fill', 'none');
+        borderLine.setAttribute('stroke', '#ff7800');
+        borderLine.setAttribute('stroke-width', '7');
+        borderLine.setAttribute('stroke-linecap', 'round');
+        borderLine.setAttribute('stroke-linejoin', 'round');
+        borderLine.setAttribute('stroke-opacity', '0.65');
+        gPreview.appendChild(borderLine);
+
+        // Overlay: yellow line preview
+        const mainLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        mainLine.setAttribute('points', ptsStr);
+        mainLine.setAttribute('fill', 'none');
+        mainLine.setAttribute('stroke', '#ffea00');
+        mainLine.setAttribute('stroke-width', '3');
+        mainLine.setAttribute('stroke-linecap', 'round');
+        mainLine.setAttribute('stroke-linejoin', 'round');
+        gPreview.appendChild(mainLine);
+
+        allPts.forEach((p, i) => {
+          const px = pctToPx(p.x, p.y);
+          const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          c.setAttribute('cx', px.x); c.setAttribute('cy', px.y);
+          c.setAttribute('r', (i === 0 && drawPoints.length >= 2) ? 8 : 4);
+          c.setAttribute('fill', (i === 0 && drawPoints.length >= 2) ? '#10b981' : 'white');
+          c.setAttribute('stroke', '#3b82f6'); c.setAttribute('stroke-width', 1.5);
+          gPreview.appendChild(c);
+        });
+      }
     }
 
     // ══════════════════════════════════════════════════════════
@@ -2784,7 +2846,7 @@
         <input type="checkbox" id="prop-locked" ${shape.locked ? 'checked' : ''} onchange="updatePropAndRender(this.checked, 'locked')" style="width:14px; height:14px; cursor:pointer;">
         <label for="prop-locked" class="field-label" style="cursor:pointer; user-select:none; margin:0;">Lock Pos</label>
       </div>
-      ${!isLabel ? `
+      ${(!isLabel && shape.type !== 'road' && shape.type !== 'gate') ? `
       <div class="field-group" style="flex-direction:row; align-items:center; gap:6px; margin:0;">
         <input type="checkbox" id="prop-hatched" ${shape.hatched ? 'checked' : ''} onchange="updatePropAndRender(this.checked, 'hatched')" style="width:14px; height:14px; cursor:pointer;">
         <label for="prop-hatched" class="field-label" style="cursor:pointer; user-select:none; margin:0;">Arsir</label>
@@ -3885,8 +3947,8 @@
           const dx = Math.abs(px - s.points[0].x);
           const dy = Math.abs(py - s.points[0].y);
           if (dx < 5 && dy < 2) return s;
-        } else if (s.type === 'road') {
-          const threshold = 1.8;
+        } else if (s.type === 'road' || s.type === 'gate') {
+          const threshold = s.type === 'gate' ? 1.2 : 1.8;
           for (let j = 0; j < s.points.length - 1; j++) {
             const p1 = s.points[j];
             const p2 = s.points[j + 1];
@@ -4193,7 +4255,7 @@
           });
           return {
             id: item.id || ('bld-new-' + (idCounter++)),
-            type: item.type || (item.isRoad ? 'road' : 'poly'),
+            type: item.type || (item.isRoad ? 'road' : item.isGate ? 'gate' : 'poly'),
             points: pts,
             color: item.color || '#3b82f6',
             name: item.name || 'Area Baru',
@@ -4206,6 +4268,7 @@
             linkedShapeId: item.linkedShapeId || null,
             parentShapeId: item.parentShapeId || null,
             isRoad: !!item.isRoad,
+            isGate: item.type === 'gate' || !!item.isGate,
             hatched: !!item.hatched
           };
         }
@@ -4349,6 +4412,7 @@
             parentShapeId: resolvedParentShapeId,
             hatched: s.hatched || undefined,
             isRoad: s.isRoad || undefined,
+            isGate: s.type === 'gate' || undefined,
             imageUrl: s.imageUrl || undefined
           };
         });

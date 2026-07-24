@@ -660,6 +660,48 @@ export default function Map({
               );
             }
 
+            if (bld.isGate) {
+              return (
+                <g 
+                  key={`${bld.id}-${idx}`}
+                  onClick={(e) => handleElementClick(e, bld.id)}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
+                    if (hasChildren) setFocusBuildingId(bld.id);
+                  }}
+                  onMouseEnter={() => setHoveredId(bld.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {/* Underlay: thicker orange line */}
+                  <polyline
+                    points={bld.points}
+                    fill="none"
+                    stroke="#ff7800"
+                    strokeWidth={isSelected ? 1.0 : 0.7}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                      strokeOpacity: isSelected ? 0.95 : 0.85
+                    }}
+                  />
+                  {/* Overlay: thinner yellow line */}
+                  <polyline
+                    points={bld.points}
+                    fill="none"
+                    stroke="#ffea00"
+                    strokeWidth={isSelected ? 0.6 : 0.35}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                      strokeOpacity: 1
+                    }}
+                  />
+                </g>
+              );
+            }
+
             if (bld.isRoad) {
               return (
                 <g 

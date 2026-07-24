@@ -44,6 +44,7 @@ export interface BuildingData {
   parentShapeId?: string;
   hatched?: boolean;
   isRoad?: boolean;
+  isGate?: boolean;
   imageUrl?: string;
 }
 
@@ -69,6 +70,7 @@ export const buildings: BuildingData[] = (rawShapes as any[]).map((shape: any) =
   parentShapeId: shape.parentShapeId,
   hatched: shape.hatched,
   isRoad: shape.isRoad,
+  isGate: shape.isGate,
   imageUrl: shape.imageUrl,
 }));
 
