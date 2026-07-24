@@ -820,6 +820,16 @@
       color: var(--red);
     }
 
+    .map-action-btn.placed {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+    .map-action-btn.placed:hover {
+      background: var(--panel2);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
     /* ── DROPDOWN MENU ── */
     .menu-item {
       position: relative;
@@ -2489,6 +2499,18 @@
         }
       }
 
+      // Update gate button active class based on mainGate presence
+      const gateBtn = document.getElementById('map-btn-gate');
+      if (gateBtn) {
+        if (mainGate) {
+          gateBtn.classList.add('placed');
+          gateBtn.setAttribute('title', 'Pilih / Ubah / Hapus Pintu Masuk Utama (Gate) [G]');
+        } else {
+          gateBtn.classList.remove('placed');
+          gateBtn.setAttribute('title', 'Pintu Masuk Utama (Gate) [G]');
+        }
+      }
+
       renderMainGate();
       renderShapeList();
     }
@@ -3294,8 +3316,16 @@
       };
 
       group.innerHTML = `
+        <defs>
+          <pattern id="gate-grid-${mainGate.x}-${mainGate.y}" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#f59e0b" stroke-opacity="0.3" stroke-width="1"/>
+          </pattern>
+        </defs>
         <!-- Rotatable Arrow Group (1/8 turns = 45°) -->
         <g transform="rotate(${rot})">
+          <!-- Grid Area Underlay -->
+          <rect x="-38" y="-38" width="76" height="76" fill="url(#gate-grid-${mainGate.x}-${mainGate.y})" stroke="#f59e0b" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="3,3" rx="4" />
+          
           <!-- Long Yellow Entrance Line (Garis Kuning Panjang di Bawah/Pangkal Panah) -->
           <line x1="-38" y1="-38" x2="-38" y2="38" stroke="#f59e0b" stroke-width="4.5" stroke-linecap="round" filter="drop-shadow(0px 2px 6px rgba(0,0,0,0.8))" />
           
