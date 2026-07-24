@@ -71,6 +71,53 @@ export default function MapSidebar({
         flexShrink: 0,
       }}
     >
+      {/* 16:9 Selected Object Banner at the very top of Sidebar (Below topbar) */}
+      {(() => {
+        const activeBld = selectedBuildingId ? (selectedBuildingId === 'main-gate' ? null : buildings.find(b => b.id === selectedBuildingId)) : null;
+        const imageUrl = selectedBuildingId === 'main-gate' ? mainGate?.imageUrl : activeBld?.imageUrl;
+        if (!imageUrl) return null;
+        return (
+          <div style={{
+            width: '100%',
+            height: '140px',
+            position: 'relative',
+            overflow: 'hidden',
+            borderBottom: '1px solid var(--border-color)',
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            flexShrink: 0,
+            animation: 'fadeIn 0.2s ease-out'
+          }}>
+            <img 
+              src={imageUrl} 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              alt="Selected object image banner" 
+            />
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+              padding: '8px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.8)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '190px' }}>
+                {selectedBuildingId === 'main-gate' ? 'Pintu Masuk Utama (Gate)' : activeBld?.name}
+              </span>
+              <button 
+                onClick={(e) => { e.stopPropagation(); onSelectBuilding(''); onSelectZone(''); onSelectMachine('', ''); }}
+                style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '11px', textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+                title="Batal Seleksi"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Compact Content Area */}
       <div className="sidebar-content" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
         
@@ -223,7 +270,6 @@ export default function MapSidebar({
       {/* Dynamic Context Floating Banner (If anything is selected) */}
       {(selectedBuildingId || selectedZoneId || selectedMachineId) && (() => {
         const activeBld = selectedBuildingId ? (selectedBuildingId === 'main-gate' ? null : buildings.find(b => b.id === selectedBuildingId)) : null;
-        const imageUrl = selectedBuildingId === 'main-gate' ? mainGate?.imageUrl : activeBld?.imageUrl;
 
         return (
           <div style={{
@@ -256,25 +302,18 @@ export default function MapSidebar({
               </button>
             </div>
             
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '4px' }}>
-              {imageUrl && (
-                <div style={{ width: '48px', height: '48px', minWidth: '48px', overflow: 'hidden', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'rgba(0,0,0,0.2)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <img src={imageUrl} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="Thumb" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {selectedBuildingId === 'main-gate' && 'Pintu Masuk Utama (Gate)'}
+                {selectedBuildingId && selectedBuildingId !== 'main-gate' && (activeBld?.name || selectedBuildingId)}
+                {selectedZoneId && `Zona: ${selectedZoneId}`}
+                {selectedMachineId && `Mesin: ${selectedMachineId}`}
+              </div>
+              {selectedBuildingId && selectedBuildingId !== 'main-gate' && activeBld?.details && (
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {activeBld.details}
                 </div>
               )}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {selectedBuildingId === 'main-gate' && 'Pintu Masuk Utama (Gate)'}
-                  {selectedBuildingId && selectedBuildingId !== 'main-gate' && (activeBld?.name || selectedBuildingId)}
-                  {selectedZoneId && `Zona: ${selectedZoneId}`}
-                  {selectedMachineId && `Mesin: ${selectedMachineId}`}
-                </div>
-                {selectedBuildingId && selectedBuildingId !== 'main-gate' && activeBld?.details && (
-                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {activeBld.details}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         );
