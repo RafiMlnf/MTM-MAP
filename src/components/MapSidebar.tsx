@@ -221,61 +221,64 @@ export default function MapSidebar({
       </div>
 
       {/* Dynamic Context Floating Banner (If anything is selected) */}
-      {(selectedBuildingId || selectedZoneId || selectedMachineId) && (
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: 'var(--bg-main)',
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none',
-          borderTop: '1.5px solid var(--primary)',
-          borderRadius: '0px',
-          padding: '10px 12px',
-          animation: 'fadeIn 0.2s ease-out',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '4px',
-          zIndex: 19,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
-              Objek Terpilih
-            </span>
-            <button 
-              onClick={() => { onSelectBuilding(''); onSelectZone(''); onSelectMachine('', ''); }}
-              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '11px', padding: '0 4px' }}
-              title="Batal Seleksi"
-            >
-              ✕
-            </button>
-          </div>
-          
-          {/* Image Display */}
-          {(() => {
-            let imageUrl = undefined;
-            if (selectedBuildingId === 'main-gate') {
-              imageUrl = mainGate?.imageUrl;
-            } else if (selectedBuildingId) {
-              imageUrl = buildings.find(b => b.id === selectedBuildingId)?.imageUrl;
-            }
-            if (!imageUrl) return null;
-            return (
-              <div style={{ width: '100%', maxHeight: '120px', overflow: 'hidden', border: '1px solid var(--border-color)', borderRadius: '4px', margin: '4px 0 8px 0', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.1)' }}>
-                <img src={imageUrl} style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain' }} alt="Attachment" />
-              </div>
-            );
-          })()}
+      {(selectedBuildingId || selectedZoneId || selectedMachineId) && (() => {
+        const activeBld = selectedBuildingId ? (selectedBuildingId === 'main-gate' ? null : buildings.find(b => b.id === selectedBuildingId)) : null;
+        const imageUrl = selectedBuildingId === 'main-gate' ? mainGate?.imageUrl : activeBld?.imageUrl;
 
-          <div style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 'bold' }}>
-            {selectedBuildingId === 'main-gate' && 'Pintu Masuk Utama (Gate)'}
-            {selectedBuildingId && selectedBuildingId !== 'main-gate' && `${buildings.find(b => b.id === selectedBuildingId)?.name || selectedBuildingId}`}
-            {selectedZoneId && `Zona: ${selectedZoneId}`}
-            {selectedMachineId && `Mesin: ${selectedMachineId}`}
+        return (
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: 'var(--bg-main)',
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
+            borderTop: '1.5px solid var(--primary)',
+            borderRadius: '0px',
+            padding: '10px 12px',
+            animation: 'fadeIn 0.2s ease-out',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+            zIndex: 19,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+                Objek Terpilih
+              </span>
+              <button 
+                onClick={() => { onSelectBuilding(''); onSelectZone(''); onSelectMachine('', ''); }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '11px', padding: '0 4px' }}
+                title="Batal Seleksi"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '4px' }}>
+              {imageUrl && (
+                <div style={{ width: '48px', height: '48px', minWidth: '48px', overflow: 'hidden', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'rgba(0,0,0,0.2)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <img src={imageUrl} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="Thumb" />
+                </div>
+              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {selectedBuildingId === 'main-gate' && 'Pintu Masuk Utama (Gate)'}
+                  {selectedBuildingId && selectedBuildingId !== 'main-gate' && (activeBld?.name || selectedBuildingId)}
+                  {selectedZoneId && `Zona: ${selectedZoneId}`}
+                  {selectedMachineId && `Mesin: ${selectedMachineId}`}
+                </div>
+                {selectedBuildingId && selectedBuildingId !== 'main-gate' && activeBld?.details && (
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {activeBld.details}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
     </aside>
   );
