@@ -213,8 +213,10 @@ export default function Home() {
               const selectedMachine = (selectedZone && selectedMachineId) ? selectedZone.machines.find(m => m.id === selectedMachineId) : null;
 
               if (selectedMachine) {
-                const area = (selectedMachine.width * selectedMachine.height) / 100;
-                return `Ukuran Mesin "${selectedMachine.name}": ${selectedMachine.width / 10}m x ${selectedMachine.height / 10}m (Luas Tapak: ${area} m²)`;
+                const width = selectedMachine.width ?? 0;
+                const height = selectedMachine.height ?? 0;
+                const area = (width * height) / 100;
+                return `Ukuran Mesin "${selectedMachine.name}": ${width / 10}m x ${height / 10}m (Luas Tapak: ${area} m²)`;
               }
               if (selectedZone) {
                 const area = (selectedZone.width * selectedZone.height) / 100;
