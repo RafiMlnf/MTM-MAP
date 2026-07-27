@@ -1167,10 +1167,18 @@
 
     <!-- LEFT: shape list -->
     <div class="left-panel" id="left-panel">
-      <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+      <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center; width:100%; border-bottom: none;">
         <span>Shapes (<span id="shape-count">0</span>)</span>
         <button onclick="addLayer()" class="btn-ghost"
           style="padding: 2px 8px; font-size: 10px; margin: 0; background: rgba(59,130,246,0.12); color: var(--accent); border: 1px solid rgba(59,130,246,0.3);">+</button>
+      </div>
+      <!-- Search Box inside Left Panel -->
+      <div class="search-box-container" style="padding: 4px 8px 8px 8px; border-bottom: 1px solid var(--border); display: flex; gap: 4px; background: transparent; position: relative;">
+        <input type="text" id="editor-search-input" placeholder="Cari shape atau gedung..." 
+          style="flex: 1; padding: 4px 22px 4px 8px; font-size: 11px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text); outline: none; border-radius: 3px;"
+          oninput="handleEditorSearch(this.value)">
+        <button onclick="clearEditorSearch()" id="editor-search-clear-btn" class="btn-ghost" 
+          style="position: absolute; right: 12px; top: 8px; padding: 0 4px; font-size: 12px; margin: 0; display: none; background: none; border: none; color: var(--muted); cursor: pointer; line-height: 1;">×</button>
       </div>
       <div class="shape-list" id="shape-list">
         <div class="empty-state">Belum ada shape.<br>Gunakan tool di atas untuk menggambar area.</div>
@@ -1431,6 +1439,42 @@
 
     let activeLayer = 1;
     let categoryBarsExpanded = { main: true, peripheral: true };
+    let editorSearchQuery = '';
+
+    function isShapeMatchingSearch(shape) {
+      if (!editorSearchQuery) return true;
+      const keywords = editorSearchQuery.split(/\s+/).filter(Boolean);
+      const name = (shape.name || '').toLowerCase();
+      const code = (shape.code || '').toLowerCase();
+      const id = (shape.id || '').toLowerCase();
+      const details = (shape.details || '').toLowerCase();
+      return keywords.every(kw => 
+        name.includes(kw) || 
+        code.includes(kw) || 
+        id.includes(kw) || 
+        details.includes(kw)
+      );
+    }
+
+    function handleEditorSearch(val) {
+      editorSearchQuery = val.trim().toLowerCase();
+      const clearBtn = document.getElementById('editor-search-clear-btn');
+      if (clearBtn) {
+        clearBtn.style.display = editorSearchQuery ? 'block' : 'none';
+      }
+      renderAll();
+      renderShapeList();
+    }
+
+    function clearEditorSearch() {
+      const input = document.getElementById('editor-search-input');
+      if (input) input.value = '';
+      editorSearchQuery = '';
+      const clearBtn = document.getElementById('editor-search-clear-btn');
+      if (clearBtn) clearBtn.style.display = 'none';
+      renderAll();
+      renderShapeList();
+    }
 
     function getLayerCategory(layer) {
       if (layer && layer.category) return layer.category;
@@ -1648,6 +1692,8 @@
           sh.layer = targetLayerId;
           saveSession();
           renderAll();
+          renderShapeList();
+          refreshPropertiesPanel();
           showToast(`📁 Shape dipindahkan ke layer: ${layers.find(l => l.id === targetLayerId)?.name}`);
         }
       } else if (layerIdStr) {
@@ -1662,6 +1708,8 @@
           layers.splice(targetIdx, 0, movedLayer);
           saveLayers();
           renderAll();
+          renderShapeList();
+          refreshPropertiesPanel();
           showToast(`↔️ Urutan layer diubah`);
         }
       }
@@ -2391,6 +2439,14 @@
 
             g.appendChild(hitRect); g.appendChild(text);
             g.onclick = ev => { ev.stopPropagation(); selectShape(shape.uuid, ev.ctrlKey); };
+
+            const matchesSearch = isShapeMatchingSearch(shape);
+            if (editorSearchQuery && !matchesSearch) {
+              g.setAttribute('opacity', '0.15');
+            } else {
+              g.setAttribute('opacity', '1');
+            }
+
             gShapes.appendChild(g);
 
             if (isSelected) {
@@ -2431,6 +2487,13 @@
             dashLine.setAttribute('stroke-opacity', '0.95');
             g.appendChild(dashLine);
 
+            const matchesSearch = isShapeMatchingSearch(shape);
+            if (editorSearchQuery && !matchesSearch) {
+              g.setAttribute('opacity', '0.15');
+            } else {
+              g.setAttribute('opacity', '1');
+            }
+
             gShapes.appendChild(g);
           } else if (shape.type === 'gate') {
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -2458,6 +2521,13 @@
             mainLine.setAttribute('stroke-linecap', 'round');
             mainLine.setAttribute('stroke-linejoin', 'round');
             g.appendChild(mainLine);
+
+            const matchesSearch = isShapeMatchingSearch(shape);
+            if (editorSearchQuery && !matchesSearch) {
+              g.setAttribute('opacity', '0.15');
+            } else {
+              g.setAttribute('opacity', '1');
+            }
 
             gGates.appendChild(g);
           } else {
@@ -2489,6 +2559,14 @@
               poly.style.cursor = 'pointer';
               poly.onclick = ev => { ev.stopPropagation(); selectShape(shape.uuid, ev.ctrlKey); };
             }
+
+            const matchesSearch = isShapeMatchingSearch(shape);
+            if (editorSearchQuery && !matchesSearch) {
+              poly.setAttribute('opacity', '0.15');
+            } else {
+              poly.setAttribute('opacity', '1');
+            }
+
             gShapes.appendChild(poly);
           }
 
@@ -2502,6 +2580,14 @@
             iconG.setAttribute('fill', color);
             iconG.style.pointerEvents = 'none';
             iconG.innerHTML = SVG_ICONS[shape.icon];
+
+            const matchesSearch = isShapeMatchingSearch(shape);
+            if (editorSearchQuery && !matchesSearch) {
+              iconG.setAttribute('opacity', '0.15');
+            } else {
+              iconG.setAttribute('opacity', '1');
+            }
+
             gShapes.appendChild(iconG);
           }
 
@@ -2805,7 +2891,10 @@
 
       renderAll();
       renderShapeList();
+      refreshPropertiesPanel();
+    }
 
+    function refreshPropertiesPanel() {
       const selArr = Array.from(selectedIds);
       if (selArr.length > 1) {
         const selectedShapes = selArr.map(u => shapes.find(s => s.uuid === u)).filter(Boolean);
@@ -2979,6 +3068,7 @@
       const cOp = common('operationalStatus');
       const cHatched = common('hatched');
       const cLocked = common('locked');
+      const cParentUuid = common('parentShapeUuid');
 
       const MIXED = '<span style="color:var(--muted);font-style:italic;">---</span>';
 
@@ -3050,11 +3140,16 @@
     <div class="field-group">
       <label class="field-label">🏢 Gedung Induk (Parent – Drill-Down)</label>
       <select class="field-input" style="border: 1px solid var(--purple);" onchange="updateMultiParent(this.value)">
-        <option value="">-- Tanpa Parent (Gedung Utama) --</option>
-        ${shapes.filter(s => s.type !== 'label' && !selectedIds.has(s.uuid)).map(p => `
-          <option value="${p.uuid}">${p.code || p.name} (${p.id})</option>
+        <option value="" ${cParentUuid === undefined || cParentUuid === '' ? 'selected' : ''}>-- Tanpa Parent (Gedung Utama) --</option>
+        ${shapes.filter(s => {
+          if (s.type === 'label' || selectedIds.has(s.uuid)) return false;
+          const parentLayer = layers.find(l => l.id === (s.layer || 1));
+          const isAssignedParent = selShapes.some(shape => shape.parentShapeUuid === s.uuid || shape.parentShapeId === s.id);
+          return (parentLayer && parentLayer.isParentFolder) || isAssignedParent;
+        }).map(p => `
+          <option value="${p.uuid}" ${cParentUuid === p.uuid ? 'selected' : ''}>${p.code || p.name} (${p.id})</option>
         `).join('')}
-        <option value="mixed_placeholder" selected disabled style="display:none;">--- (berbeda-beda)</option>
+        ${cParentUuid === null ? '<option value="mixed_placeholder" selected disabled style="display:block;">--- (berbeda-beda)</option>' : ''}
       </select>
     </div>
 
@@ -3308,6 +3403,7 @@
       saveSession();
       renderAll();
       renderShapeList();
+      refreshPropertiesPanel();
     }
 
     function updateMultiParent(parentUuid) {
@@ -3335,6 +3431,7 @@
       saveSession();
       renderAll();
       renderShapeList();
+      refreshPropertiesPanel();
     }
 
     function exitLayerProps() {
@@ -3705,6 +3802,14 @@
 
             if (isChildLayer) return;
 
+            // Check if this layer has any shape (or children of shape in this layer) matching the search
+            const hasAnyMatch = layerShapes.some(s => {
+              if (isShapeMatchingSearch(s)) return true;
+              const children = shapes.filter(c => c.parentShapeUuid === s.uuid || (c.parentShapeId && c.parentShapeId === s.id));
+              return children.some(c => isShapeMatchingSearch(c));
+            });
+            if (editorSearchQuery && !hasAnyMatch) return;
+
             const isParentLayer = layer.isParentFolder || layerShapes.some(ps =>
               shapes.some(c => c.parentShapeUuid === ps.uuid || (c.parentShapeId && c.parentShapeId === ps.id))
             );
@@ -3735,7 +3840,7 @@
             const arrow = document.createElement('span');
             arrow.style.fontSize = '8px';
             arrow.style.marginRight = '4px';
-            arrow.textContent = layer.expanded ? '▼' : '▶';
+            arrow.textContent = (layer.expanded || editorSearchQuery) ? '▼' : '▶';
             arrow.onclick = (e) => {
               e.stopPropagation();
               layer.expanded = !layer.expanded;
@@ -3828,7 +3933,7 @@
             catBody.appendChild(header);
 
             const container = document.createElement('div');
-            container.className = `layer-shapes-list ${layer.expanded ? '' : 'collapsed'}`;
+            container.className = `layer-shapes-list ${(layer.expanded || editorSearchQuery) ? '' : 'collapsed'}`;
             container.setAttribute('ondragover', 'allowDrop(event)');
             container.setAttribute('ondragenter', 'dragEnter(event)');
             container.setAttribute('ondragleave', 'dragLeave(event)');
@@ -3851,6 +3956,10 @@
                 }
                 item.setAttribute('draggable', 'true');
                 item.setAttribute('ondragstart', `dragShape(event, '${s.uuid}')`);
+
+                if (editorSearchQuery && !isShapeMatchingSearch(s)) {
+                  item.style.opacity = '0.5';
+                }
 
                 item.onclick = (e) => {
                   e.stopPropagation();
@@ -3888,20 +3997,29 @@
                 !layerShapes.some(p => p.uuid === s.parentShapeUuid || p.id === s.parentShapeId)
               );
 
-              [...parentShapes, ...orphans].forEach(ps => {
+              // Filter parents and orphans based on search
+              const matchingParentsAndOrphans = [...parentShapes, ...orphans].filter(ps => {
+                if (isShapeMatchingSearch(ps)) return true;
+                const children = shapes.filter(c => c.parentShapeUuid === ps.uuid || (c.parentShapeId && c.parentShapeId === ps.id));
+                return children.some(c => isShapeMatchingSearch(c));
+              });
+
+              matchingParentsAndOrphans.forEach(ps => {
                 renderItem(ps, false);
 
                 const children = shapes.filter(c =>
                   c.parentShapeUuid === ps.uuid || (c.parentShapeId && c.parentShapeId === ps.id)
                 );
 
-                if (children.length > 0) {
-                  const childLayersInvolved = [...new Set(children.map(c => c.layer || 1))]
+                const matchingChildren = children.filter(c => isShapeMatchingSearch(c));
+
+                if (matchingChildren.length > 0) {
+                  const childLayersInvolved = [...new Set(matchingChildren.map(c => c.layer || 1))]
                     .map(lid => layers.find(l => l.id === lid))
                     .filter(Boolean);
 
                   childLayersInvolved.forEach(cl => {
-                    const childrenInThisLayer = children.filter(c => (c.layer || 1) === cl.id);
+                    const childrenInThisLayer = matchingChildren.filter(c => (c.layer || 1) === cl.id);
                     if (childrenInThisLayer.length === 0) return;
 
                     const isChildLayerActive = activeLayer === cl.id || selectedLayerIdForProps === cl.id;

@@ -104,6 +104,7 @@ export default function Map({
   const rotationRef = useRef(rotation);
   // Flag: when true, ResizeObserver won't override position with handleReset
   const restoredFromSessionRef = useRef(false);
+  const draggedRef = useRef(false);
 
   useEffect(() => {
     rotationRef.current = rotation;
@@ -122,28 +123,62 @@ export default function Map({
 
   // Center target building when selected from sidebar
   useEffect(() => {
-    if (!selectedBuildingId) return;
+    if (!selectedBuildingId) {
+      setFocusBuildingId(null);
+      return;
+    }
 
     const bld = buildings.find((b) => b.id === selectedBuildingId);
     if (!bld) return;
 
-    // Get approximate center of the building points
+    const hasChildren = buildings.some((x) => x.parentShapeId === selectedBuildingId);
+    if (hasChildren) {
+      setFocusBuildingId(selectedBuildingId);
+    } else if (bld.parentShapeId) {
+      setFocusBuildingId(bld.parentShapeId);
+    } else {
+      setFocusBuildingId(null);
+    }
+
+    // Get approximate center and bounding box of the building points
     const coords = bld.points.split(' ').map((p) => p.split(',').map(Number));
     const xs = coords.map((c) => c[0]);
     const ys = coords.map((c) => c[1]);
-    const centerX = (Math.max(...xs) + Math.min(...xs)) / 2;
-    const centerY = (Math.max(...ys) + Math.min(...ys)) / 2;
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const centerX = (maxX + minX) / 2;
+    const centerY = (maxY + minY) / 2;
 
     // Translate percentages (0-100) to actual canvas pixels
     const targetX = (centerX / 100) * canvasWidth;
     const targetY = (centerY / 100) * canvasHeight;
+
+    const bldWidthPx = ((maxX - minX) / 100) * canvasWidth;
+    const bldHeightPx = ((maxY - minY) / 100) * canvasHeight;
     
     const isChild = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
-    const targetZoom = isChild ? 1.1 : 0.65;
 
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       const containerHeight = containerRef.current.clientHeight;
+
+      let targetZoom = 0.65;
+      if (isChild || hasChildren) {
+        // Calculate dynamic zoom to fit building in container with 120px padding
+        const padding = 120;
+        const scaleX = (containerWidth - padding) / bldWidthPx;
+        const scaleY = (containerHeight - padding) / bldHeightPx;
+        // Cap the maximum zoom to 0.85 so it's not too close for small elements
+        targetZoom = Math.min(0.85, Math.min(scaleX, scaleY));
+        // Sane lower bound
+        targetZoom = Math.max(0.4, targetZoom);
+      } else {
+        // Standard zoom for standalone parent buildings
+        targetZoom = 0.65;
+      }
 
       setAnimateTransform(true);
       setScale(targetZoom);
@@ -164,6 +199,7 @@ export default function Map({
     setIsInteracting(true);
     dragStartRef.current = { x: e.clientX - offsetRef.current.x, y: e.clientY - offsetRef.current.y };
     dragStartMouseRef.current = { x: e.clientX, y: e.clientY };
+    draggedRef.current = false;
 
     // Synchronously remove CSS transition delay immediately to eliminate 0.4s lag
     if (canvasRef.current) {
@@ -176,6 +212,12 @@ export default function Map({
       const newX = moveEvent.clientX - dragStartRef.current.x;
       const newY = moveEvent.clientY - dragStartRef.current.y;
       
+      const dx = moveEvent.clientX - dragStartMouseRef.current.x;
+      const dy = moveEvent.clientY - dragStartMouseRef.current.y;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        draggedRef.current = true;
+      }
+
       offsetRef.current = { x: newX, y: newY };
       
       if (canvasRef.current) {
@@ -210,23 +252,13 @@ export default function Map({
 
   const handleElementClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    const dx = e.clientX - dragStartMouseRef.current.x;
-    const dy = e.clientY - dragStartMouseRef.current.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    // Threshold is 5 pixels to distinguish drag vs click
-    if (distance < 5) {
-      onSelectBuilding(id);
-    }
+    if (draggedRef.current) return;
+    onSelectBuilding(id);
   };
 
   const handleBackgroundClick = (e: React.MouseEvent) => {
-    const dx = e.clientX - dragStartMouseRef.current.x;
-    const dy = e.clientY - dragStartMouseRef.current.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    // Threshold is 5 pixels to distinguish drag vs click
-    if (distance < 5) {
-      onSelectBuilding('');
-    }
+    if (draggedRef.current) return;
+    onSelectBuilding('');
   };
 
   const handleZoomIn = () => {
@@ -469,7 +501,7 @@ export default function Map({
       {/* Zoom controls floating on map */}
       {focusBuildingId && (
         <button
-          onClick={(e) => { e.stopPropagation(); setFocusBuildingId(null); }}
+          onClick={(e) => { e.stopPropagation(); onSelectBuilding(''); }}
           style={{
             position: 'absolute',
             top: 20,
@@ -652,10 +684,9 @@ export default function Map({
 
             // 2. Filter child room visibility
             if (isChild && !isAlsoParent) {
+              if (!showChildBuildings) return null;
               if (focusBuildingId) {
                 if (bld.parentShapeId !== focusBuildingId && !isFocusedParent) return null;
-              } else {
-                if (!showChildBuildings) return null;
               }
             }
 
@@ -680,11 +711,6 @@ export default function Map({
                 <g 
                   key={`${bld.id}-${idx}`}
                   onClick={(e) => handleElementClick(e, bld.id)}
-                  onDoubleClick={(e) => {
-                    e.stopPropagation();
-                    const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
-                    if (hasChildren) setFocusBuildingId(bld.id);
-                  }}
                   onMouseEnter={() => setHoveredId(bld.id)}
                   onMouseLeave={() => setHoveredId(null)}
                   style={{ cursor: 'pointer' }}
@@ -747,11 +773,6 @@ export default function Map({
                       : 0.85
                 }}
                 onClick={(e) => handleElementClick(e, bld.id)}
-                onDoubleClick={(e) => {
-                  e.stopPropagation();
-                  const hasChildren = buildings.some(x => x.parentShapeId === bld.id);
-                  if (hasChildren) setFocusBuildingId(bld.id);
-                }}
                 onMouseEnter={() => setHoveredId(bld.id)}
                 onMouseLeave={() => setHoveredId(null)}
               />
@@ -772,12 +793,14 @@ export default function Map({
           {activeView === 'satellite' && buildings.map((bld, idx) => {
             if (!bld.icon || !SVG_ICONS[bld.icon]) return null;
 
+            const isChildShape = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
+            const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
+            if (isChildShape && !isAlsoParent && !showChildBuildings) return null;
+
             if (focusBuildingId) {
               const isChild = bld.parentShapeId === focusBuildingId;
               if (!isChild) return null;
             } else {
-              const isChildShape = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
-              const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
               if (isChildShape && !isAlsoParent) return null;
             }
 
@@ -814,32 +837,24 @@ export default function Map({
           )}
           {/* Gate shapes rendered on top of everything else */}
           {showGateLines && activeView === 'satellite' && buildings.filter(b => b.isGate).map((bld, idx) => {
-            const isSelected = selectedBuildingId === bld.id;
-            const isHovered = hoveredId === bld.id;
             return (
-              <g
-                key={`gate-${bld.id}-${idx}`}
-                onClick={(e) => handleElementClick(e, bld.id)}
-                onMouseEnter={() => setHoveredId(bld.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                style={{ cursor: 'pointer' }}
-              >
+              <g key={`gate-${bld.id}-${idx}`}>
                 {/* Underlay: orange stroke */}
                 <polyline
                   points={bld.points}
                   fill="none"
                   stroke="#ff7800"
-                  strokeWidth={isSelected ? 0.6 : 0.35}
+                  strokeWidth={0.35}
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ strokeOpacity: isSelected || isHovered ? 1 : 0.9 }}
+                  style={{ strokeOpacity: 0.9 }}
                 />
                 {/* Overlay: yellow solid line */}
                 <polyline
                   points={bld.points}
                   fill="none"
                   stroke="#ffea00"
-                  strokeWidth={isSelected ? 0.35 : 0.18}
+                  strokeWidth={0.18}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ strokeOpacity: 1 }}
@@ -855,6 +870,7 @@ export default function Map({
               style={{ cursor: 'pointer' }}
               onClick={(e) => {
                 e.stopPropagation();
+                if (draggedRef.current) return;
                 onSelectBuilding('main-gate');
               }}
             >

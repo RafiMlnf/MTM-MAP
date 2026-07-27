@@ -12,6 +12,7 @@ export interface MachineData {
   details: string;
   operator: string;
   efficiency: number; // percentage
+  andonLineId?: string;
 }
 
 export interface ZoneData {
@@ -170,7 +171,7 @@ export const zones: ZoneData[] = [
       { id: "HPM", name: "HPM", type: "cell", left: 202, top: 169, width: 42, height: 49, status: "maintenance", efficiency: 0, operator: "Gani (Teknisi)", details: "Hydraulic Press Machine. Mengalami kebocoran oli seal silinder utama." },
 
       // Row 4
-      { id: "Assy A", name: "Assy A", type: "cell", left: 8, top: 243, width: 42, height: 49, status: "running", hasDot: true, efficiency: 89, operator: "Hendra", details: "Stasiun perakitan sub-mesin otomatis tipe A." },
+      { id: "Assy A", name: "Assy A", type: "cell", left: 8, top: 243, width: 42, height: 49, status: "running", hasDot: true, efficiency: 89, operator: "Hendra", details: "Stasiun perakitan sub-mesin otomatis tipe A.", andonLineId: "AssyStemA" },
       { id: "Assy B", name: "Assy B", type: "cell", left: 56, top: 243, width: 42, height: 49, status: "running", efficiency: 87, operator: "Iqbal", details: "Stasiun perakitan sub-mesin otomatis tipe B." },
       { id: "Spdl", name: "Spdl", type: "cell", left: 154, top: 243, width: 42, height: 49, status: "running", efficiency: 94, operator: "Jamal", details: "Mesin bubut spidel ganda berkopling magnetik." },
       { id: "D80", name: "D80", type: "cell", left: 202, top: 243, width: 42, height: 49, status: "running", hasDot: true, efficiency: 91, operator: "Kadir", details: "Mesin deep-hole drilling model D80 untuk mengebor poros panjang." },

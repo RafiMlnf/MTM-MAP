@@ -254,6 +254,13 @@ export default function Home() {
     setSelectedBuildingId(id ? id : null);
     setSelectedZoneId(null);
     setSelectedMachineId(null);
+    if (id) {
+      const bld = activeBuildings.find(b => b.id === id);
+      const hasChildren = activeBuildings.some(x => x.parentShapeId === id);
+      if (hasChildren || (bld && bld.parentShapeId)) {
+        setShowChildBuildings(true);
+      }
+    }
   };
 
   const handleSelectZone = (id: string) => {
