@@ -47,6 +47,22 @@ export interface BuildingData {
   isRoad?: boolean;
   isGate?: boolean;
   imageUrl?: string;
+  // API Integration fields
+  apiEnabled?: boolean;
+  apiUrl?: string;
+  apiMethod?: string;
+  apiInterval?: number;
+  apiHeaders?: string;
+  apiBody?: string;
+  apiOeeKey?: string;
+  apiStatusKey?: string;
+  apiPlanKey?: string;
+  apiActualKey?: string;
+  apiAchKey?: string;
+  apiAvailabilityKey?: string;
+  apiPerformanceKey?: string;
+  apiQualityKey?: string;
+  apiWoKey?: string;
 }
 
 import rawShapes from '../../public/shapes.json';
@@ -73,6 +89,21 @@ export const buildings: BuildingData[] = (rawShapes as any[]).map((shape: any) =
   isRoad: shape.isRoad,
   isGate: shape.isGate,
   imageUrl: shape.imageUrl,
+  apiEnabled: shape.apiEnabled,
+  apiUrl: shape.apiUrl,
+  apiMethod: shape.apiMethod,
+  apiInterval: shape.apiInterval,
+  apiHeaders: shape.apiHeaders,
+  apiBody: shape.apiBody,
+  apiOeeKey: shape.apiOeeKey,
+  apiStatusKey: shape.apiStatusKey,
+  apiPlanKey: shape.apiPlanKey,
+  apiActualKey: shape.apiActualKey,
+  apiAchKey: shape.apiAchKey,
+  apiAvailabilityKey: shape.apiAvailabilityKey,
+  apiPerformanceKey: shape.apiPerformanceKey,
+  apiQualityKey: shape.apiQualityKey,
+  apiWoKey: shape.apiWoKey,
 }));
 
 export const zones: ZoneData[] = [

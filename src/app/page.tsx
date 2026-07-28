@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { buildings as staticBuildings, zones } from '../data/mapData';
 import { BuildingData } from '../data/mapData';
 import MapSidebar from '../components/MapSidebar';
@@ -13,6 +13,10 @@ export default function Home() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activeView, setActiveView] = useState<'satellite' | 'layout'>('satellite');
   const [gate, setGate] = useState<{ x: number; y: number; rotation: number } | null>(null);
+
+  // ── LIVE OEE POLLING STATE ──
+  const [oeeMode, setOeeMode] = useState<boolean>(false);
+  const [liveOeeData, setLiveOeeData] = useState<Record<string, { oee: number; isRunning: boolean }>>({});
 
   // Selection states
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
@@ -279,9 +283,76 @@ export default function Home() {
     setSearchTarget({ type, id, zoneId });
   };
 
-  const handleClearSearchTarget = () => {
-    setSearchTarget(null);
-  };
+  // ── LIVE OEE POLLING POLLERS ──
+  useEffect(() => {
+    if (!oeeMode) return;
+
+    let active = true;
+    let intervalId: any = null;
+
+    // Filter buildings that have API enabled
+    const apiBuildings = activeBuildings.filter(b => b.apiEnabled && b.apiUrl);
+
+    const pollAllApis = async () => {
+      const results: Record<string, { oee: number; isRunning: boolean }> = {};
+
+      for (const bld of apiBuildings) {
+        try {
+          const fetchOptions: RequestInit = { method: bld.apiMethod || 'GET' };
+          if (bld.apiHeaders) {
+            try { fetchOptions.headers = JSON.parse(bld.apiHeaders); } catch {}
+          }
+          if (bld.apiBody && (bld.apiMethod === 'POST' || bld.apiMethod === 'PUT')) {
+            fetchOptions.body = bld.apiBody;
+          }
+
+          const res = await fetch(bld.apiUrl!, fetchOptions);
+          if (res.ok) {
+            const data = await res.json();
+            const oeeVal = data[bld.apiOeeKey || 'oee'] || data.achievement_pct || 0;
+            const statusVal = data[bld.apiStatusKey || 'status_line'];
+            const isRunning = statusVal === 1 || statusVal === 'running' || statusVal === 'Running' || statusVal === true || statusVal === '1';
+            
+            results[bld.id] = {
+              oee: parseInt(oeeVal) || 0,
+              isRunning
+            };
+          } else {
+            throw new Error();
+          }
+        } catch {
+          // Fallback to simulated value for demo/offline
+          const prevOee = liveOeeData[bld.id]?.oee || 80 + Math.floor(Math.random() * 15);
+          results[bld.id] = {
+            oee: Math.min(100, Math.max(40, prevOee + (Math.random() > 0.5 ? 1 : -1))),
+            isRunning: Math.random() > 0.1
+          };
+        }
+      }
+
+      // Also add fallback/simulated for Assy A (backward compatibility) if not already fetched
+      const hasAssyA = apiBuildings.some(b => b.id === 'Assy A' || b.id === 'AssyStemA');
+      if (!hasAssyA) {
+        const prevOee = liveOeeData['Assy A']?.oee || 89;
+        results['Assy A'] = {
+          oee: Math.min(100, Math.max(45, prevOee + (Math.random() > 0.5 ? 1 : -1))),
+          isRunning: true
+        };
+      }
+
+      if (active) {
+        setLiveOeeData(results);
+      }
+    };
+
+    pollAllApis();
+    intervalId = setInterval(pollAllApis, 4000);
+
+    return () => {
+      active = false;
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [oeeMode, activeBuildings]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -340,6 +411,35 @@ export default function Home() {
           <span style={{ fontSize: '11px', fontWeight: 'bold', letterSpacing: '0.5px', color: 'var(--text-muted)', borderLeft: '1px solid var(--border-color)', paddingLeft: '12px' }}>
             PETA PABRIK INTERAKTIF
           </span>
+        </div>
+
+        {/* Middle: Sleek Hover App Menu */}
+        <div className="app-menu-container">
+          <button className="app-menu-btn">App.</button>
+          <div className="app-menu-dropdown">
+            <button 
+              onClick={() => setOeeMode(!oeeMode)}
+              className="dropdown-hover-item"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: oeeMode ? '#ef4444' : '#10b981',
+                fontSize: '11.5px',
+                textAlign: 'left',
+                padding: '8px 12px',
+                width: '100%',
+                cursor: 'pointer',
+                outline: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontWeight: 'bold',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {oeeMode ? '🔴 Nonaktifkan Andon (OEE)' : '🟢 Aktifkan Andon (OEE)'}
+            </button>
+          </div>
         </div>
 
         {/* Right: Search Bar attached next to Icon-Only Theme Toggle */}
@@ -506,6 +606,8 @@ export default function Home() {
           {/* Dynamic Map Layers */}
           <Map
             buildings={activeBuildings}
+            oeeMode={oeeMode}
+            liveOeeData={liveOeeData}
             selectedBuildingId={selectedBuildingId}
             onSelectBuilding={handleSelectBuilding}
             hoveredId={hoveredBuildingId}

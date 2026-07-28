@@ -1355,6 +1355,107 @@
     </div>
   </div>
 
+  <!-- MODAL API CONFIG -->
+  <div class="modal-backdrop" id="modal-api-config">
+    <div class="modal" style="width: 600px; max-height: 85vh;">
+      <div class="modal-header">
+        <h2 style="display: flex; align-items: center; gap: 6px;">🔌 Pengaturan Integrasi API Shape</h2>
+        <button class="modal-close" onclick="closeApiConfigModal()">×</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background: rgba(59, 130, 246, 0.1); padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--accent);">Status Integrasi API</div>
+            <div style="font-size: 11px; color: var(--muted);">Aktifkan untuk mengambil telemetry data dari endpoint luar.</div>
+          </div>
+          <input type="checkbox" id="api-modal-enabled" style="width: 20px; height: 20px; cursor: pointer;">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">API Endpoint URL</label>
+          <input type="text" id="api-modal-url" class="field-input" placeholder="http://mtmsvr-andonapp/andon-gateway/api/telemetry/latest/..." style="font-family: monospace !important;">
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <div class="field-group" style="flex: 1;">
+            <label class="field-label">HTTP Method</label>
+            <select id="api-modal-method" class="field-input">
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+            </select>
+          </div>
+          <div class="field-group" style="flex: 1;">
+            <label class="field-label">Polling Interval (Detik)</label>
+            <input type="number" id="api-modal-interval" class="field-input" min="1" max="3600" value="4">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <div class="field-group" style="flex: 1;">
+            <label class="field-label">Headers (JSON, opsional)</label>
+            <textarea id="api-modal-headers" class="field-input" rows="2" placeholder='{"Authorization": "Bearer ...", "Content-Type": "application/json"}' style="font-family: monospace !important; font-size: 11px; resize: vertical;"></textarea>
+          </div>
+          <div class="field-group" style="flex: 1;">
+            <label class="field-label">Request Body (JSON/Text, opsional)</label>
+            <textarea id="api-modal-body" class="field-input" rows="2" placeholder='{"status": "active"}' style="font-family: monospace !important; font-size: 11px; resize: vertical;"></textarea>
+          </div>
+        </div>
+
+        <div style="font-weight: 700; font-size: 12px; margin-top: 16px; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; color: var(--accent2);">
+          🔑 Pemetaan Kunci Response (Response Key Mapping)
+        </div>
+        <div style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">
+          Masukkan nama key JSON dari API response untuk dipetakan ke field tampilan.
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px;">
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">OEE (%) Key</label>
+            <input type="text" id="api-modal-oee-key" class="field-input" placeholder="oee" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">Status Key (0: Off, 1: Run, etc)</label>
+            <input type="text" id="api-modal-status-key" class="field-input" placeholder="status_line" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">Plan / Target Qty Key</label>
+            <input type="text" id="api-modal-plan-key" class="field-input" placeholder="plan_qty" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">Actual Qty Key</label>
+            <input type="text" id="api-modal-actual-key" class="field-input" placeholder="actual_qty" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">Achievement (%) Key</label>
+            <input type="text" id="api-modal-ach-key" class="field-input" placeholder="achievement_pct" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">Availability (%) Key</label>
+            <input type="text" id="api-modal-availability-key" class="field-input" placeholder="availability" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">Performance (%) Key</label>
+            <input type="text" id="api-modal-performance-key" class="field-input" placeholder="performance" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px;">
+            <label class="field-label">Quality Rate (%) Key</label>
+            <input type="text" id="api-modal-quality-key" class="field-input" placeholder="quality_rate" style="font-size: 11px;">
+          </div>
+          <div class="field-group" style="margin-bottom: 4px; grid-column: span 2;">
+            <label class="field-label">Work Order / Job Name Key</label>
+            <input type="text" id="api-modal-wo-key" class="field-input" placeholder="work_order_name" style="font-size: 11px;">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 14px;">
+          <button class="btn-ghost" style="width: auto; padding: 6px 12px; margin: 0;" onclick="closeApiConfigModal()">Batal</button>
+          <button class="btn-export" style="width: auto; padding: 6px 16px; margin: 0; background: var(--accent); color: #000;" onclick="saveApiConfig()">Simpan Konfigurasi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ══════════════════════════════════════════════════════════
     // STATE
@@ -1369,6 +1470,7 @@
     };
 
     let shapes = [];
+    let currentApiEditingShapeUuid = null;
     let selectedId = null;
     let selectedIds = new Set();
     let currentTool = 'select';
@@ -3025,6 +3127,23 @@
       <label class="field-label">Status Operasional</label>
       <input class="field-input" value="${escHtml(shape.operationalStatus)}" oninput="updateProp(this.value, 'operationalStatus')">
     </div>
+    <div class="field-group" style="border: 1px solid var(--border); padding: 8px; border-radius: 6px; background: rgba(59, 130, 246, 0.05); margin-top: 10px; margin-bottom: 10px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+        <label class="field-label" style="font-weight: 700; color: var(--accent); margin: 0; display: flex; align-items: center; gap: 4px;">
+          🔌 Integrasi API
+        </label>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <input type="checkbox" id="prop-api-enabled" ${shape.apiEnabled ? 'checked' : ''} onchange="updatePropAndRender(this.checked, 'apiEnabled')" style="width: 14px; height: 14px; cursor: pointer;">
+          <label for="prop-api-enabled" class="field-label" style="cursor: pointer; margin: 0; font-size: 11px;">Aktif</label>
+        </div>
+      </div>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <div style="font-size: 11px; color: var(--muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          ${shape.apiEnabled ? (shape.apiUrl ? escHtml(shape.apiUrl) : 'Belum diatur') : 'Tidak Aktif'}
+        </div>
+        <button class="btn-ghost" style="padding: 4px 8px; font-size: 10px; font-weight: 700; margin: 0; width: auto;" onclick="openApiConfigModal('${shape.uuid}')">⚙️ Atur API</button>
+      </div>
+    </div>
     <div class="field-group">
       <label class="field-label">Deskripsi</label>
       <textarea class="field-input" oninput="updateProp(this.value, 'details')">${escHtml(shape.details)}</textarea>
@@ -4241,6 +4360,25 @@
           const resolvedParentShapeId = parentTarget ? parentTarget.id : (shapeLayer ? shapeLayer.parentShapeId : undefined);
           const parentIdPart = resolvedParentShapeId ? `,\n    parentShapeId: "${resolvedParentShapeId}"` : '';
 
+          let apiPart = '';
+          if (s.apiEnabled) {
+            apiPart = ',\n    apiEnabled: true' +
+                      ',\n    apiUrl: "' + (s.apiUrl || '') + '"' +
+                      ',\n    apiMethod: "' + (s.apiMethod || 'GET') + '"' +
+                      ',\n    apiInterval: ' + (s.apiInterval || 4) +
+                      ',\n    apiHeaders: ' + (s.apiHeaders ? JSON.stringify(s.apiHeaders) : 'null') +
+                      ',\n    apiBody: ' + (s.apiBody ? JSON.stringify(s.apiBody) : 'null') +
+                      ',\n    apiOeeKey: "' + (s.apiOeeKey || 'oee') + '"' +
+                      ',\n    apiStatusKey: "' + (s.apiStatusKey || 'status_line') + '"' +
+                      ',\n    apiPlanKey: "' + (s.apiPlanKey || 'plan_qty') + '"' +
+                      ',\n    apiActualKey: "' + (s.apiActualKey || 'actual_qty') + '"' +
+                      ',\n    apiAchKey: "' + (s.apiAchKey || 'achievement_pct') + '"' +
+                      ',\n    apiAvailabilityKey: "' + (s.apiAvailabilityKey || 'availability') + '"' +
+                      ',\n    apiPerformanceKey: "' + (s.apiPerformanceKey || 'performance') + '"' +
+                      ',\n    apiQualityKey: "' + (s.apiQualityKey || 'quality_rate') + '"' +
+                      ',\n    apiWoKey: "' + (s.apiWoKey || 'work_order_name') + '"';
+          }
+
           return `  {
     id: "${s.id}",
     name: "${s.name}",
@@ -4251,7 +4389,7 @@
     area: ${wM * hM},
     details: "${(s.details || '').replace(/"/g, '\\"')}",
     zones: [],
-    operationalStatus: "${s.operationalStatus || 'Aktif'}"${s.icon ? `,\n    icon: "${s.icon}"` : ''}${s.layer ? `,\n    layer: ${s.layer}` : ''}${s.hatched ? `,\n    hatched: true` : ''}${s.isRoad ? `,\n    isRoad: true` : ''}${s.locked ? `,\n    locked: true` : ''}${linkedIdPart}${parentIdPart}
+    operationalStatus: "${s.operationalStatus || 'Aktif'}"${s.icon ? `,\n    icon: "${s.icon}"` : ''}${s.layer ? `,\n    layer: ${s.layer}` : ''}${s.hatched ? `,\n    hatched: true` : ''}${s.isRoad ? `,\n    isRoad: true` : ''}${s.locked ? `,\n    locked: true` : ''}${linkedIdPart}${parentIdPart}${apiPart}
   }`;
         }).join(',\n');
 
@@ -4294,6 +4432,79 @@
     }
 
     function closeModal() { document.getElementById('modal').classList.remove('open'); }
+    
+    function openApiConfigModal(uuid) {
+      currentApiEditingShapeUuid = uuid;
+      const shape = shapes.find(s => s.uuid === uuid);
+      if (!shape) return;
+
+      document.getElementById('api-modal-enabled').checked = !!shape.apiEnabled;
+      document.getElementById('api-modal-url').value = shape.apiUrl || '';
+      document.getElementById('api-modal-method').value = shape.apiMethod || 'GET';
+      document.getElementById('api-modal-interval').value = shape.apiInterval || 4;
+      document.getElementById('api-modal-headers').value = shape.apiHeaders || '';
+      document.getElementById('api-modal-body').value = shape.apiBody || '';
+
+      document.getElementById('api-modal-oee-key').value = shape.apiOeeKey || 'oee';
+      document.getElementById('api-modal-status-key').value = shape.apiStatusKey || 'status_line';
+      document.getElementById('api-modal-plan-key').value = shape.apiPlanKey || 'plan_qty';
+      document.getElementById('api-modal-actual-key').value = shape.apiActualKey || 'actual_qty';
+      document.getElementById('api-modal-ach-key').value = shape.apiAchKey || 'achievement_pct';
+      document.getElementById('api-modal-availability-key').value = shape.apiAvailabilityKey || 'availability';
+      document.getElementById('api-modal-performance-key').value = shape.apiPerformanceKey || 'performance';
+      document.getElementById('api-modal-quality-key').value = shape.apiQualityKey || 'quality_rate';
+      document.getElementById('api-modal-wo-key').value = shape.apiWoKey || 'work_order_name';
+
+      document.getElementById('modal-api-config').classList.add('open');
+    }
+
+    function closeApiConfigModal() {
+      document.getElementById('modal-api-config').classList.remove('open');
+      currentApiEditingShapeUuid = null;
+    }
+
+    function saveApiConfig() {
+      if (!currentApiEditingShapeUuid) return;
+      const shape = shapes.find(s => s.uuid === currentApiEditingShapeUuid);
+      if (!shape) return;
+
+      const headersVal = document.getElementById('api-modal-headers').value.trim();
+      const bodyVal = document.getElementById('api-modal-body').value.trim();
+
+      // Simple validation for JSON headers/body
+      if (headersVal) {
+        try {
+          JSON.parse(headersVal);
+        } catch (e) {
+          alert('Format Headers harus berupa JSON valid atau kosong.');
+          return;
+        }
+      }
+
+      saveUndo();
+
+      shape.apiEnabled = document.getElementById('api-modal-enabled').checked;
+      shape.apiUrl = document.getElementById('api-modal-url').value.trim();
+      shape.apiMethod = document.getElementById('api-modal-method').value;
+      shape.apiInterval = parseInt(document.getElementById('api-modal-interval').value) || 4;
+      shape.apiHeaders = headersVal;
+      shape.apiBody = bodyVal;
+
+      shape.apiOeeKey = document.getElementById('api-modal-oee-key').value.trim();
+      shape.apiStatusKey = document.getElementById('api-modal-status-key').value.trim();
+      shape.apiPlanKey = document.getElementById('api-modal-plan-key').value.trim();
+      shape.apiActualKey = document.getElementById('api-modal-actual-key').value.trim();
+      shape.apiAchKey = document.getElementById('api-modal-ach-key').value.trim();
+      shape.apiAvailabilityKey = document.getElementById('api-modal-availability-key').value.trim();
+      shape.apiPerformanceKey = document.getElementById('api-modal-performance-key').value.trim();
+      shape.apiQualityKey = document.getElementById('api-modal-quality-key').value.trim();
+      shape.apiWoKey = document.getElementById('api-modal-wo-key').value.trim();
+
+      saveSession();
+      refreshPropertiesPanel();
+      renderAll();
+      closeApiConfigModal();
+    }
 
     function copyCode() {
       const code = document.getElementById('export-code').textContent;

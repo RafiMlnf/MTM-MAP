@@ -1980,3 +1980,62 @@ input:checked + .switch-slider:before {
   50% { opacity: 0.45; }
   100% { opacity: 0.15; }
 }
+
+.dropdown-hover-item {
+  transition: all 0.12s ease;
+}
+
+.dropdown-hover-item:hover {
+  background-color: var(--tab-bg-inactive) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.app-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.app-menu-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-main);
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.app-menu-container:hover .app-menu-btn {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+.app-menu-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  backgroundColor: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  padding: 4px 0;
+  min-width: 150px;
+  z-index: 99;
+  flex-direction: column;
+  animation: fadeIn 0.12s ease-out;
+  background-color: var(--bg-main);
+}
+
+.app-menu-container:hover .app-menu-dropdown {
+  display: flex;
+}

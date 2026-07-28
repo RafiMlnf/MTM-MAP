@@ -63,18 +63,82 @@ export default function MapSidebar({
     return selectedBuildingId ? (selectedBuildingId === 'main-gate' ? null : buildings.find(b => b.id === selectedBuildingId)) : null;
   }, [buildings, selectedBuildingId]);
 
-  const isAssyStemASelected = React.useMemo(() => {
-    if (selectedMachine?.andonLineId === 'AssyStemA') return true;
-    if (!activeBld) return false;
-    const name = (activeBld.name || '').toLowerCase();
-    const code = (activeBld.code || '').toLowerCase();
-    return name === 'assy stem a' || code === 'assy stem a' || name.includes('assy stem a') || code.includes('assy stem a');
+  const apiConfig = React.useMemo(() => {
+    // If machine selected:
+    if (selectedMachine?.andonLineId === 'AssyStemA') {
+      return {
+        enabled: true,
+        url: 'http://mtmsvr-andonapp/andon-gateway/api/telemetry/latest/AssyStemA',
+        method: 'GET',
+        headers: null as string | null,
+        body: null as string | null,
+        interval: 4000,
+        oeeKey: 'oee',
+        statusKey: 'status_line',
+        planKey: 'plan_qty',
+        actualKey: 'actual_qty',
+        achKey: 'achievement_pct',
+        availabilityKey: 'availability',
+        performanceKey: 'performance',
+        qualityKey: 'quality_rate',
+        woKey: 'work_order_name',
+      };
+    }
+
+    if (!activeBld) return null;
+
+    // Check if activeBld is Assy A (backward compatibility)
+    const isAssyA = (activeBld.name || '').toLowerCase().includes('assy stem a') ||
+                    (activeBld.code || '').toLowerCase().includes('assy stem a') ||
+                    activeBld.id === 'Assy A';
+
+    if (activeBld.apiEnabled) {
+      return {
+        enabled: true,
+        url: activeBld.apiUrl,
+        method: activeBld.apiMethod || 'GET',
+        headers: activeBld.apiHeaders || null,
+        body: activeBld.apiBody || null,
+        interval: (activeBld.apiInterval || 4) * 1000,
+        oeeKey: activeBld.apiOeeKey || 'oee',
+        statusKey: activeBld.apiStatusKey || 'status_line',
+        planKey: activeBld.apiPlanKey || 'plan_qty',
+        actualKey: activeBld.apiActualKey || 'actual_qty',
+        achKey: activeBld.apiAchKey || 'achievement_pct',
+        availabilityKey: activeBld.apiAvailabilityKey || 'availability',
+        performanceKey: activeBld.apiPerformanceKey || 'performance',
+        qualityKey: activeBld.apiQualityKey || 'quality_rate',
+        woKey: activeBld.apiWoKey || 'work_order_name',
+      };
+    }
+
+    if (isAssyA) {
+      return {
+        enabled: true,
+        url: 'http://mtmsvr-andonapp/andon-gateway/api/telemetry/latest/AssyStemA',
+        method: 'GET',
+        headers: null as string | null,
+        body: null as string | null,
+        interval: 4000,
+        oeeKey: 'oee',
+        statusKey: 'status_line',
+        planKey: 'plan_qty',
+        actualKey: 'actual_qty',
+        achKey: 'achievement_pct',
+        availabilityKey: 'availability',
+        performanceKey: 'performance',
+        qualityKey: 'quality_rate',
+        woKey: 'work_order_name',
+      };
+    }
+
+    return null;
   }, [selectedMachine, activeBld]);
 
   const [andonData, setAndonData] = React.useState<any>(null);
 
   React.useEffect(() => {
-    if (!isAssyStemASelected) {
+    if (!apiConfig || !apiConfig.enabled) {
       setAndonData(null);
       return;
     }
@@ -87,7 +151,7 @@ export default function MapSidebar({
       const now = new Date();
       const timeStr = now.toLocaleTimeString('id-ID');
       const basePlan = 650;
-      let actual = prevData ? prevData.actual_qty : 540;
+      let actual = prevData ? (prevData[apiConfig.actualKey] || 540) : 540;
       
       // Gradually increase actual quantity to simulate production
       if (Math.random() > 0.4) {
@@ -98,17 +162,16 @@ export default function MapSidebar({
       
       const ach = Math.round((actual / basePlan) * 100);
       return {
-        line_id: 'AssyStemA',
+        [apiConfig.statusKey]: 1, // Running
+        [apiConfig.planKey]: basePlan,
+        [apiConfig.actualKey]: actual,
+        [apiConfig.achKey]: ach,
+        [apiConfig.oeeKey]: 88,
+        [apiConfig.availabilityKey]: 95,
+        [apiConfig.performanceKey]: 92,
+        [apiConfig.qualityKey]: 99,
+        [apiConfig.woKey]: 'WO-' + (activeBld?.code || 'GENERIC') + '-2026',
         time: timeStr,
-        status_line: 1, // Running
-        plan_qty: basePlan,
-        actual_qty: actual,
-        achievement_pct: ach,
-        oee: 88,
-        availability: 95,
-        performance: 92,
-        quality_rate: 99,
-        work_order_name: 'WO-ASSY-A-2026',
         plc_connected: true
       };
     };
@@ -116,7 +179,23 @@ export default function MapSidebar({
     const fetchData = async () => {
       if (!active) return;
       try {
-        const res = await fetch(`http://mtmsvr-andonapp/andon-gateway/api/telemetry/latest/AssyStemA`);
+        const fetchOptions: RequestInit = {
+          method: apiConfig.method,
+        };
+
+        if (apiConfig.headers) {
+          try {
+            fetchOptions.headers = JSON.parse(apiConfig.headers);
+          } catch (e) {
+            console.error('Invalid custom headers format. Must be JSON.', e);
+          }
+        }
+
+        if (apiConfig.body && (apiConfig.method === 'POST' || apiConfig.method === 'PUT')) {
+          fetchOptions.body = apiConfig.body;
+        }
+
+        const res = await fetch(apiConfig.url!, fetchOptions);
         if (res.ok) {
           const data = await res.json();
           if (active) {
@@ -135,14 +214,14 @@ export default function MapSidebar({
 
     fetchData();
 
-    // Poll every 4 seconds for real-time updates
-    intervalId = setInterval(fetchData, 4000);
+    // Poll for real-time updates
+    intervalId = setInterval(fetchData, apiConfig.interval);
 
     return () => {
       active = false;
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isAssyStemASelected]);
+  }, [apiConfig, activeBld]);
 
   return (
     <aside 
@@ -404,11 +483,22 @@ export default function MapSidebar({
                 <div style={{ fontSize: '10px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {activeBld.details}
                 </div>
-              )}
+              )}              {/* Real-time Andon Circle Chart */}
+              {apiConfig && apiConfig.enabled && (() => {
+                const oeeVal = andonData ? andonData[apiConfig.oeeKey] : 0;
+                const achVal = andonData ? andonData[apiConfig.achKey] : 0;
+                const percent = oeeVal || achVal || 0;
+                
+                const statusVal = andonData ? andonData[apiConfig.statusKey] : null;
+                const isRunning = statusVal === 1 || statusVal === 'running' || statusVal === 'Running' || statusVal === true || statusVal === '1';
 
-              {/* Real-time Andon Circle Chart */}
-              {isAssyStemASelected && (() => {
-                const percent = andonData ? andonData.oee || andonData.achievement_pct || 0 : 0;
+                const planVal = andonData ? andonData[apiConfig.planKey] : '-';
+                const actualVal = andonData ? andonData[apiConfig.actualKey] : '-';
+                const availabilityVal = andonData ? andonData[apiConfig.availabilityKey] : null;
+                const performanceVal = andonData ? andonData[apiConfig.performanceKey] : null;
+                const qualityVal = andonData ? andonData[apiConfig.qualityKey] : null;
+                const woVal = andonData ? andonData[apiConfig.woKey] : null;
+
                 const radius = 25;
                 const strokeWidth = 5;
                 const circumference = 2 * Math.PI * radius;
@@ -418,50 +508,117 @@ export default function MapSidebar({
                   <div style={{ 
                     display: 'flex', 
                     flexDirection: 'column',
-                    alignItems: 'center', 
-                    justifyContent: 'center',
+                    alignItems: 'stretch', 
+                    gap: '10px',
                     marginTop: '12px', 
-                    padding: '10px', 
-                    backgroundColor: 'rgba(255, 255, 255, 0.02)', 
-                    border: '1px dashed var(--border-color)', 
-                    borderRadius: '0px' 
+                    padding: '12px', 
+                    backgroundColor: 'rgba(59, 130, 246, 0.03)', 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: '4px',
+                    animation: 'fadeIn 0.25s ease-out'
                   }}>
-                    {/* SVG Circular Progress */}
-                    <div style={{ position: 'relative', width: '60px', height: '60px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="60" height="60" viewBox="0 0 60 60" style={{ position: 'absolute', top: 0, left: 0 }}>
-                        <circle
-                          cx="30"
-                          cy="30"
-                          r={radius}
-                          fill="transparent"
-                          stroke="var(--border-color)"
-                          strokeWidth={strokeWidth}
-                          style={{ opacity: 0.15 }}
-                        />
-                        <circle
-                          cx="30"
-                          cy="30"
-                          r={radius}
-                          fill="transparent"
-                          stroke={andonData?.status_line === 0 ? '#ef4444' : 'var(--primary)'}
-                          strokeWidth={strokeWidth}
-                          strokeDasharray={circumference}
-                          strokeDashoffset={strokeDashoffset}
-                          strokeLinecap="round"
-                          transform="rotate(-90 30 30)"
-                          style={{ transition: 'stroke-dashoffset 0.5s ease-out' }}
-                        />
-                      </svg>
-                      <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-main)', zIndex: 2 }}>
-                        {percent}%
-                      </span>
-                      <span style={{ fontSize: '7px', color: 'var(--text-muted)', zIndex: 2, marginTop: '-2px', textTransform: 'uppercase', fontWeight: '600' }}>
-                        OEE
-                      </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      {/* SVG Circular Progress */}
+                      <div style={{ position: 'relative', width: '54px', height: '54px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="54" height="54" viewBox="0 0 60 60" style={{ position: 'absolute', top: 0, left: 0 }}>
+                          <circle
+                            cx="30"
+                            cy="30"
+                            r={radius}
+                            fill="transparent"
+                            stroke="var(--border-color)"
+                            strokeWidth={strokeWidth}
+                            style={{ opacity: 0.12 }}
+                          />
+                          <circle
+                            cx="30"
+                            cy="30"
+                            r={radius}
+                            fill="transparent"
+                            stroke={isRunning ? '#10b981' : '#ef4444'}
+                            strokeWidth={strokeWidth}
+                            strokeDasharray={circumference}
+                            strokeDashoffset={strokeDashoffset}
+                            strokeLinecap="round"
+                            transform="rotate(-90 30 30)"
+                            style={{ transition: 'stroke-dashoffset 0.5s ease-out' }}
+                          />
+                        </svg>
+                        <span style={{ fontSize: '10px', fontWeight: 'bold', color: 'var(--text-main)', zIndex: 2 }}>
+                          {percent}%
+                        </span>
+                        <span style={{ fontSize: '6px', color: 'var(--text-muted)', zIndex: 2, marginTop: '-2px', textTransform: 'uppercase', fontWeight: '700' }}>
+                          OEE
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
+                        <span style={{ fontSize: '9px', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+                          Status Line
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <span style={{ 
+                            width: '6px', 
+                            height: '6px', 
+                            borderRadius: '50%', 
+                            backgroundColor: isRunning ? '#10b981' : '#ef4444',
+                            boxShadow: isRunning ? '0 0 6px #10b981' : '0 0 6px #ef4444'
+                          }} />
+                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: isRunning ? '#10b981' : '#ef4444', textTransform: 'uppercase' }}>
+                            {isRunning ? 'RUNNING' : 'STOPPED'}
+                          </span>
+                        </div>
+                        {woVal && (
+                          <span style={{ fontSize: '9px', color: 'var(--text-muted)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '130px' }} title={String(woVal)}>
+                            WO: <strong style={{ color: 'var(--text-main)' }}>{String(woVal)}</strong>
+                          </span>
+                        )}
+                      </div>
                     </div>
+
+                    {/* Detailed grid parameters */}
+                    <div style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: '1fr 1fr', 
+                      gap: '6px', 
+                      borderTop: '1px solid var(--border-color)', 
+                      paddingTop: '10px',
+                      marginTop: '4px'
+                    }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                        <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Target/Plan</span>
+                        <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-main)' }}>{String(planVal)}</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                        <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Actual Qty</span>
+                        <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-main)' }}>{String(actualVal)}</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                        <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Achievement</span>
+                        <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-main)' }}>{achVal !== null && achVal !== undefined ? `${achVal}%` : '-'}</span>
+                      </div>
+                      {availabilityVal !== null && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                          <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Availability</span>
+                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-main)' }}>{availabilityVal}%</span>
+                        </div>
+                      )}
+                      {performanceVal !== null && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                          <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Performance</span>
+                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-main)' }}>{performanceVal}%</span>
+                        </div>
+                      )}
+                      {qualityVal !== null && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                          <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Quality Rate</span>
+                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-main)' }}>{qualityVal}%</span>
+                        </div>
+                      )}
                   </div>
-                );
-              })()}
+                </div>
+              );
+            })()}
             </div>
           </div>
         );

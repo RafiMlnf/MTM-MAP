@@ -34,6 +34,8 @@ interface MapProps {
   showGateLines: boolean;
   onToggleGateLines: (val: boolean) => void;
   mainGate?: { x: number; y: number; rotation: number } | null;
+  oeeMode?: boolean;
+  liveOeeData?: Record<string, { oee: number; isRunning: boolean }>;
 }
 
 export default function Map({
@@ -57,6 +59,8 @@ export default function Map({
   showGateLines,
   onToggleGateLines,
   mainGate,
+  oeeMode = false,
+  liveOeeData = {},
 }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -672,7 +676,42 @@ export default function Map({
           {activeView === 'satellite' && buildings.map((bld, idx) => {
             const isSelected = selectedBuildingId === bld.id;
             const isHovered = hoveredId === bld.id;
-            const baseColor = bld.color || '#3b82f6';
+            const oeeInfo = oeeMode && liveOeeData ? liveOeeData[bld.id] : null;
+
+            let baseColor = bld.color || '#3b82f6';
+            let strokeColor = baseColor;
+            let fillOpacity = bld.icon === 'listrik'
+              ? undefined
+              : isSelected 
+                ? shapeOpacity * 0.7 
+                : isHovered 
+                  ? shapeOpacity * 0.8 
+                  : shapeOpacity * 0.45;
+
+            if (oeeMode) {
+              if (oeeInfo) {
+                // Color based on OEE efficiency
+                if (oeeInfo.isRunning) {
+                  if (oeeInfo.oee >= 85) {
+                    baseColor = '#10b981'; // Green
+                  } else if (oeeInfo.oee >= 70) {
+                    baseColor = '#f59e0b'; // Yellow
+                  } else {
+                    baseColor = '#ef4444'; // Red
+                  }
+                } else {
+                  baseColor = '#64748b'; // Stopped / Grey
+                }
+                strokeColor = baseColor;
+                fillOpacity = isSelected ? 0.75 : isHovered ? 0.85 : 0.6;
+              } else {
+                // Dim non-OEE shapes
+                baseColor = 'rgba(100, 116, 139, 0.15)';
+                strokeColor = 'rgba(255, 255, 255, 0.1)';
+                fillOpacity = 0.08;
+              }
+            }
+
             const isFocusedParent = focusBuildingId === bld.id;
 
             const isChild = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
@@ -758,14 +797,8 @@ export default function Map({
                 } ${bld.icon === 'listrik' ? 'shape-pulse-slow' : ''}`}
                 style={{
                   fill: baseColor,
-                  stroke: baseColor,
-                  fillOpacity: bld.icon === 'listrik'
-                    ? undefined
-                    : isSelected 
-                      ? shapeOpacity * 0.7 
-                      : isHovered 
-                        ? shapeOpacity * 0.8 
-                        : shapeOpacity * 0.45,
+                  stroke: strokeColor,
+                  fillOpacity: fillOpacity,
                   strokeOpacity: isSelected 
                     ? 1 
                     : isHovered 
@@ -892,6 +925,66 @@ export default function Map({
               </g>
             </g>
           )}
+
+          {/* Render OEE Badge on Buildings when OEE mode is enabled */}
+          {oeeMode && liveOeeData && activeView === 'satellite' && buildings.map((bld, idx) => {
+            const oeeInfo = liveOeeData[bld.id];
+            if (!oeeInfo) return null;
+
+            const isChildShape = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
+            const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
+            if (isChildShape && !isAlsoParent && !showChildBuildings) return null;
+
+            if (focusBuildingId) {
+              const isChild = bld.parentShapeId === focusBuildingId;
+              if (!isChild) return null;
+            } else {
+              if (isChildShape && !isAlsoParent) return null;
+            }
+
+            const coords = bld.points.split(' ').map((p) => p.split(',').map(Number));
+            const xs = coords.map((c) => c[0]);
+            const ys = coords.map((c) => c[1]);
+            const centerX = (Math.max(...xs) + Math.min(...xs)) / 2;
+            const centerY = (Math.max(...ys) + Math.min(...ys)) / 2;
+
+            const color = oeeInfo.isRunning 
+              ? (oeeInfo.oee >= 85 ? '#10b981' : oeeInfo.oee >= 70 ? '#f59e0b' : '#ef4444') 
+              : '#64748b';
+
+            return (
+              <g 
+                key={`oee-badge-${bld.id}-${idx}`}
+                transform={`translate(${centerX}, ${centerY + 2.5})`}
+                style={{ pointerEvents: 'none' }}
+              >
+                {/* Small rect badge background */}
+                <rect 
+                  x="-7"
+                  y="-1.8"
+                  width="14"
+                  height="3.6"
+                  rx="0.6"
+                  fill="rgba(15, 23, 42, 0.85)"
+                  stroke={color}
+                  strokeWidth={0.15}
+                />
+                <text
+                  x="0"
+                  y="0.7"
+                  textAnchor="middle"
+                  fill="#ffffff"
+                  style={{ 
+                    fontSize: '1.4px', 
+                    fontWeight: 'bold', 
+                    fontFamily: '"Google Sans", sans-serif'
+                  }}
+                >
+                  OEE: {oeeInfo.oee}%
+                </text>
+              </g>
+            );
+          })}
         </svg>
       </div>
     </div>
