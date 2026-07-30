@@ -5,6 +5,7 @@ import { buildings as staticBuildings, zones } from '../data/mapData';
 import { BuildingData } from '../data/mapData';
 import MapSidebar from '../components/MapSidebar';
 import Map from '../components/Map';
+import RightSidebar from '../components/RightSidebar';
 
 const LIVE_STORAGE_KEY = 'mtm_live_buildings';
 const BROADCAST_CHANNEL = 'mtm-map-sync';
@@ -602,7 +603,7 @@ export default function Home() {
         />
 
         {/* Main Workspace */}
-        <main className="map-workspace">
+        <main className="map-workspace" style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
           {/* Dynamic Map Layers */}
           <Map
             buildings={activeBuildings}
@@ -629,6 +630,27 @@ export default function Home() {
             mainGate={gate}
           />
         </main>
+
+        {/* Right Sidebar for Detailed Information */}
+        <RightSidebar
+          isOpen={!!(selectedBuildingId || selectedZoneId || selectedMachineId)}
+          onClose={() => {
+            handleSelectBuilding('');
+            handleSelectZone('');
+            handleSelectMachine('', '');
+          }}
+          selectedBuildingId={selectedBuildingId}
+          selectedZoneId={selectedZoneId}
+          selectedMachineId={selectedMachineId}
+          buildings={activeBuildings}
+          zones={zones}
+          onSelectBuilding={handleSelectBuilding}
+          onSelectZone={handleSelectZone}
+          onSelectMachine={handleSelectMachine}
+          onTriggerSearchPan={handleTriggerSearchPan}
+          mainGate={gate}
+          theme={theme}
+        />
       </div>
 
 

@@ -2039,3 +2039,20 @@ input:checked + .switch-slider:before {
 .app-menu-container:hover .app-menu-dropdown {
   display: flex;
 }
+
+/* Right Sidebar slide-in animation & styling */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.right-sidebar-container {
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.22);
+}
+
