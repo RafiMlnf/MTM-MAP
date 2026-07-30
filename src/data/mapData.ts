@@ -65,46 +65,62 @@ export interface BuildingData {
   apiWoKey?: string;
 }
 
-import rawShapes from '../../public/shapes.json';
+import rawShapesJson from '../../public/shapes.json';
 
-export const buildings: BuildingData[] = (rawShapes as any[]).map((shape: any) => ({
-  id: shape.id || shape.uuid,
-  name: shape.name || shape.code || shape.id,
-  code: shape.code || shape.name || '',
-  points: Array.isArray(shape.points)
-    ? shape.points.map((p: any) => `${p.x},${p.y}`).join(' ')
-    : (shape.points || ''),
-  width: shape.width || 0,
-  length: shape.length || 0,
-  area: shape.area || 0,
-  details: shape.details || '',
-  zones: shape.zones || [],
-  operationalStatus: shape.operationalStatus || 'Aktif',
-  icon: shape.icon,
-  color: shape.color,
-  layer: shape.layer,
-  linkedShapeId: shape.linkedShapeId,
-  parentShapeId: shape.parentShapeId,
-  hatched: shape.hatched,
-  isRoad: shape.isRoad,
-  isGate: shape.isGate,
-  imageUrl: shape.imageUrl,
-  apiEnabled: shape.apiEnabled,
-  apiUrl: shape.apiUrl,
-  apiMethod: shape.apiMethod,
-  apiInterval: shape.apiInterval,
-  apiHeaders: shape.apiHeaders,
-  apiBody: shape.apiBody,
-  apiOeeKey: shape.apiOeeKey,
-  apiStatusKey: shape.apiStatusKey,
-  apiPlanKey: shape.apiPlanKey,
-  apiActualKey: shape.apiActualKey,
-  apiAchKey: shape.apiAchKey,
-  apiAvailabilityKey: shape.apiAvailabilityKey,
-  apiPerformanceKey: shape.apiPerformanceKey,
-  apiQualityKey: shape.apiQualityKey,
-  apiWoKey: shape.apiWoKey,
-}));
+// shapes.json structure: { layers: [...], mainGate: null|{...}, shapes: [...] }
+const rawShapesFile = rawShapesJson as any;
+const rawShapesArray: any[] = Array.isArray(rawShapesFile)
+  ? rawShapesFile
+  : (rawShapesFile.shapes ?? rawShapesFile);
+
+export const staticLayers: { id: number; name: string; visible: boolean; expanded: boolean; category: string }[] =
+  Array.isArray(rawShapesFile.layers) ? rawShapesFile.layers : [];
+
+export const staticMainGate: { x: number; y: number; rotation: number } | null =
+  rawShapesFile.mainGate ?? null;
+
+function shapeToBuilding(shape: any): BuildingData {
+  return {
+    id: shape.id || shape.uuid,
+    name: shape.name || shape.code || shape.id,
+    code: shape.code || shape.name || '',
+    points: Array.isArray(shape.points)
+      ? shape.points.map((p: any) => `${p.x},${p.y}`).join(' ')
+      : (shape.points || ''),
+    width: shape.width || 0,
+    length: shape.length || 0,
+    area: shape.area || 0,
+    details: shape.details || '',
+    zones: shape.zones || [],
+    operationalStatus: shape.operationalStatus || 'Aktif',
+    icon: shape.icon || undefined,
+    color: shape.color || undefined,
+    layer: shape.layer ?? undefined,
+    linkedShapeId: shape.linkedShapeId || undefined,
+    parentShapeId: shape.parentShapeId || undefined,
+    hatched: shape.hatched ?? false,
+    isRoad: shape.isRoad ?? false,
+    isGate: shape.type === 'gate' || !!shape.isGate,
+    imageUrl: shape.imageUrl || undefined,
+    apiEnabled: shape.apiEnabled ?? false,
+    apiUrl: shape.apiUrl || undefined,
+    apiMethod: shape.apiMethod || undefined,
+    apiInterval: shape.apiInterval || undefined,
+    apiHeaders: shape.apiHeaders || undefined,
+    apiBody: shape.apiBody || undefined,
+    apiOeeKey: shape.apiOeeKey || undefined,
+    apiStatusKey: shape.apiStatusKey || undefined,
+    apiPlanKey: shape.apiPlanKey || undefined,
+    apiActualKey: shape.apiActualKey || undefined,
+    apiAchKey: shape.apiAchKey || undefined,
+    apiAvailabilityKey: shape.apiAvailabilityKey || undefined,
+    apiPerformanceKey: shape.apiPerformanceKey || undefined,
+    apiQualityKey: shape.apiQualityKey || undefined,
+    apiWoKey: shape.apiWoKey || undefined,
+  };
+}
+
+export const buildings: BuildingData[] = rawShapesArray.map(shapeToBuilding);
 
 export const zones: ZoneData[] = [
   {

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { buildings as staticBuildings, zones } from '../data/mapData';
+import { buildings as staticBuildings, zones, staticMainGate } from '../data/mapData';
 import { BuildingData } from '../data/mapData';
 import MapSidebar from '../components/MapSidebar';
 import Map from '../components/Map';
@@ -13,7 +13,7 @@ const BROADCAST_CHANNEL = 'mtm-map-sync';
 export default function Home() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activeView, setActiveView] = useState<'satellite' | 'layout'>('satellite');
-  const [gate, setGate] = useState<{ x: number; y: number; rotation: number } | null>(null);
+  const [gate, setGate] = useState<{ x: number; y: number; rotation: number } | null>(staticMainGate);
 
   // ── LIVE OEE POLLING STATE ──
   const [oeeMode, setOeeMode] = useState<boolean>(false);
@@ -76,6 +76,15 @@ export default function Home() {
       const hPct = ys.length ? (Math.max(...ys) - Math.min(...ys)) : 0;
       const wM = Math.round(wPct * 200 / 100) || 10;
       const hM = Math.round(hPct * 130 / 100) || 10;
+
+      // Resolve parentShapeId: prefer explicit id, fallback to uuid lookup
+      const resolvedParentId = s.parentShapeId
+        || (s.parentShapeUuid ? shapesArray.find((t: any) => t.uuid === s.parentShapeUuid)?.id : undefined);
+
+      // Resolve linkedShapeId: prefer explicit id, fallback to uuid lookup
+      const resolvedLinkedId = s.linkedShapeId
+        || (s.linkedShapeUuid ? shapesArray.find((t: any) => t.uuid === s.linkedShapeUuid)?.id : undefined);
+
       return {
         id: s.id || s.uuid,
         name: s.name || s.code || s.id,
@@ -87,17 +96,18 @@ export default function Home() {
         details: s.details || '',
         zones: s.zones || [],
         operationalStatus: s.operationalStatus || 'Aktif',
-        icon: s.icon,
-        color: s.color,
-        layer: s.layer || 1,
-        linkedShapeId: s.linkedShapeId || (s.linkedShapeUuid ? shapesArray.find((t: any) => t.uuid === s.linkedShapeUuid)?.id : undefined),
-        parentShapeId: s.parentShapeId || (s.parentShapeUuid ? shapesArray.find((t: any) => t.uuid === s.parentShapeUuid)?.id : undefined),
-        hatched: s.hatched,
-        isRoad: s.isRoad,
+        icon: s.icon || undefined,
+        color: s.color || undefined,
+        layer: s.layer ?? undefined,
+        linkedShapeId: resolvedLinkedId || undefined,
+        parentShapeId: resolvedParentId || undefined,
+        hatched: s.hatched ?? false,
+        isRoad: s.isRoad ?? false,
         isGate: s.type === 'gate' || !!s.isGate,
-        imageUrl: s.imageUrl
+        imageUrl: s.imageUrl || undefined,
       };
     });
+
   }, []);
 
   const activeBuildings: BuildingData[] = liveBuildings ?? staticBuildings;
@@ -133,8 +143,19 @@ export default function Home() {
       if (savedShapesStr) {
         try {
           const parsed = JSON.parse(savedShapesStr);
+          // Handle both raw array format and {layers, mainGate, shapes} object format
+          let shapesArr: any[] | null = null;
           if (Array.isArray(parsed)) {
-            setLiveBuildings(convertEditorShapes(parsed));
+            shapesArr = parsed;
+          } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.shapes)) {
+            shapesArr = parsed.shapes;
+          }
+          if (shapesArr && shapesArr.length > 0) {
+            const converted = convertEditorShapes(shapesArr);
+            // Only use live buildings if we got a meaningful result
+            if (converted.length > 0) {
+              setLiveBuildings(converted);
+            }
           }
         } catch (_) {}
       }
@@ -152,8 +173,18 @@ export default function Home() {
         try {
           if (e.newValue) {
             const parsed = JSON.parse(e.newValue);
+            // Handle both raw array format and {layers, mainGate, shapes} object format
+            let shapesArr: any[] | null = null;
             if (Array.isArray(parsed)) {
-              setLiveBuildings(convertEditorShapes(parsed));
+              shapesArr = parsed;
+            } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.shapes)) {
+              shapesArr = parsed.shapes;
+            }
+            if (shapesArr && shapesArr.length > 0) {
+              const converted = convertEditorShapes(shapesArr);
+              if (converted.length > 0) {
+                setLiveBuildings(converted);
+              }
             }
           } else {
             setLiveBuildings(null);

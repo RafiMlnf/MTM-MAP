@@ -614,37 +614,89 @@ export default function RightSidebar({
         })()}
 
         {/* List of related rooms (If Selected Parent Building has child shapes) */}
-        {selectedBuildingId && childShapes.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
-              Daftar Ruangan Dalam ({childShapes.length})
-            </span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {childShapes.map((child) => (
-                <div
-                  key={child.id}
-                  onClick={() => onSelectBuilding(child.id)}
-                  style={{
-                    padding: '8px 10px',
-                    backgroundColor: 'var(--bg-card)',
-                    border: '1px solid var(--border-color)',
-                    cursor: 'pointer',
-                    fontSize: '11px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    transition: 'all 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; }}
-                >
-                  <span style={{ fontWeight: 'bold', color: 'var(--text-main)' }}>{child.name}</span>
-                  <span style={{ fontSize: '9.5px', color: 'var(--text-muted)' }}>{child.code}</span>
+        {selectedBuildingId && childShapes.length > 0 && (() => {
+          const machines = childShapes
+            .filter(s => s.icon === 'mesin' || s.icon === 'listrik')
+            .sort((a, b) => (a.code || a.name).localeCompare(b.code || b.name, undefined, { sensitivity: 'base', numeric: true }));
+            
+          const otherRooms = childShapes
+            .filter(s => s.icon !== 'mesin' && s.icon !== 'listrik')
+            .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true }));
+
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* 1. Prioritized Machines List */}
+              {machines.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+                    ⚙️ Daftar Mesin / Peralatan ({machines.length})
+                  </span>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
+                    {machines.map((child) => (
+                      <div
+                        key={child.id}
+                        onClick={() => onSelectBuilding(child.id)}
+                        style={{
+                          padding: '8px 10px',
+                          backgroundColor: 'var(--bg-card)',
+                          border: '1px solid var(--border-color)',
+                          cursor: 'pointer',
+                          fontSize: '11px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          textAlign: 'center',
+                          transition: 'all 0.15s ease',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; }}
+                        title={child.name}
+                      >
+                        <span style={{ fontWeight: 'bold', color: 'var(--text-main)' }}>{child.code || child.name}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              )}
+
+              {/* 2. Other Rooms/Areas List */}
+              {otherRooms.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+                    🚪 Daftar Ruangan / Area ({otherRooms.length})
+                  </span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {otherRooms.map((child) => (
+                      <div
+                        key={child.id}
+                        onClick={() => onSelectBuilding(child.id)}
+                        style={{
+                          padding: '8px 10px',
+                          backgroundColor: 'var(--bg-card)',
+                          border: '1px solid var(--border-color)',
+                          cursor: 'pointer',
+                          fontSize: '11px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          transition: 'all 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; }}
+                      >
+                        <span style={{ fontWeight: 'bold', color: 'var(--text-main)' }}>{child.name}</span>
+                        <span style={{ fontSize: '9.5px', color: 'var(--text-muted)' }}>{child.code}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* List of Machines inside selected Zone */}
         {selectedZoneId && !selectedMachineId && activeZone && (
