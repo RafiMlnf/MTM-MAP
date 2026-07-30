@@ -136,6 +136,7 @@ export default function RightSidebar({
   }, [selectedMachine, activeBld]);
 
   const [andonData, setAndonData] = React.useState<any>(null);
+  const [apiError, setApiError] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!apiConfig || !apiConfig.enabled) {
@@ -198,13 +199,15 @@ export default function RightSidebar({
           const data = await res.json();
           if (active) {
             setAndonData(data);
+            setApiError(false);
           }
         } else {
           throw new Error('Non-OK response');
         }
       } catch (err) {
         if (active) {
-          setAndonData((prev: any) => generateSimulatedData(prev));
+          setAndonData(null);
+          setApiError(true);
         }
       }
     };
@@ -469,6 +472,36 @@ export default function RightSidebar({
 
         {/* Live ANDON Telemetry Gauge Card */}
         {apiConfig && apiConfig.enabled && (() => {
+          if (apiError) {
+            return (
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                gap: '8px',
+                padding: '12px', 
+                backgroundColor: 'rgba(239, 68, 68, 0.05)', 
+                border: '1px solid #ef4444', 
+                animation: 'fadeIn 0.25s ease-out'
+              }}>
+                <span style={{ fontSize: '9px', fontWeight: 'bold', color: '#ef4444', letterSpacing: '0.5px' }}>
+                  LIVE OPC-UA TELEMETRY
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                  <span style={{ 
+                    width: '8px', 
+                    height: '8px', 
+                    borderRadius: '50%', 
+                    backgroundColor: '#ef4444',
+                    boxShadow: '0 0 6px #ef4444'
+                  }} />
+                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#ef4444' }}>
+                    API tidak dapat tersambung
+                  </span>
+                </div>
+              </div>
+            );
+          }
+
           const oeeVal = andonData ? andonData[apiConfig.oeeKey] : 0;
           const achVal = andonData ? andonData[apiConfig.achKey] : 0;
           const percent = oeeVal || achVal || 0;

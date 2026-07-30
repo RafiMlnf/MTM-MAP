@@ -17,7 +17,7 @@ export default function Home() {
 
   // ── LIVE OEE POLLING STATE ──
   const [oeeMode, setOeeMode] = useState<boolean>(false);
-  const [liveOeeData, setLiveOeeData] = useState<Record<string, { oee: number; isRunning: boolean }>>({});
+  const [liveOeeData, setLiveOeeData] = useState<Record<string, { oee: number; isRunning: boolean; apiError?: boolean }>>({});
 
   // Selection states
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
@@ -134,31 +134,9 @@ export default function Home() {
 
       const bld = sessionStorage.getItem('mtm_selected_bld');
       const view = sessionStorage.getItem('mtm_active_view');
-      const savedGate = localStorage.getItem('mtm_map_maingate');
-      const savedShapesStr = localStorage.getItem('mtm_map_shapes');
 
       if (bld) setSelectedBuildingId(bld);
       if (view === 'satellite' || view === 'layout') setActiveView(view as 'satellite' | 'layout');
-      if (savedGate) setGate(JSON.parse(savedGate));
-      if (savedShapesStr) {
-        try {
-          const parsed = JSON.parse(savedShapesStr);
-          // Handle both raw array format and {layers, mainGate, shapes} object format
-          let shapesArr: any[] | null = null;
-          if (Array.isArray(parsed)) {
-            shapesArr = parsed;
-          } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.shapes)) {
-            shapesArr = parsed.shapes;
-          }
-          if (shapesArr && shapesArr.length > 0) {
-            const converted = convertEditorShapes(shapesArr);
-            // Only use live buildings if we got a meaningful result
-            if (converted.length > 0) {
-              setLiveBuildings(converted);
-            }
-          }
-        } catch (_) {}
-      }
       // showParent, showChild, and opacity values are now restored via lazy useState initializers
     } catch (_) {}
 
@@ -326,7 +304,7 @@ export default function Home() {
     const apiBuildings = activeBuildings.filter(b => b.apiEnabled && b.apiUrl);
 
     const pollAllApis = async () => {
-      const results: Record<string, { oee: number; isRunning: boolean }> = {};
+      const results: Record<string, { oee: number; isRunning: boolean; apiError?: boolean }> = {};
 
       for (const bld of apiBuildings) {
         try {
@@ -353,11 +331,11 @@ export default function Home() {
             throw new Error();
           }
         } catch {
-          // Fallback to simulated value for demo/offline
-          const prevOee = liveOeeData[bld.id]?.oee || 80 + Math.floor(Math.random() * 15);
+          // If API connection fails, set apiError to true and do not simulate data
           results[bld.id] = {
-            oee: Math.min(100, Math.max(40, prevOee + (Math.random() > 0.5 ? 1 : -1))),
-            isRunning: Math.random() > 0.1
+            oee: 0,
+            isRunning: false,
+            apiError: true
           };
         }
       }

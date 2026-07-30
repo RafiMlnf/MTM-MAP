@@ -46,7 +46,7 @@
     header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 4px;
       padding: 7px 14px;
       background: var(--panel);
       border-bottom: 1px solid var(--border);
@@ -76,8 +76,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 4px 9px;
-      gap: 2px;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
       background: transparent;
       border: 1px solid transparent;
       border-radius: 6px;
@@ -86,7 +88,6 @@
       font-size: 10px;
       transition: all .15s;
       white-space: nowrap;
-      min-width: 46px;
       flex-shrink: 0;
     }
 
@@ -1001,58 +1002,76 @@
         </svg>
       </button>
       <div class="dropdown-content" id="file-menu">
-        <a onclick="event.preventDefault(); closeAllMenus(); saveToBrowserManual();">
+        <a onclick="event.preventDefault(); closeAllMenus(); forceSaveToServer();">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             style="width:12px; height:12px; margin-right:8px;">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
             <polyline points="17 21 17 13 7 13 7 21" />
             <polyline points="7 3 7 8 15 8" />
           </svg>
-          Simpan di Browser <span class="menu-shortcut">Ctrl+S</span>
+          Simpan ke Server <span class="menu-shortcut">Ctrl+S</span>
         </a>
-        <a onclick="event.preventDefault(); closeAllMenus(); showExport();">
+        <a onclick="event.preventDefault(); closeAllMenus(); importShapesFromMap();">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             style="width:12px; height:12px; margin-right:8px;">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
           </svg>
-          Export ke mapData.ts
+          Load Shapes dari Map (test.tsx)
         </a>
         <div class="menu-sep"></div>
-        <a onclick="event.preventDefault(); closeAllMenus(); loadServerJSON();">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="width:12px; height:12px; margin-right:8px;">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
-          Load shapes.json (Server)
-        </a>
-        <a onclick="event.preventDefault(); closeAllMenus(); exportJSON();">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="width:12px; height:12px; margin-right:8px;">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-            <polyline points="17 21 17 13 7 13 7 21" />
-            <polyline points="7 3 7 8 15 8" />
-          </svg>
-          Simpan ke Server (JSON)
-        </a>
-        <a onclick="event.preventDefault(); closeAllMenus(); downloadJSON();">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="width:12px; height:12px; margin-right:8px;">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          Unduh JSON (Browser)
-        </a>
-        <a onclick="event.preventDefault(); closeAllMenus(); importJSON();">
+        <a onclick="event.preventDefault(); closeAllMenus(); openMtmFile();">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             style="width:12px; height:12px; margin-right:8px;">
             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
           </svg>
-          Buka JSON
+          Buka Berkas Peta (.mtm)
+        </a>
+        <a onclick="event.preventDefault(); closeAllMenus(); downloadMtmFile();">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width:12px; height:12px; margin-right:8px;">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Unduh Berkas Peta (.mtm)
+        </a>
+        <div class="menu-sep"></div>
+        <a onclick="event.preventDefault(); closeAllMenus(); showExport();">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width:12px; height:12px; margin-right:8px;">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          Lihat Kode Eksport (TS/TSX)
+        </a>
+      </div>
+    </div>
+
+    <!-- View Menu Dropdown -->
+    <div class="menu-item dropdown" style="margin-left: 10px;">
+      <button class="menu-btn" onclick="toggleMenu('view-menu')">
+        View
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          style="width:8px; height:8px; display:inline-block; margin-left:3px; vertical-align:middle;">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      <div class="dropdown-content" id="view-menu">
+        <a onclick="event.preventDefault(); toggleGridOption();" style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="chk-grid" style="pointer-events: none; accent-color: var(--accent);">
+          Tampilkan Grid
+        </a>
+        <a onclick="event.preventDefault(); toggleGuidesOption();" style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="chk-guides" style="pointer-events: none; accent-color: var(--accent);">
+          Tampilkan Guides
+        </a>
+        <a onclick="event.preventDefault(); toggleRulerOption();" style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="chk-ruler" style="pointer-events: none; accent-color: var(--accent);">
+          Tampilkan Ruler
         </a>
       </div>
     </div>
@@ -1066,31 +1085,26 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M4 4l7 18 3-7 7-3z" />
       </svg>
-      Select <span class="kbd">V</span>
     </button>
     <button class="tool-btn" id="tool-rect" title="Rectangle [R]" onclick="setTool('rect')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="5" width="18" height="14" rx="1" />
       </svg>
-      Rect <span class="kbd">R</span>
     </button>
     <button class="tool-btn" id="tool-poly" title="Polygon [P]" onclick="setTool('poly')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="12,3 20,9 17,19 7,19 4,9" />
       </svg>
-      Poly <span class="kbd">P</span>
     </button>
     <button class="tool-btn" id="tool-label" title="Label [T]" onclick="setTool('label')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M4 7h16M4 12h10M4 17h6" />
       </svg>
-      Label <span class="kbd">T</span>
     </button>
     <button class="tool-btn" id="tool-road" title="Road [W]" onclick="setTool('road')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M4 22V2M20 22V2M12 4v4m0 4v4m0 4v4" />
       </svg>
-      Road <span class="kbd">W</span>
     </button>
     <button class="tool-btn" id="tool-gate" title="Gate [Y]" onclick="setTool('gate')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1098,35 +1112,20 @@
         <line x1="3" y1="6" x2="3" y2="18" />
         <line x1="21" y1="6" x2="21" y2="18" />
       </svg>
-      Gate <span class="kbd">Y</span>
     </button>
 
     <div class="header-sep"></div>
-    <div class="color-row">
-      <label>Warna</label>
-      <input type="color" id="tool-color" value="#ef4444" title="Warna Shape">
-    </div>
-    <button class="tool-btn" id="btn-magnet" onclick="toggleMagnet()" title="Magnet (Snap ke Grid/Titik Shape) [M]">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M5 2a4 4 0 0 0-4 4v7a8 8 0 0 0 16 0V6a4 4 0 0 0-4-4H5z" />
-        <path d="M5 6v7a4 4 0 0 0 8 0V6" />
-      </svg>
-      Magnet
-    </button>
-    <div class="header-sep"></div>
 
-    <button class="tool-btn" onclick="undo()" title="Undo Ctrl+Z">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 10h11a6 6 0 010 12H7" />
-        <path d="M3 10l4-4-4-4" />
+    <button class="tool-btn" onclick="undo()" title="Undo [Ctrl+Z]">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7v6h6" />
+        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
       </svg>
-      Undo
     </button>
     <button class="tool-btn danger" onclick="deleteSelected()" title="Hapus [Del]">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
       </svg>
-      Hapus
     </button>
 
     <div class="header-sep ml-auto"></div>
@@ -1136,7 +1135,6 @@
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
       </svg>
-      Zoom+
     </button>
     <span class="zoom-display" id="zoom-label">100%</span>
     <button class="tool-btn" onclick="changeZoom(-0.25)" title="Zoom Out">
@@ -1144,31 +1142,32 @@
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35M8 11h6" />
       </svg>
-      Zoom-
     </button>
-    <button class="tool-btn" onclick="resetView()" title="Reset [0]">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0" />
-        <path d="M12 8v4l3 3" />
+    <button class="tool-btn" onclick="resetView()" title="Reset Fokus Peta [0]">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="22" y1="12" x2="18" y2="12" />
+        <line x1="6" y1="12" x2="2" y2="12" />
+        <line x1="12" y1="6" x2="12" y2="2" />
+        <line x1="12" y1="22" x2="12" y2="18" />
       </svg>
-      Reset
     </button>
 
-    <button class="tool-btn live" id="btn-live-push" onclick="pushToMap()"
-      title="Push shapes ke Map Page secara langsung">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3" />
-        <path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12" />
-        <path d="M8 12h8" />
-        <path d="M14 9l3 3-3 3" />
-      </svg>
-      Live Push
-    </button>
-
-    <label class="auto-push-toggle" title="Auto-push ke Map setiap kali menyimpan">
-      <input type="checkbox" id="auto-push-toggle" onchange="toggleAutoPush(this.checked)">
-      Auto-Push
-    </label>
+    <div style="display: flex; flex-direction: row; align-items: center; gap: 6px; margin-left: 10px;">
+      <label class="auto-push-toggle" title="Auto-push ke Map setiap kali menyimpan" style="margin: 0; font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3px; display: flex; align-items: center; gap: 3px; padding: 0; user-select: none; color: var(--text-muted); cursor: pointer;">
+        <input type="checkbox" id="auto-push-toggle" onchange="toggleAutoPush(this.checked)" style="width: 10px; height: 10px; margin: 0; cursor: pointer;">
+        Auto-Push
+      </label>
+      <button class="tool-btn live" id="btn-live-push" onclick="pushToMap()"
+        title="Push shapes ke Map Page secara langsung" style="width: 28px; height: 28px; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12" />
+          <path d="M8 12h8" />
+          <path d="M14 9l3 3-3 3" />
+        </svg>
+      </button>
+    </div>
   </header>
 
   <!-- MAIN -->
@@ -1212,6 +1211,9 @@
         <div class="canvas-transform" id="canvas-transform">
           <img id="map-img" src="/map-img/mtmmap.jpg" alt="PT MTM Map" draggable="false">
           <svg id="svg-overlay" xmlns="http://www.w3.org/2000/svg">
+            <g id="g-grid"></g>
+            <g id="g-guides"></g>
+            <g id="g-ruler"></g>
             <g id="g-shapes"></g>
             <g id="g-gates"></g>
             <g id="g-preview"></g>
@@ -1230,6 +1232,13 @@
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
           </svg>
         </button>
+        <button class="map-action-btn" id="map-btn-unlink" title="Unlink terpilih [U]" onclick="unlinkSelectedShapes()">
+          <!-- Broken chain / Unlink icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3" />
+            <line x1="8" y1="12" x2="16" y2="12" stroke="red" stroke-dasharray="3 3" />
+          </svg>
+        </button>
         <button class="map-action-btn" id="map-btn-gate" title="Pintu Masuk Utama (Gate) [G]"
           onclick="handleGateButtonClick()">
           <!-- Gate / Entry Arrow icon -->
@@ -1245,13 +1254,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-          </svg>
-        </button>
-        <button class="map-action-btn" id="map-btn-unlink" title="Unlink terpilih [U]" onclick="unlinkSelectedShapes()">
-          <!-- Broken chain / Unlink icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3" />
-            <line x1="8" y1="12" x2="16" y2="12" stroke="red" stroke-dasharray="3 3" />
           </svg>
         </button>
       </div>
@@ -1280,32 +1282,7 @@
           <input type="range" class="opacity-slider" min="0.1" max="1.0" step="0.05" value="1.0" id="bg-opacity-slider"
             oninput="changeBgOpacity(this.value)">
         </div>
-        <div class="sep"></div>
-        <button class="btn-export" onclick="saveToBrowserManual()">
-          <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-            <polyline points="17 21 17 13 7 13 7 21" />
-            <polyline points="7 3 7 8 15 8" />
-          </svg>Simpan di Browser
-        </button>
-        <button class="btn-export" style="margin-top:4px;" onclick="showExport()">
-          <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>Export ke mapData.ts
-        </button>
-        <button class="btn-ghost" style="margin-top:4px;" onclick="loadServerJSON()">
-          <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>Load shapes.json (Server)
-        </button>
-        <button class="btn-ghost" style="margin-top:4px;" onclick="exportJSON()">
+        <button class="btn-export" onclick="forceSaveToServer()">
           <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
@@ -1313,19 +1290,36 @@
             <polyline points="7 3 7 8 15 8" />
           </svg>Simpan ke Server
         </button>
-        <button class="btn-ghost" style="margin-top:4px;" onclick="downloadJSON()">
+        <button class="btn-export" style="margin-top:4px;" onclick="importShapesFromMap()">
+          <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+          </svg>Load Shapes dari Map
+        </button>
+        <button class="btn-ghost" style="margin-top:4px;" onclick="openMtmFile()">
+          <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>Buka Berkas (.mtm)
+        </button>
+        <button class="btn-ghost" style="margin-top:4px;" onclick="downloadMtmFile()">
           <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>Unduh JSON
+          </svg>Unduh Berkas (.mtm)
         </button>
-        <button class="btn-ghost" style="margin-top:4px;" onclick="importJSON()">
+        <button class="btn-ghost" style="margin-top:4px;" onclick="showExport()">
           <svg style="width:12px; height:12px; vertical-align:middle; margin-right:5px; margin-top:-2px;"
             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-          </svg>Buka JSON
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>Lihat Kode Eksport (TS/TSX)
         </button>
       </div>
     </div>
@@ -1512,19 +1506,32 @@
     let isPlacingGate = false;
     let selectedGate = false;
     let isDraggingGate = false;
+    let gateHasMoved = false;
     let gateStartPos = { x: 0, y: 0 };
 
     let isDragging = false;
+    let dragHasMoved = false;
     let dragStartPts = [];
     let dragStartMouse = { x: 0, y: 0 };
 
     // Magnet & Resize States
     let magnetEnabled = false;
     let isResizing = false;
+    let resizeHasMoved = false;
     let activeResizeHandle = null;
     let initBBox = null;
     let resizeStartMouse = null;
     let resizeStartPts = [];
+
+    let showGrid = true;
+    let showGuides = true;
+    let showRuler = true;
+
+    try {
+      showGrid = localStorage.getItem('mtm_editor_show_grid') !== 'false';
+      showGuides = localStorage.getItem('mtm_editor_show_guides') !== 'false';
+      showRuler = localStorage.getItem('mtm_editor_show_ruler') !== 'false';
+    } catch (e) {}
 
     let mapW = 0, mapH = 0;
     let idCounter = 1;
@@ -1662,6 +1669,10 @@
     function saveLayers() {
       try {
         localStorage.setItem('mtm_map_layers', JSON.stringify(layers));
+        // Keep in sync with server data
+        if (typeof saveSession === 'function') {
+          saveSession();
+        }
       } catch (e) {
         console.error('Gagal menyimpan sesi layers ke localStorage', e);
       }
@@ -1838,30 +1849,81 @@
       }
     }
 
-    // Load shapes from localStorage on initialization
-    try {
-      const savedShapes = localStorage.getItem('mtm_map_shapes');
-      if (savedShapes) {
-        shapes = JSON.parse(savedShapes);
-        ensureUuids(shapes);
-        shapes.forEach(s => {
-          if (s.id && s.id.startsWith('bld-new-')) {
-            const num = parseInt(s.id.replace('bld-new-', ''), 10);
-            if (!isNaN(num) && num >= idCounter) {
-              idCounter = num + 1;
+    // Load shapes from server (with localStorage fallback) on initialization
+    function loadSession() {
+      // 1. Initial fallback load from localStorage
+      try {
+        const savedShapes = localStorage.getItem('mtm_map_shapes');
+        if (savedShapes) {
+          shapes = JSON.parse(savedShapes);
+          ensureUuids(shapes);
+          shapes.forEach(s => {
+            if (s.id && s.id.startsWith('bld-new-')) {
+              const num = parseInt(s.id.replace('bld-new-', ''), 10);
+              if (!isNaN(num) && num >= idCounter) {
+                idCounter = num + 1;
+              }
             }
+          });
+        }
+        const savedGate = localStorage.getItem('mtm_map_maingate');
+        if (savedGate) {
+          mainGate = JSON.parse(savedGate);
+        }
+      } catch (e) {
+        console.error('Gagal memuat sesi shapes dari localStorage', e);
+      }
+
+      // 2. Fetch the true source of truth from Server
+      fetch('/api/shapes')
+        .then(res => res.json())
+        .then(data => {
+          if (data && (data.shapes || data.layers || data.mainGate)) {
+            const serverShapes = data.shapes || [];
+            const serverLayers = data.layers || [];
+            const serverMainGate = data.mainGate || null;
+
+            if (serverShapes.length > 0) {
+              shapes = serverShapes;
+              ensureUuids(shapes);
+              shapes.forEach(s => {
+                if (s.id && s.id.startsWith('bld-new-')) {
+                  const num = parseInt(s.id.replace('bld-new-', ''), 10);
+                  if (!isNaN(num) && num >= idCounter) {
+                    idCounter = num + 1;
+                  }
+                }
+              });
+            }
+
+            if (serverLayers.length > 0) {
+              layers = serverLayers;
+              // Update local state without causing circular saves
+              try {
+                localStorage.setItem('mtm_map_layers', JSON.stringify(layers));
+              } catch (_) {}
+              renderShapeList();
+            }
+
+            if (serverMainGate) {
+              mainGate = serverMainGate;
+            }
+
+            renderAll();
+            renderShapeList();
+            showToast('🔄 Peta berhasil dimuat dari server!');
           }
+        })
+        .catch(err => {
+          console.warn('Gagal memuat data peta dari server. Menggunakan cache lokal browser:', err);
         });
-      }
-      const savedGate = localStorage.getItem('mtm_map_maingate');
-      if (savedGate) {
-        mainGate = JSON.parse(savedGate);
-      }
-    } catch (e) {
-      console.error('Gagal memuat sesi shapes dari localStorage', e);
     }
 
+    loadSession();
+
+    let autosaveTimeout = null;
     function saveSession() {
+      // 1. Save to local storage (browser fallback)
       try {
         localStorage.setItem('mtm_map_shapes', JSON.stringify(shapes));
         if (mainGate) {
@@ -1872,6 +1934,35 @@
       } catch (e) {
         console.error('Gagal menyimpan sesi shapes ke localStorage', e);
       }
+
+      // 2. Debounced auto-save to Server
+      if (autosaveTimeout) clearTimeout(autosaveTimeout);
+      autosaveTimeout = setTimeout(() => {
+        const exportData = {
+          layers: layers,
+          mainGate: mainGate || null,
+          shapes: shapes
+        };
+        fetch('/api/save-shapes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(exportData)
+        })
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.success) {
+            console.log('Autosaved to server successfully:', resData.savedAt);
+            if (typeof autoPush !== 'undefined' && autoPush) {
+              pushLive(true);
+            }
+          }
+        })
+        .catch(err => {
+          console.warn('Gagal auto-save ke server:', err);
+        });
+      }, 2000); // 2-second debounce
     }
 
     const viewport = document.getElementById('canvas-viewport');
@@ -1882,6 +1973,214 @@
     const gPreview = document.getElementById('g-preview');
     const gHandles = document.getElementById('g-handles');
     const svgOverlay = document.getElementById('svg-overlay');
+
+    function stringifyMtm(data) {
+      let out = "MTM_MAP_VERSION 1.0\n\n";
+
+      // Layers section
+      out += "[layers]\n";
+      if (Array.isArray(data.layers)) {
+        data.layers.forEach(l => {
+          out += `${l.id}|${l.name || ''}|${l.visible ?? true}|${l.expanded ?? true}|${l.category || ''}\n`;
+        });
+      }
+      out += "\n";
+
+      // Main Gate section
+      out += "[maingate]\n";
+      if (data.mainGate) {
+        out += `x=${data.mainGate.x ?? ''}\n`;
+        out += `y=${data.mainGate.y ?? ''}\n`;
+        out += `rotation=${data.mainGate.rotation ?? ''}\n`;
+        if (data.mainGate.imageUrl) {
+          out += `imageUrl=${data.mainGate.imageUrl}\n`;
+        }
+      }
+      out += "\n";
+
+      // Shapes section
+      out += "[shapes]\n";
+      if (Array.isArray(data.shapes)) {
+        data.shapes.forEach((s, idx) => {
+          if (idx > 0) out += "---\n";
+          for (const [key, value] of Object.entries(s)) {
+            if (value === undefined || value === null) continue;
+            if (key === 'points' && Array.isArray(value)) {
+              out += `points=${value.map(p => `${p.x},${p.y}`).join(' ')}\n`;
+            } else if (typeof value === 'object') {
+              out += `${key}=${JSON.stringify(value)}\n`;
+            } else {
+              out += `${key}=${value}\n`;
+            }
+          }
+        });
+      }
+
+      return out;
+    }
+
+    function parseMtm(content) {
+      const result = {
+        layers: [],
+        mainGate: null,
+        shapes: []
+      };
+
+      const lines = content.split('\n');
+      let currentSection = '';
+      let currentShape = null;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || line.startsWith('#')) continue;
+
+        if (line === '[layers]') {
+          currentSection = 'layers';
+          continue;
+        }
+        if (line === '[maingate]') {
+          currentSection = 'maingate';
+          result.mainGate = {};
+          continue;
+        }
+        if (line === '[shapes]') {
+          currentSection = 'shapes';
+          continue;
+        }
+
+        if (currentSection === 'layers') {
+          const parts = line.split('|');
+          if (parts.length >= 2) {
+            result.layers.push({
+              id: isNaN(Number(parts[0])) ? parts[0] : Number(parts[0]),
+              name: parts[1],
+              visible: parts[2] === 'true',
+              expanded: parts[3] === 'true',
+              category: parts[4] || ''
+            });
+          }
+        } else if (currentSection === 'maingate') {
+          const eqIdx = line.indexOf('=');
+          if (eqIdx !== -1) {
+            const key = line.substring(0, eqIdx).trim();
+            const val = line.substring(eqIdx + 1).trim();
+            if (key === 'x' || key === 'y' || key === 'rotation') {
+              result.mainGate[key] = Number(val);
+            } else {
+              result.mainGate[key] = val;
+            }
+          }
+        } else if (currentSection === 'shapes') {
+          if (line === '---') {
+            if (currentShape) {
+              result.shapes.push(currentShape);
+            }
+            currentShape = null;
+            continue;
+          }
+
+          if (!currentShape) {
+            currentShape = {};
+          }
+
+          const eqIdx = line.indexOf('=');
+          if (eqIdx !== -1) {
+            const key = line.substring(0, eqIdx).trim();
+            let val = line.substring(eqIdx + 1).trim();
+
+            if (key === 'points') {
+              val = val.split(' ').map(p => {
+                const [x, y] = p.split(',').map(Number);
+                return { x, y };
+              });
+            } else if (val === 'true') {
+              val = true;
+            } else if (val === 'false') {
+              val = false;
+            } else if (!isNaN(Number(val)) && val !== '') {
+              val = Number(val);
+            } else if (val.startsWith('[') || val.startsWith('{')) {
+              try {
+                val = JSON.parse(val);
+              } catch (_) {}
+            }
+
+            currentShape[key] = val;
+          }
+        }
+      }
+
+      // Push last shape if any
+      if (currentShape) {
+        result.shapes.push(currentShape);
+      }
+
+      return result;
+    }
+
+    function downloadMtmFile() {
+      const exportData = {
+        layers: layers,
+        mainGate: mainGate || null,
+        shapes: shapes
+      };
+      const mtmContent = stringifyMtm(exportData);
+      const blob = new Blob([mtmContent], { type: 'text/plain;charset=utf-8' });
+      const a = Object.assign(document.createElement('a'), { 
+        href: URL.createObjectURL(blob), 
+        download: 'map.mtm' 
+      });
+      a.click(); 
+      URL.revokeObjectURL(a.href);
+      showToast('📥 Berkas .mtm terunduh ke komputer Anda');
+    }
+
+    function openMtmFile() {
+      const input = Object.assign(document.createElement('input'), { 
+        type: 'file', 
+        accept: '.mtm' 
+      });
+      input.onchange = e => {
+        const file = e.target.files[0]; 
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          try {
+            const content = ev.target.result;
+            if (!content.includes('MTM_MAP_VERSION')) {
+              throw new Error('Berkas bukan format .mtm yang valid!');
+            }
+            const parsed = parseMtm(content);
+            
+            shapes = parsed.shapes || [];
+            layers = parsed.layers || [];
+            mainGate = parsed.mainGate || null;
+
+            ensureUuids(shapes);
+            shapes.forEach(s => {
+              if (s.id && s.id.startsWith('bld-new-')) {
+                const num = parseInt(s.id.replace('bld-new-', ''), 10);
+                if (!isNaN(num) && num >= idCounter) {
+                  idCounter = num + 1;
+                }
+              }
+            });
+
+            // Update local state and trigger server save
+            localStorage.setItem('mtm_map_layers', JSON.stringify(layers));
+            saveSession();
+
+            renderAll();
+            renderShapeList();
+            showToast('✅ Berkas .mtm berhasil dibuka dan disimpan ke server!');
+          } catch (err) {
+            alert(err.message || 'Gagal membaca berkas .mtm!');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
 
     function generateUuid() {
       return 'uuid-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
@@ -1906,6 +2205,25 @@
 
     function newId() { return 'bld-new-' + (idCounter++); }
 
+    function createLabel(x, y) {
+      saveUndo();
+      const s = {
+        uuid: generateUuid(),
+        id: 'label-' + (idCounter++),
+        type: 'label',
+        points: [{ x: x, y: y }],
+        color: '#ffffff',
+        name: 'Label Baru',
+        fontSize: 14,
+        icon: '',
+        layer: activeLayer
+      };
+      shapes.push(s);
+      selectShape(s.uuid);
+      renderAll();
+      saveSession();
+    }
+
     // ══════════════════════════════════════════════════════════
     // INIT
     // ══════════════════════════════════════════════════════════
@@ -1918,6 +2236,7 @@
       mapImg.style.opacity = bgOpacity;
       changeBgOpacity(bgOpacity);
       resetView();
+      initViewSettings();
     };
     if (mapImg.complete && mapImg.naturalWidth > 0) mapImg.onload();
 
@@ -2106,6 +2425,7 @@
         if (mainGate && Math.hypot(mainGate.x - pct.x, mainGate.y - pct.y) < 3.5) {
           selectGate();
           isDraggingGate = true;
+          gateHasMoved = false;
           dragStartMouse = { x: pct.x, y: pct.y };
           gateStartPos = { x: mainGate.x, y: mainGate.y };
           return;
@@ -2119,6 +2439,7 @@
             const clickedHandle = handles.find(h => Math.hypot(h.x - pct.x, h.y - pct.y) < 1.0 / zoom);
             if (clickedHandle) {
               isResizing = true;
+              resizeHasMoved = false;
               activeResizeHandle = clickedHandle.type;
               const xs = activeShape.points.map(p => p.x);
               const ys = activeShape.points.map(p => p.y);
@@ -2140,6 +2461,7 @@
         if (hit) {
           selectShape(hit.uuid, e.ctrlKey);
           isDragging = true;
+          dragHasMoved = false;
           dragStartMouse = { x: pct.x, y: pct.y };
           dragStartPts = Array.from(selectedIds).map(uuid => {
             const sh = shapes.find(s => s.uuid === uuid || s.id === uuid);
@@ -2193,9 +2515,15 @@
       if (isDraggingGate && mainGate) {
         const dx = pct.x - dragStartMouse.x;
         const dy = pct.y - dragStartMouse.y;
-        mainGate.x = Math.max(0, Math.min(100, gateStartPos.x + dx));
-        mainGate.y = Math.max(0, Math.min(100, gateStartPos.y + dy));
-        renderAll();
+        if (dx !== 0 || dy !== 0) {
+          if (!gateHasMoved) {
+            saveUndo();
+            gateHasMoved = true;
+          }
+          mainGate.x = Math.max(0, Math.min(100, gateStartPos.x + dx));
+          mainGate.y = Math.max(0, Math.min(100, gateStartPos.y + dy));
+          renderAll();
+        }
         return;
       }
 
@@ -2209,31 +2537,37 @@
           const dx = pct.x - resizeStartMouse.x;
           const dy = pct.y - resizeStartMouse.y;
 
-          let newMinX = initBBox.minX, newMaxX = initBBox.maxX;
-          let newMinY = initBBox.minY, newMaxY = initBBox.maxY;
+          if (dx !== 0 || dy !== 0) {
+            if (!resizeHasMoved) {
+              saveUndo();
+              resizeHasMoved = true;
+            }
+            let newMinX = initBBox.minX, newMaxX = initBBox.maxX;
+            let newMinY = initBBox.minY, newMaxY = initBBox.maxY;
 
-          if (activeResizeHandle.includes('L')) newMinX = Math.min(initBBox.maxX - 0.5, initBBox.minX + dx);
-          if (activeResizeHandle.includes('R')) newMaxX = Math.max(initBBox.minX + 0.5, initBBox.maxX + dx);
-          if (activeResizeHandle.includes('T')) newMinY = Math.min(initBBox.maxY - 0.5, initBBox.minY + dy);
-          if (activeResizeHandle.includes('B')) newMaxY = Math.max(initBBox.minY + 0.5, initBBox.maxY + dy);
+            if (activeResizeHandle.includes('L')) newMinX = Math.min(initBBox.maxX - 0.5, initBBox.minX + dx);
+            if (activeResizeHandle.includes('R')) newMaxX = Math.max(initBBox.minX + 0.5, initBBox.maxX + dx);
+            if (activeResizeHandle.includes('T')) newMinY = Math.min(initBBox.maxY - 0.5, initBBox.minY + dy);
+            if (activeResizeHandle.includes('B')) newMaxY = Math.max(initBBox.minY + 0.5, initBBox.maxY + dy);
 
-          const oldW = initBBox.maxX - initBBox.minX;
-          const oldH = initBBox.maxY - initBBox.minY;
-          const newW = newMaxX - newMinX;
-          const newH = newMaxY - newMinY;
+            const oldW = initBBox.maxX - initBBox.minX;
+            const oldH = initBBox.maxY - initBBox.minY;
+            const newW = newMaxX - newMinX;
+            const newH = newMaxY - newMinY;
 
-          if (oldW > 0 && oldH > 0) {
-            activeShape.points = resizeStartPts.map(p => {
-              const rx = (p.x - initBBox.minX) / oldW;
-              const ry = (p.y - initBBox.minY) / oldH;
-              return {
-                x: newMinX + rx * newW,
-                y: newMinY + ry * newH
-              };
-            });
+            if (oldW > 0 && oldH > 0) {
+              activeShape.points = resizeStartPts.map(p => {
+                const rx = (p.x - initBBox.minX) / oldW;
+                const ry = (p.y - initBBox.minY) / oldH;
+                return {
+                  x: newMinX + rx * newW,
+                  y: newMinY + ry * newH
+                };
+              });
+            }
+            renderAll();
+            updatePropsCoords(activeShape);
           }
-          renderAll();
-          updatePropsCoords(activeShape);
           return;
         }
       }
@@ -2241,15 +2575,21 @@
       if (isDragging && selectedId && currentTool === 'select') {
         const dx = pct.x - dragStartMouse.x;
         const dy = pct.y - dragStartMouse.y;
-        dragStartPts.forEach(item => {
-          const sh = shapes.find(s => s.uuid === item.id || s.id === item.id);
-          if (sh && !sh.locked) {
-            sh.points = item.points.map(p => ({ x: p.x + dx, y: p.y + dy }));
+        if (dx !== 0 || dy !== 0) {
+          if (!dragHasMoved) {
+            saveUndo();
+            dragHasMoved = true;
           }
-        });
-        renderAll();
-        const sh = shapes.find(s => s.uuid === selectedId);
-        if (sh) updatePropsCoords(sh);
+          dragStartPts.forEach(item => {
+            const sh = shapes.find(s => s.uuid === item.id || s.id === item.id);
+            if (sh && !sh.locked) {
+              sh.points = item.points.map(p => ({ x: p.x + dx, y: p.y + dy }));
+            }
+          });
+          renderAll();
+          const sh = shapes.find(s => s.uuid === selectedId);
+          if (sh) updatePropsCoords(sh);
+        }
         return;
       }
       if (isDrawing || drawPoints.length > 0) renderPreview();
@@ -2268,14 +2608,12 @@
         return;
       }
       if (isResizing) {
-        saveUndo();
         isResizing = false;
         activeResizeHandle = null;
         saveSession();
         return;
       }
       if (isDragging && selectedId) {
-        saveUndo();
         isDragging = false;
         dragStartPts = [];
         saveSession();
@@ -2359,7 +2697,17 @@
     window.addEventListener('keydown', e => {
       if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
         e.preventDefault();
-        saveToBrowserManual();
+        forceSaveToServer();
+        return;
+      }
+      if (e.ctrlKey && (e.code === 'KeyZ' || e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault();
+        undo();
+        return;
+      }
+      if (e.ctrlKey && (e.code === 'KeyY' || e.key === 'y' || e.key === 'Y')) {
+        e.preventDefault();
+        redo();
         return;
       }
       const tag = document.activeElement.tagName;
@@ -2377,8 +2725,6 @@
       if (e.key === 'Enter' && currentTool === 'road' && drawPoints.length >= 2) finishRoad();
       if (e.key === 'Enter' && currentTool === 'gate' && drawPoints.length >= 2) finishGate();
       if ((e.key === 'Delete' || e.key === 'Backspace') && !isDragging) deleteSelected();
-      if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
-      if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
       if (e.key === 'l' || e.key === 'L') { e.preventDefault(); linkSelectedShapes(); }
       if (e.key === 'u' || e.key === 'U') { e.preventDefault(); unlinkSelectedShapes(); }
       if (e.key === 'k' || e.key === 'K') { e.preventDefault(); toggleLockSelected(); }
@@ -2387,6 +2733,163 @@
       if (e.key === '+' || e.key === '=') changeZoom(0.25);
       if (e.key === '-') changeZoom(-0.25);
     });
+
+    // ── VIEW OPTIONS: GRID, GUIDES, RULER ──
+    function drawGridLines() {
+      const gGrid = document.getElementById('g-grid');
+      if (!gGrid) return;
+      gGrid.innerHTML = '';
+      if (!showGrid) return;
+      
+      // Draw grid lines every 5%
+      for (let i = 5; i < 100; i += 5) {
+        // Vertical lines
+        const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        vLine.setAttribute('x1', `${i}%`);
+        vLine.setAttribute('y1', '0%');
+        vLine.setAttribute('x2', `${i}%`);
+        vLine.setAttribute('y2', '100%');
+        vLine.setAttribute('stroke', 'rgba(255, 255, 255, 0.18)');
+        vLine.setAttribute('stroke-width', '1');
+        vLine.setAttribute('stroke-dasharray', '2,4');
+        vLine.setAttribute('vector-effect', 'non-scaling-stroke');
+        gGrid.appendChild(vLine);
+
+        // Horizontal lines
+        const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        hLine.setAttribute('x1', '0%');
+        hLine.setAttribute('y1', `${i}%`);
+        hLine.setAttribute('x2', '100%');
+        hLine.setAttribute('y2', `${i}%`);
+        hLine.setAttribute('stroke', 'rgba(255, 255, 255, 0.18)');
+        hLine.setAttribute('stroke-width', '1');
+        hLine.setAttribute('stroke-dasharray', '2,4');
+        hLine.setAttribute('vector-effect', 'non-scaling-stroke');
+        gGrid.appendChild(hLine);
+      }
+    }
+
+    function drawGuides() {
+      const gGuides = document.getElementById('g-guides');
+      if (!gGuides) return;
+      gGuides.innerHTML = '';
+      if (!showGuides) return;
+      
+      // Vertical Center Guide (50%)
+      const vGuide = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      vGuide.setAttribute('x1', '50%');
+      vGuide.setAttribute('y1', '0%');
+      vGuide.setAttribute('x2', '50%');
+      vGuide.setAttribute('y2', '100%');
+      vGuide.setAttribute('stroke', '#06b6d4'); // Cyan guide line
+      vGuide.setAttribute('stroke-width', '1.5');
+      vGuide.setAttribute('vector-effect', 'non-scaling-stroke');
+      vGuide.setAttribute('opacity', '0.6');
+      gGuides.appendChild(vGuide);
+
+      // Horizontal Center Guide (50%)
+      const hGuide = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      hGuide.setAttribute('x1', '0%');
+      hGuide.setAttribute('y1', '50%');
+      hGuide.setAttribute('x2', '100%');
+      hGuide.setAttribute('y2', '50%');
+      hGuide.setAttribute('stroke', '#06b6d4');
+      hGuide.setAttribute('stroke-width', '1.5');
+      hGuide.setAttribute('vector-effect', 'non-scaling-stroke');
+      hGuide.setAttribute('opacity', '0.6');
+      gGuides.appendChild(hGuide);
+    }
+
+    function drawRuler() {
+      const gRuler = document.getElementById('g-ruler');
+      if (!gRuler) return;
+      gRuler.innerHTML = '';
+      if (!showRuler) return;
+
+      // Draw X ticks along top edge (Y = 0%)
+      for (let i = 0; i <= 100; i += 10) {
+        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tick.setAttribute('x1', `${i}%`);
+        tick.setAttribute('y1', '0%');
+        tick.setAttribute('x2', `${i}%`);
+        tick.setAttribute('y2', '10');
+        tick.setAttribute('stroke', '#f59e0b');
+        tick.setAttribute('stroke-width', '1.5');
+        tick.setAttribute('vector-effect', 'non-scaling-stroke');
+        gRuler.appendChild(tick);
+
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', `${i}%`);
+        txt.setAttribute('y', '22');
+        txt.setAttribute('fill', '#f59e0b');
+        txt.setAttribute('font-size', '10');
+        txt.setAttribute('font-weight', 'bold');
+        txt.setAttribute('text-anchor', 'middle');
+        txt.style.pointerEvents = 'none';
+        txt.style.userSelect = 'none';
+        txt.textContent = `${i}%`;
+        gRuler.appendChild(txt);
+      }
+
+      // Draw Y ticks along left edge (X = 0%)
+      for (let i = 10; i <= 100; i += 10) {
+        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tick.setAttribute('x1', '0%');
+        tick.setAttribute('y1', `${i}%`);
+        tick.setAttribute('x2', '10');
+        tick.setAttribute('y2', `${i}%`);
+        tick.setAttribute('stroke', '#f59e0b');
+        tick.setAttribute('stroke-width', '1.5');
+        tick.setAttribute('vector-effect', 'non-scaling-stroke');
+        gRuler.appendChild(tick);
+
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', '16');
+        txt.setAttribute('y', `${i}%`);
+        txt.setAttribute('fill', '#f59e0b');
+        txt.setAttribute('font-size', '10');
+        txt.setAttribute('font-weight', 'bold');
+        txt.setAttribute('dominant-baseline', 'middle');
+        txt.style.pointerEvents = 'none';
+        txt.style.userSelect = 'none';
+        txt.textContent = `${i}%`;
+        gRuler.appendChild(txt);
+      }
+    }
+
+    function toggleGridOption() {
+      showGrid = !showGrid;
+      document.getElementById('chk-grid').checked = showGrid;
+      drawGridLines();
+      localStorage.setItem('mtm_editor_show_grid', String(showGrid));
+    }
+
+    function toggleGuidesOption() {
+      showGuides = !showGuides;
+      document.getElementById('chk-guides').checked = showGuides;
+      drawGuides();
+      localStorage.setItem('mtm_editor_show_guides', String(showGuides));
+    }
+
+    function toggleRulerOption() {
+      showRuler = !showRuler;
+      document.getElementById('chk-ruler').checked = showRuler;
+      drawRuler();
+      localStorage.setItem('mtm_editor_show_ruler', String(showRuler));
+    }
+
+    function initViewSettings() {
+      const chkGrid = document.getElementById('chk-grid');
+      const chkGuides = document.getElementById('chk-guides');
+      const chkRuler = document.getElementById('chk-ruler');
+      if (chkGrid) chkGrid.checked = showGrid;
+      if (chkGuides) chkGuides.checked = showGuides;
+      if (chkRuler) chkRuler.checked = showRuler;
+      drawGridLines();
+      drawGuides();
+      drawRuler();
+    }
+
     window.addEventListener('keyup', e => {
       if (e.code === 'Space') {
         spacePanning = false;
@@ -2516,7 +3019,7 @@
         const layerShapes = shapes.filter(s => (s.layer || 1) === layer.id);
         layerShapes.forEach(shape => {
           const isSelected = selectedIds.has(shape.uuid);
-          const color = shape.color || '#ef4444';
+          const color = shape.color || '#3b82f6';
           const isFocusedParent = focusParentUuid === shape.uuid;
 
           const shapeLayer = layers.find(l => l.id === (shape.layer || 1));
@@ -2840,6 +3343,10 @@
         }
       }
 
+      drawGridLines();
+      drawGuides();
+      drawRuler();
+
       renderMainGate();
       renderShapeList();
     }
@@ -3034,14 +3541,26 @@
 
     function showDefaultProps() {
       document.getElementById('props-body').innerHTML = `
-    <div class="hint">
-      Pilih atau gambar shape untuk edit propertinya.<br><br>
-      <strong>V</strong> – Select/Move<br><strong>R</strong> – Rect<br>
-      <strong>P</strong> – Polygon<br><strong>T</strong> – Label<br>
-      <strong>Enter/Dbl-click</strong> – Tutup polygon<br>
-      <strong>Esc</strong> – Batal<br><strong>Del</strong> – Hapus<br>
-      <strong>Ctrl+Z/Y</strong> – Undo/Redo<br>
-      <strong>Space+Drag</strong> – Pan<br><strong>Scroll</strong> – Zoom
+    <div class="hint" style="line-height:1.5;">
+      <strong>ALAT GAMBAR:</strong><br>
+      <strong>V</strong> – Select & Move (Pilih/Geser)<br>
+      <strong>R</strong> – Rectangle (Gedung)<br>
+      <strong>P</strong> – Polygon (Area)<br>
+      <strong>T</strong> – Label & Ikon<br>
+      <strong>W</strong> – Jalan (Road)<br>
+      <strong>Y</strong> – Gerbang (Gate)<br>
+      <div class="sep" style="margin: 6px 0;"></div>
+      <strong>HOTKEY / SHORTCUT:</strong><br>
+      <strong>Enter / Dbl-click</strong> – Tutup Polygon/Jalan<br>
+      <strong>Esc</strong> – Batal menggambar<br>
+      <strong>Del / Backspace</strong> – Hapus shape<br>
+      <strong>L</strong> – Tautkan posisi (Link)<br>
+      <strong>U</strong> – Lepas tautan (Unlink)<br>
+      <strong>K</strong> – Kunci posisi (Lock/Unlock)<br>
+      <strong>Ctrl+Z / Y</strong> – Undo / Redo<br>
+      <strong>Ctrl+S</strong> – Simpan ke Server<br>
+      <strong>Space + Drag</strong> – Geser Peta (Pan)<br>
+      <strong>Scroll Mouse</strong> – Zoom In/Out
     </div>
     <div class="sep"></div>
     <div class="field-group" style="margin-bottom:10px;">
@@ -3094,7 +3613,7 @@
     </div>
     <div class="field-group">
       <label class="field-label">Warna</label>
-      <input type="color" class="field-input" style="height:34px;padding:2px;" value="${shape.color || '#ef4444'}" oninput="updatePropAndRender(this.value, 'color')">
+      <input type="color" class="field-input" style="height:34px;padding:2px;" value="${shape.color || '#3b82f6'}" oninput="updatePropAndRender(this.value, 'color')">
     </div>
 
     <div style="display:flex; align-items:center; gap:16px; margin: 6px 0;">
@@ -3370,10 +3889,30 @@
         saveUndo();
         const activeShape = shapes.find(s => s.uuid === selectedId);
         if (activeShape) {
-          activeShape.imageUrl = compressedData;
-          saveSession();
-          showShapeProps(activeShape);
-          showToast("🖼️ Gambar berhasil dikompresi & dilampirkan!");
+          showToast("📤 Mengunggah gambar ke server...");
+          fetch('/api/save-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ shapeId: activeShape.id || activeShape.uuid, imageDataUrl: compressedData })
+          })
+          .then(res => res.json())
+          .then(resData => {
+            if (resData.success) {
+              activeShape.imageUrl = resData.imagePath;
+              saveSession();
+              showShapeProps(activeShape);
+              showToast("🖼️ Gambar berhasil diunggah ke server!");
+            } else {
+              throw new Error(resData.error || 'Server failed to save image');
+            }
+          })
+          .catch(err => {
+            console.warn('Fallback to local memory storage:', err);
+            activeShape.imageUrl = compressedData;
+            saveSession();
+            showShapeProps(activeShape);
+            showToast("⚠️ Gambar disimpan lokal di memori browser");
+          });
         }
       });
     }
@@ -3764,10 +4303,30 @@
       compressAndAttachImage(file, (compressedData) => {
         saveUndo();
         if (mainGate) {
-          mainGate.imageUrl = compressedData;
-          saveSession();
-          showGateProps();
-          showToast("🖼️ Gambar gate berhasil dikompresi & dilampirkan!");
+          showToast("📤 Mengunggah gambar gate ke server...");
+          fetch('/api/save-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ shapeId: 'main-gate', imageDataUrl: compressedData })
+          })
+          .then(res => res.json())
+          .then(resData => {
+            if (resData.success) {
+              mainGate.imageUrl = resData.imagePath;
+              saveSession();
+              showGateProps();
+              showToast("🖼️ Gambar gate berhasil diunggah ke server!");
+            } else {
+              throw new Error(resData.error || 'Server failed to save image');
+            }
+          })
+          .catch(err => {
+            console.warn('Fallback to local memory storage:', err);
+            mainGate.imageUrl = compressedData;
+            saveSession();
+            showGateProps();
+            showToast("⚠️ Gambar gate disimpan lokal di memori browser");
+          });
         }
       });
     }
@@ -3893,7 +4452,7 @@
 
         const addCatBtn = document.createElement('button');
         addCatBtn.className = 'layer-action-btn';
-        addCatBtn.style.cssText = 'background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--text); cursor: pointer; font-size: 9px; padding: 1px 5px; border-radius: 3px;';
+        addCatBtn.style.cssText = 'width: 15px; height: 15px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--text); cursor: pointer; font-size: 10px; border-radius: 3px; padding: 0; line-height: 1;';
         addCatBtn.textContent = '+';
         addCatBtn.title = `Tambah Layer di ${cat.title}`;
         addCatBtn.onclick = (e) => {
@@ -4098,8 +4657,8 @@
 
                 const icon = document.createElement('div');
                 icon.className = 'shape-icon';
-                icon.style.backgroundColor = `${s.color || '#ef4444'}22`;
-                icon.style.border = `1.5px solid ${s.color || '#ef4444'}`;
+                icon.style.backgroundColor = `${s.color || '#3b82f6'}22`;
+                icon.style.border = `1.5px solid ${s.color || '#3b82f6'}`;
                 icon.textContent = icons[s.type] || '◈';
 
                 const name = document.createElement('span');
@@ -4191,8 +4750,8 @@
 
                       const icon = document.createElement('div');
                       icon.className = 'shape-icon';
-                      icon.style.backgroundColor = `${cs.color || '#ef4444'}22`;
-                      icon.style.border = `1.5px solid ${cs.color || '#ef4444'}`;
+                      icon.style.backgroundColor = `${cs.color || '#3b82f6'}22`;
+                      icon.style.border = `1.5px solid ${cs.color || '#3b82f6'}`;
                       icon.textContent = icons[cs.type] || '◈';
 
                       const name = document.createElement('span');
@@ -4531,49 +5090,81 @@
     // JSON BACKUP
     // ══════════════════════════════════════════════════════════
     // ══════════════════════════════════════════════════════════
-    function exportJSON() {
+    function forceSaveToServer() {
+      // Clear any pending autosave timeout
+      if (autosaveTimeout) clearTimeout(autosaveTimeout);
+      
       const exportData = {
         layers: layers,
         mainGate: mainGate || null,
         shapes: shapes
       };
       
-      // Attempt to save to local folder on server
+      showToast('💾 Menyimpan ke server...');
+      
       fetch('/api/save-shapes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(exportData, null, 2)
+        body: JSON.stringify(exportData)
       })
       .then(res => res.json())
       .then(resData => {
         if (resData.success) {
           showToast(`💾 Tersimpan di Server: ${resData.filename}`);
+          if (typeof autoPush !== 'undefined' && autoPush) {
+            pushLive(true);
+          }
         } else {
-          throw new Error(resData.error || 'Server failed to save file');
+          throw new Error(resData.error || 'Server failed to save');
         }
       })
       .catch(err => {
-        console.warn('Fallback to browser download:', err);
-        // Fallback: browser download
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'shapes.json' });
-        a.click(); URL.revokeObjectURL(a.href);
-        showToast('📥 Backup terunduh ke browser');
+        console.error('Gagal menyimpan ke server:', err);
+        showToast('⚠️ Gagal menyimpan ke server.');
       });
     }
 
-    function downloadJSON() {
-      const exportData = {
-        layers: layers,
-        mainGate: mainGate || null,
-        shapes: shapes
-      };
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'shapes.json' });
-      a.click(); URL.revokeObjectURL(a.href);
-      showToast('📥 Backup terunduh ke browser');
+    function importShapesFromMap() {
+      if (confirm('PERINGATAN: Ini akan menimpa data peta saat ini dengan data shapes baru dari test.tsx di server. Lanjutkan?')) {
+        showToast('🔄 Mentranslate data dari test.tsx...');
+        fetch('/api/import-shapes', {
+          method: 'POST'
+        })
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.success) {
+            shapes = resData.data.shapes || [];
+            layers = resData.data.layers || [];
+            mainGate = resData.data.mainGate || null;
+            
+            ensureUuids(shapes);
+            shapes.forEach(s => {
+              if (s.id && s.id.startsWith('bld-new-')) {
+                const num = parseInt(s.id.replace('bld-new-', ''), 10);
+                if (!isNaN(num) && num >= idCounter) {
+                  idCounter = num + 1;
+                }
+              }
+            });
+            
+            // Clear localStorage cache to prevent interference
+            localStorage.removeItem('mtm_map_shapes');
+            localStorage.removeItem('mtm_map_maingate');
+
+            renderAll();
+            renderShapeList();
+            showToast(`✅ Berhasil mentranslate ${resData.shapeCount} shapes dari test.tsx!`);
+          } else {
+            throw new Error(resData.error || 'Server failed to import shapes');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Gagal mentranslate shapes dari map: ' + err.message);
+        });
+      }
     }
 
 

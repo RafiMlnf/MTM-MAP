@@ -1,87 +1,94 @@
 {
   "layers": [
     {
+      "id": 1785437832533,
+      "name": "FORGING MAIN",
+      "visible": true,
+      "expanded": true,
+      "category": "main"
+    },
+    {
       "id": 1784526121296,
       "name": "OFFICE MAIN",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784522334253,
       "name": "PROD 1 MAIN",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784614215582,
       "name": "PROD 1 - DIES",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784594744710,
       "name": "PROD 2 MAIN",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784514325323,
       "name": "PROD 2",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784775538112,
       "name": "ADM DELIV MAIN",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784517725139,
       "name": "FORGING",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784594897381,
       "name": "PACKAGING MAIN",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784594720629,
       "name": "PACKAGING",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1784600291176,
       "name": "RAW MATERIAL",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1785123994198,
       "name": "MAINTENANCE MAIN",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
       "id": 1,
       "name": "Main Building",
       "visible": true,
-      "expanded": true,
+      "expanded": false,
       "category": "main"
     },
     {
@@ -155,7 +162,12 @@
       "category": "peripheral"
     }
   ],
-  "mainGate": null,
+  "mainGate": {
+    "x": 36.801004615245965,
+    "y": 95.88999996039838,
+    "rotation": 270,
+    "imageUrl": "/assets/map-thumb/main-gate.jpg"
+  },
   "shapes": [
     {
       "uuid": "uuid-xbyzb5ywh-1784507442279",
@@ -2279,11 +2291,13 @@
         }
       ],
       "color": "#ef4444",
-      "name": "CENTRAK DATA DELTA",
-      "code": "CENTRAK DATA DELTA",
+      "name": "CENTRAL DATA FORGED",
+      "code": "CENTRAL DATA FORGED",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-3z0mz79k0-1784522647826",
@@ -2312,7 +2326,9 @@
       "code": "F8",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-sd2msjuih-1784524983002",
@@ -2341,7 +2357,9 @@
       "code": "F10",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-so9v3cq9i-1784599993891",
@@ -2370,7 +2388,9 @@
       "code": "F6",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-cbun8k9hs-1784600007772",
@@ -2399,7 +2419,9 @@
       "code": "F7",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-lqgmrvmb4-1784600121287",
@@ -2428,7 +2450,9 @@
       "code": "CUTTING",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-n14cyfpx6-1784600448395",
@@ -2457,7 +2481,9 @@
       "code": "F4",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-ulxmvyv7j-1784600580941",
@@ -2486,7 +2512,9 @@
       "code": "F1",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-xihzpe1c9-1784600594961",
@@ -2515,7 +2543,9 @@
       "code": "F5",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-tbypenut8-1784600611945",
@@ -2544,7 +2574,9 @@
       "code": "F9",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-qiiuryxa5-1784600722211",
@@ -2573,7 +2605,9 @@
       "code": "KAMAR MANDI",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-jwgesxzjj-1784600737805",
@@ -2602,7 +2636,9 @@
       "code": "FOREMAN ROOM",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784517725139
+      "layer": 1784517725139,
+      "parentShapeUuid": "uuid-my74qb20p-1785437849821",
+      "parentShapeId": "bld-new-291"
     },
     {
       "uuid": "uuid-1dvwgfe48-1784879669071",
@@ -3482,7 +3518,8 @@
       "code": "KOPERASI",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784594720629
+      "layer": 1784594720629,
+      "imageUrl": "/assets/map-thumb/bld-new-192.jpg"
     },
     {
       "uuid": "uuid-z33sx0fc5-1784617027699",
@@ -3785,20 +3822,20 @@
       "type": "rect",
       "points": [
         {
-          "x": 8.520402,
-          "y": 15.665519
+          "x": 5.272365764171587,
+          "y": 15.689314782023079
         },
         {
-          "x": 11.558521,
-          "y": 15.665519
+          "x": 8.310484764171587,
+          "y": 15.689314782023079
         },
         {
-          "x": 11.558521,
-          "y": 20.948446
+          "x": 8.310484764171587,
+          "y": 20.97224178202308
         },
         {
-          "x": 8.520402,
-          "y": 20.948446
+          "x": 5.272365764171587,
+          "y": 20.97224178202308
         }
       ],
       "color": "#ef4444",
@@ -5666,20 +5703,20 @@
       "type": "rect",
       "points": [
         {
-          "x": 64.453569,
-          "y": 77.766376
+          "x": 64.59188223351325,
+          "y": 77.55621830682918
         },
         {
-          "x": 67.221244,
-          "y": 77.766376
+          "x": 67.35955723351324,
+          "y": 77.55621830682918
         },
         {
-          "x": 67.221244,
-          "y": 85.234454
+          "x": 67.35955723351324,
+          "y": 82.6132192055355
         },
         {
-          "x": 64.453569,
-          "y": 85.234454
+          "x": 64.59188223351325,
+          "y": 82.6132192055355
         }
       ],
       "color": "#e27cfe",
@@ -5687,7 +5724,8 @@
       "code": "TEMPAT WUDHU",
       "details": "",
       "operationalStatus": "Aktif",
-      "layer": 1784594760758
+      "layer": 1784594760758,
+      "locked": true
     },
     {
       "uuid": "uuid-ybdktkx2w-1784779836687",
@@ -6426,7 +6464,8 @@
       "operationalStatus": "Aktif",
       "layer": 1784508686805,
       "hatched": true,
-      "icon": "parkir"
+      "icon": "parkir",
+      "imageUrl": "/assets/map-thumb/bld-new-61.jpg"
     },
     {
       "uuid": "uuid-nzsoob72j-1784517791132",
@@ -6824,6 +6863,38 @@
       "operationalStatus": "Aktif",
       "layer": 1784508980953,
       "icon": "listrik"
+    },
+    {
+      "uuid": "uuid-my74qb20p-1785437849821",
+      "id": "bld-new-291",
+      "type": "rect",
+      "points": [
+        {
+          "x": 13.781680772374523,
+          "y": 6.101260690492289
+        },
+        {
+          "x": 34.613661072999044,
+          "y": 6.101260690492289
+        },
+        {
+          "x": 34.613661072999044,
+          "y": 36.158354819485204
+        },
+        {
+          "x": 13.781680772374523,
+          "y": 36.158354819485204
+        }
+      ],
+      "color": "#ef4444",
+      "name": "GEDUNG FORGING",
+      "code": "FORGING",
+      "details": "",
+      "operationalStatus": "Aktif",
+      "layer": 1785437832533,
+      "hatched": true,
+      "locked": true
     }
-  ]
+  ],
+  "savedAt": "2026-07-30T20:10:26.867Z"
 }

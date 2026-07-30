@@ -35,7 +35,7 @@ interface MapProps {
   onToggleGateLines: (val: boolean) => void;
   mainGate?: { x: number; y: number; rotation: number } | null;
   oeeMode?: boolean;
-  liveOeeData?: Record<string, { oee: number; isRunning: boolean }>;
+  liveOeeData?: Record<string, { oee: number; isRunning: boolean; apiError?: boolean }>;
 }
 
 export default function Map({
@@ -67,6 +67,13 @@ export default function Map({
   const dragStartMouseRef = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
+  const [isGrayscale, setIsGrayscale] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  }, []);
 
   // Zoom & Pan states — lazy initializers read sessionStorage synchronously on first render
   const [scale, setScale] = useState(() => {
@@ -449,6 +456,7 @@ export default function Map({
       className="map-layout-container"
       ref={containerRef}
       onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
       style={{ cursor: isDragging ? 'grabbing' : 'default' }}
       onClick={handleBackgroundClick}
     >
@@ -462,45 +470,102 @@ export default function Map({
           background: 'var(--bg-main)',
           border: '1px solid var(--border-color)',
           borderRadius: '0px',
-          padding: '10px 12px',
+          padding: isMinimized ? '6px 10px' : '10px 12px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '8px',
+          gap: isMinimized ? '0px' : '8px',
           zIndex: 80,
           boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
           fontFamily: 'var(--font-sans)',
+          minWidth: isMinimized ? '100px' : 'auto',
         }}
       >
-        <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px', marginBottom: '2px' }}>
-          VISIBILITAS LAYER
-        </span>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
-          <input
-            type="checkbox"
-            checked={showParentBuildings}
-            onChange={(e) => onToggleParentBuildings(e.target.checked)}
-            style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
-          />
-          <span>Ged. Utama</span>
-        </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
-          <input
-            type="checkbox"
-            checked={showChildBuildings}
-            onChange={(e) => onToggleChildBuildings(e.target.checked)}
-            style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
-          />
-          <span>Ruangan Dalam</span>
-        </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
-          <input
-            type="checkbox"
-            checked={showGateLines}
-            onChange={(e) => onToggleGateLines(e.target.checked)}
-            style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
-          />
-          <span>Gerbang / Gate</span>
-        </label>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
+          <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px' }}>
+            VISIBILITAS
+          </span>
+          <button
+            onClick={() => setIsMinimized(!isMinimized)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-muted)',
+              cursor: 'pointer',
+              padding: '2px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: 1,
+            }}
+            title={isMinimized ? "Expand" : "Minimize"}
+          >
+            {isMinimized ? (
+              <svg width="8" height="8" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+              </svg>
+            ) : (
+              <svg width="8" height="8" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {!isMinimized && (
+          <>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+              <input
+                type="checkbox"
+                checked={showParentBuildings}
+                onChange={(e) => onToggleParentBuildings(e.target.checked)}
+                style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+              <span>Ged. Utama</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+              <input
+                type="checkbox"
+                checked={showChildBuildings}
+                onChange={(e) => onToggleChildBuildings(e.target.checked)}
+                style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+              <span>Ruangan Dalam</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+              <input
+                type="checkbox"
+                checked={showGateLines}
+                onChange={(e) => onToggleGateLines(e.target.checked)}
+                style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+              <span>Gerbang / Gate</span>
+            </label>
+            <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
+            <span style={{ fontSize: '9.5px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.5px', marginBottom: '2px' }}>
+              TAMPILAN SHAPES
+            </span>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+              <input
+                type="radio"
+                name="grayscale_mode"
+                checked={!isGrayscale}
+                onChange={() => setIsGrayscale(false)}
+                style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+              <span>Berwarna</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11.5px', color: 'var(--text-main)', userSelect: 'none' }}>
+              <input
+                type="radio"
+                name="grayscale_mode"
+                checked={isGrayscale}
+                onChange={() => setIsGrayscale(true)}
+                style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+              <span>Abu-abu</span>
+            </label>
+          </>
+        )}
       </div>
       {/* Zoom controls floating on map */}
       {focusBuildingId && (
@@ -629,7 +694,7 @@ export default function Map({
             </pattern>
             {/* Dynamic hatching patterns for each hatched building */}
             {buildings.filter(b => b.hatched).map((bld) => {
-               const baseColor = bld.color || '#3b82f6';
+               const baseColor = isGrayscale ? '#64748b' : (bld.color || '#3b82f6');
                return (
                  <pattern
                    key={`hatch-pattern-${bld.id}`}
@@ -678,7 +743,7 @@ export default function Map({
             const isHovered = hoveredId === bld.id;
             const oeeInfo = oeeMode && liveOeeData ? liveOeeData[bld.id] : null;
 
-            let baseColor = bld.color || '#3b82f6';
+            let baseColor = isGrayscale ? '#64748b' : (bld.color || '#3b82f6');
             let strokeColor = baseColor;
             let fillOpacity = bld.icon === 'listrik'
               ? undefined
@@ -688,10 +753,12 @@ export default function Map({
                   ? shapeOpacity * 0.8 
                   : shapeOpacity * 0.45;
 
-            if (oeeMode) {
+            if (oeeMode && !isGrayscale) {
               if (oeeInfo) {
                 // Color based on OEE efficiency
-                if (oeeInfo.isRunning) {
+                if (oeeInfo.apiError) {
+                  baseColor = '#64748b'; // Gray/Stopped color on API Error
+                } else if (oeeInfo.isRunning) {
                   if (oeeInfo.oee >= 85) {
                     baseColor = '#10b981'; // Green
                   } else if (oeeInfo.oee >= 70) {
@@ -843,7 +910,7 @@ export default function Map({
             const centerX = (Math.max(...xs) + Math.min(...xs)) / 2;
             const centerY = (Math.max(...ys) + Math.min(...ys)) / 2;
 
-            const color = bld.color || '#3b82f6';
+            const color = isGrayscale ? '#64748b' : (bld.color || '#3b82f6');
 
             return (
               <g
@@ -929,7 +996,7 @@ export default function Map({
           {/* Render OEE Badge on Buildings when OEE mode is enabled */}
           {oeeMode && liveOeeData && activeView === 'satellite' && buildings.map((bld, idx) => {
             const oeeInfo = liveOeeData[bld.id];
-            if (!oeeInfo) return null;
+            if (!oeeInfo || oeeInfo.apiError) return null;
 
             const isChildShape = bld.parentShapeId && buildings.some(p => p.id === bld.parentShapeId);
             const isAlsoParent = buildings.some(p => p.parentShapeId === bld.id);
@@ -987,6 +1054,30 @@ export default function Map({
           })}
         </svg>
       </div>
+
+      {hoveredId && (
+        <div
+          style={{
+            position: 'fixed',
+            left: mousePos.x + 12,
+            top: mousePos.y + 12,
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            color: '#f8fafc',
+            padding: '6px 10px',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: '600',
+            pointerEvents: 'none',
+            zIndex: 9999,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            fontFamily: 'var(--font-sans)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {buildings.find((b) => b.id === hoveredId)?.name}
+        </div>
+      )}
     </div>
   );
 }

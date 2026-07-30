@@ -108,6 +108,36 @@ export default function OpcBar({
             style={{ width: '100%', cursor: 'pointer' }}
           />
         </div>
+
+        {/* Reset Cache / Reload Map */}
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px', marginTop: '4px' }}>
+          <button
+            onClick={() => {
+              if (confirm('Hapus cache lokal dan muat ulang peta dari repository?')) {
+                localStorage.removeItem('mtm_map_shapes');
+                localStorage.removeItem('mtm_map_maingate');
+                window.location.reload();
+              }
+            }}
+            style={{
+              width: '100%',
+              padding: '6px 8px',
+              backgroundColor: 'var(--maintenance-glow)',
+              border: '1px solid var(--maintenance)',
+              color: 'var(--maintenance)',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              transition: 'background 0.2s',
+            }}
+          >
+            🔄 Reset ke Peta Default Repo
+          </button>
+        </div>
       </div>
     </div>
   );
